@@ -1415,6 +1415,11 @@
               </table>
             </div>
 
+            <div class="rph-section-block" id="previewRujukanIntegrasiBlock" style="display:none;">
+              <h4><i class="fa-solid fa-book-open"></i> Rujukan Buku Teks Integrasi (KPM)</h4>
+              <ul id="previewRujukanIntegrasi" style="padding-left:1.5rem; font-size:0.88rem; margin-top:4px; color:var(--text);"></ul>
+            </div>
+
             <div class="rph-section-block">
               <h4><i class="fa-solid fa-lightbulb"></i> Soalan Pencetus Idea (Driving Question)</h4>
               <div id="previewDrivingQuestion" style="background: rgba(251,188,5,0.1); border-left: 4px solid var(--accent); padding: 8px 12px; border-radius: 4px; font-size: 0.9rem; font-style: italic;">
@@ -3362,6 +3367,11 @@ Abaikan maklumat tandatangan pentadbir, cuti umum, atau kepala surat yang tidak 
                 "tajuk": "Kemasan, Dokumentasi & Pembentangan (ACT)",
                 "aktiviti": "• Sediakan laporan projek (objektif, lakaran, bahan, kos, refleksi).\n• Kemaskan hasil akhir.\n• Bentangkan projek dan jalankan pertandingan kereta kawalan."
             }
+        ],
+        "integrasiRujukan": [
+            "Sains T6: Unit 6 Daya (geseran & gerakan, ms 87-112); Unit 7 Kelajuan (ms 113-126)",
+            "Matematik T6: Bab 4 Masa dan Waktu - kelajuan (jarak/masa, ms 141-154)",
+            "Bahasa Melayu T6: Tema 6 Unit 17 Teknologi Membantu Kita (ms 127-132)"
         ]
     },
     "6_auto_plant": {
@@ -3415,6 +3425,11 @@ Abaikan maklumat tandatangan pentadbir, cuti umum, atau kepala surat yang tidak 
                 "tajuk": "Kemasan, Dokumentasi & Pembentangan (ACT)",
                 "aktiviti": "• Baiki dan naik taraf sistem berdasarkan maklum balas.\n• Sediakan laporan: masalah, cara sistem berfungsi, inovasi.\n• Bentangkan projek menggunakan pelbagai media."
             }
+        ],
+        "integrasiRujukan": [
+            "Sains T6: Unit 4 Interaksi antara Hidupan (ms 51-66)",
+            "Matematik T6: Bab 5 Ukuran dan Sukatan - isi padu cecair (ms 155-164)",
+            "Bahasa Melayu T6: Tema 7 Unit 20 Rezeki daripada Tanah (ms 151-156)"
         ]
     },
     "6_penghasilan": {
@@ -3468,6 +3483,12 @@ Abaikan maklumat tandatangan pentadbir, cuti umum, atau kepala surat yang tidak 
                 "tajuk": "Kemasan, Dokumentasi & Pembentangan (ACT)",
                 "aktiviti": "• Buat dokumentasi mudah proses penghasilan.\n• Kemaskan hasil akhir dan sediakan pameran.\n• Bentangkan produk secara kreatif dan jawab soalan."
             }
+        ],
+        "integrasiRujukan": [
+            "Matematik T6: Bab 3 Wang - harga kos, untung rugi (ms 103-140)",
+            "Sains T6: Unit 13 Teknologi (ms 211-222)",
+            "Pendidikan Moral T6: Unit 10 Kejujuran",
+            "Bahasa Melayu T6: Tema 8 Unit 23 Usahawan Berjaya (ms 173-178)"
         ]
     },
     "6_pintu_pagar": {
@@ -3522,6 +3543,11 @@ Abaikan maklumat tandatangan pentadbir, cuti umum, atau kepala surat yang tidak 
                 "tajuk": "Kemasan, Dokumentasi & Pembentangan (ACT)",
                 "aktiviti": "• Buat kemasan akhir dan pastikan pagar berfungsi sepenuhnya. • Sediakan laporan projek ringkas (objektif, lakaran, bahan, kos, cabaran, refleksi). • Bentangkan hasil projek menggunakan pelbagai media."
             }
+        ],
+        "integrasiRujukan": [
+            "Sains T6: Unit 12 Kestabilan dan Kekuatan (ms 193-210); Unit 13 Teknologi (ms 211-222)",
+            "Matematik T6: Bab 5 Ukuran dan Sukatan (ms 155-164)",
+            "Pendidikan Moral T6: Unit 2 Bertanggungjawab"
         ]
     },
     "6_robot_halangan": {
@@ -3576,6 +3602,11 @@ Abaikan maklumat tandatangan pentadbir, cuti umum, atau kepala surat yang tidak 
                 "tajuk": "Kemasan, Dokumentasi & Pembentangan (ACT)",
                 "aktiviti": "• Kemaskan hasil akhir dan pastikan robot berfungsi dengan baik. • Sediakan dokumentasi mudah dan pameran. • Bentangkan projek serta terangkan fungsi setiap elemen robotik."
             }
+        ],
+        "integrasiRujukan": [
+            "Sains T6: Unit 7 Kelajuan (ms 113-126); Unit 13 Teknologi (ms 211-222)",
+            "Matematik T6: Bab 4 Masa dan Waktu (ms 141-154); Bab 5 Ukuran dan Sukatan (ms 155-164)",
+            "Bahasa Melayu T6: Tema 6 Unit 17 Teknologi Membantu Kita (ms 127-132)"
         ]
     }
 };
@@ -3745,6 +3776,18 @@ Abaikan maklumat tandatangan pentadbir, cuti umum, atau kepala surat yang tidak 
       // Subjek gandingan / integrasi formal (PBL rentas subjek)
       const pGanding = document.getElementById('previewSubjekGandingan');
       if (pGanding && tmpl.subjekGandingan) pGanding.innerText = tmpl.subjekGandingan;
+
+      // Rujukan buku teks integrasi (subjek lain - KPM)
+      const rujBlock = document.getElementById('previewRujukanIntegrasiBlock');
+      const rujList = document.getElementById('previewRujukanIntegrasi');
+      if (rujBlock && rujList) {
+        if (Array.isArray(tmpl.integrasiRujukan) && tmpl.integrasiRujukan.length) {
+          rujList.innerHTML = tmpl.integrasiRujukan.map(r => `<li>${r}</li>`).join('');
+          rujBlock.style.display = '';
+        } else {
+          rujBlock.style.display = 'none';
+        }
+      }
 
       // Garis masa 4 fasa PBL (PLAN -> DO -> CHECK -> ACT)
       const timeline = document.getElementById('previewTimelineContainer');
