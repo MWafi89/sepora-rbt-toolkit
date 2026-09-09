@@ -4412,6 +4412,37 @@ function autoGenerateSmartRph() {
       const pRptRef = document.getElementById('previewRptRef');
       if (pRptRef) pRptRef.innerText = tmpl.rujukanRpt || (valMinggu ? 'RPT RBT 2026 - Minggu ' + valMinggu : '');
 
+      // Refleksi auto - mengikuti perjalanan RPH sebenar (induksi -> aktiviti -> penutup -> penilaian)
+      const pRflx = document.getElementById('previewRefleksi');
+      if (pRflx) {
+        const rflxPlain = function (h) {
+          return String(h || '').replace(/<br\s*\/?>/gi, ' | ').replace(/<[^>]*>/g, ' ').replace(/&amp;/g, '&').replace(/&nbsp;/g, ' ').replace(/\s+/g, ' ').trim();
+        };
+        const rflxShort = function (t, n) {
+          t = rflxPlain(t);
+          return t.length > (n || 90) ? t.slice(0, n) + '...' : t;
+        };
+        const projek = rflxPlain(tmpl.tajuk).replace(/^PBL\s*\d+\s*:\s*/i, '');
+        const induksi = rflxShort(tmpl.setInduksi, 110);
+        const penutup = rflxShort(tmpl.penutup, 100);
+        // aktiviti berperingkat dari blok langkah
+        const langkahBlok = rflxPlain(tmpl.langkah).split('Langkah').map(function (x) { return x.trim(); }).filter(function (x) { return x.length > 4; });
+        const aktivitiRingkas = langkahBlok.map(function (x) {
+          const tanpaTajuk = x.replace(/^\d+\s*\([^)]*\)\s*:\s*/, '').replace(/[|\u2022]/g, ' ').replace(/\s+/g, ' ').trim();
+          return tanpaTajuk.length > 80 ? tanpaTajuk.slice(0, 80) + '...' : tanpaTajuk;
+        });
+        const aliran = aktivitiRingkas.length ? aktivitiRingkas.join(' \u2192 ') : rflxShort(tmpl.langkah, 120);
+        const kelasTxt = tmpl.kelas || (valKelas || '');
+        const fasaInfo = (Array.isArray(tmpl.fasaProjek) && tmpl.fasaProjek.length) ? ('Projek dalam fasa ' + (tmpl.fasaProjek[0] ? tmpl.fasaProjek[0].fasa : '') + ' - ' + (tmpl.fasaProjek[0] ? tmpl.fasaProjek[0].minggu : '')) : '';
+        pRflx.innerText =
+          'Refleksi PdPc: ' + projek + ' bersama murid ' + kelasTxt + '. ' + (fasaInfo ? '(' + fasaInfo + ')\n' : '\n') +
+          'Perjalanan sesi mengikut RPH:\n' +
+          '1) Induksi - ' + induksi + '\n' +
+          '2) Aktiviti - ' + aliran + '\n' +
+          '3) Penutup - ' + penutup + '\n' +
+          'Pencapaian: ___ / 30 orang murid mencapai objektif pada sesi ini. Murid yang belum menguasai: ___ (bimbingan tambahan). Tindakan susulan: ___.';
+      }
+
       // Kemas kini kandungan pedagogi PBL & STEM
       const pIntegrasi = document.getElementById('previewIntegrasiTable');
       const pDrivingQ = document.getElementById('previewDrivingQuestion');
