@@ -1190,7 +1190,7 @@
               <button class="btn btn-secondary" onclick="loadPblRbtTemplate('4_pen3d')" style="background:#0284c7; border-color:#0284c7; color:#fff;" title="Muat Templat PBL Inovasi Pen 3D Tahun 4">
                 <i class="fa-solid fa-pen-nib"></i> PBL Pen 3D Thn 4
               </button>
-              <button class="btn btn-secondary" onclick="loadPblRbtTemplate('4_kotak')" style="background:#059669; border-color:#059669; color:#fff;" title="Muat Templat PBL RBT Tahun 4 (Pembungkusan)">
+              <button class="btn btn-secondary" onclick="loadPblRbtTemplate('4_pembungkusan')" style="background:#059669; border-color:#059669; color:#fff;" title="Muat Templat PBL RBT Tahun 4 (Pembungkusan)">
                 <i class="fa-solid fa-box-open"></i> PBL Kotak Thn 4
               </button>
               <button class="btn btn-secondary" onclick="loadPblRbtTemplate(5)" style="background:#2563eb; border-color:#2563eb; color:#fff;" title="Muat Templat PBL RBT Tahun 5">
@@ -1233,14 +1233,16 @@
                     <label class="form-label" style="color: #be185d; font-weight: 700; margin-bottom: 0; display: flex; align-items: center; gap: 6px; font-size: 0.88rem;">
                       <i class="fa-solid fa-graduation-cap"></i> Dropdown Tahun 4
                     </label>
-                    <span class="badge" style="background:#fce7f3; color:#be185d; font-size:0.7rem; font-weight:700; padding:2px 6px; border-radius:4px;">UNIT 1 - 4</span>
+                    <span class="badge" style="background:#fce7f3; color:#be185d; font-size:0.7rem; font-weight:700; padding:2px 6px; border-radius:4px;">UNIT 2 - 6</span>
                   </div>
                   <select id="selectPblTahun4" class="form-select" onchange="handleDropdownTahunChange('4', this.value)" style="border-color: #fbcfe8; font-weight: 600; font-size: 0.85rem;">
                     <option value="" disabled selected>-- Pilih Mengikut Unit (Tahun 4) --</option>
-                    <option value="4_pengaturcaraan">Unit 1: Algoritma & Pengaturcaraan Blok Scratch</option>
-                    <option value="4_pen3d">Unit 2: Projek Inovasi Reka Bentuk Pen 3D</option>
-                    <option value="4_jahitan">Unit 3: Projek Artikel Jahitan Tangan Berpoket</option>
-                    <option value="4_kotak">Unit 4: Pembungkusan Makanan Mesra Alam (Eco-Box)</option>
+                    <option value="4_kereta_idamanku">PBL 1: REKA BENTUK "KERETA IDAMANKU" (Unit 2)</option>
+                    <option value="4_pen3d">PBL 2: PENGENALAN KEPADA TEKNOLOGI KEYCHAIN 3D PEN (Unit 3)</option>
+                    <option value="4_jahitan">PBL 3: PENGENALAN KEPADA TEKNOLOGI JAHITAN (Unit 3)</option>
+                    <option value="4_pembungkusan">PBL 4: REKA BENTUK PEMBUNGKUSAN (Unit 4)</option>
+                    <option value="4_makanan">PBL 5: REKA BENTUK MAKANAN (Unit 5)</option>
+                    <option value="4_pengaturcaraan">PBL 6: REKA BENTUK PENGATURCARAAN (Unit 6)</option>
                   </select>
                 </div>
 
@@ -1254,10 +1256,10 @@
                   </div>
                   <select id="selectPblTahun5" class="form-select" onchange="handleDropdownTahunChange('5', this.value)" style="border-color: #bfdbfe; font-weight: 600; font-size: 0.85rem;">
                     <option value="" disabled selected>-- Pilih Mengikut Unit (Tahun 5) --</option>
-                    <option value="5_rumah_tangga">Unit 1: Teknologi Rumah Tangga (Artikel Jahitan Hiasan)</option>
-                    <option value="5_lampu_auto">Unit 2: Tenaga Boleh Baharu (Lampu Keselamatan Sensor LDR)</option>
-                    <option value="5_rumah_pintar">Unit 3: Reka Bentuk Pengaturcaraan (Model Rumah Pintar Hijau)</option>
-                    <option value="5_akuaponik">Unit 4: Teknologi Pertanian (Pertanian Bandar & Akuaponik)</option>
+                    <option value="5_rumah_tangga">PBL 1: TEKNOLOGI RUMAH TANGGA ARTIKEL JAHITAN (Unit 1)</option>
+                    <option value="5_kipas_solar">PBL 2: TABUNG KIPAS SOLAR (Unit 2)</option>
+                    <option value="5_atmega">PBL 3: PENGATURCARAAN KIT ATMEGA328P (Unit 3)</option>
+                    <option value="5_tanaman">PBL 4: Tanaman Konvensional (Unit 4)</option>
                   </select>
                 </div>
 
@@ -1267,126 +1269,35 @@
                     <label class="form-label" style="color: #7e22ce; font-weight: 700; margin-bottom: 0; display: flex; align-items: center; gap: 6px; font-size: 0.88rem;">
                       <i class="fa-solid fa-robot"></i> Dropdown Tahun 6
                     </label>
-                    <span class="badge" style="background:#f3e8ff; color:#7e22ce; font-size:0.7rem; font-weight:700; padding:2px 6px; border-radius:4px;">UNIT 1 - 4</span>
+                    <span class="badge" style="background:#f3e8ff; color:#7e22ce; font-size:0.7rem; font-weight:700; padding:2px 6px; border-radius:4px;">UNIT 1 - 3</span>
                   </div>
                   <select id="selectPblTahun6" class="form-select" onchange="handleDropdownTahunChange('6', this.value)" style="border-color: #e9d5ff; font-weight: 600; font-size: 0.85rem;">
                     <option value="" disabled selected>-- Pilih Mengikut Unit (Tahun 6) --</option>
-                    <option value="6_penggera">Unit 1: Elektromekanikal (Sistem Penggera Penceroboh)</option>
-                    <option value="6_robotik">Unit 2: Pengenalan Robotik (Sistem Navigasi Halangan)</option>
-                    <option value="6_robot_solar">Unit 3: Robotik & Tenaga Solar (Robot Pembersih Pintar)</option>
-                    <option value="6_kenderaan_solar">Unit 4: Tenaga Boleh Baharu (Kereta Solar & Transmisi Gear)</option>
+                    <option value="6_kereta_kawalan">PBL 1: KERETA KAWALAN SAYA (Unit 1)</option>
+                    <option value="6_auto_plant">PBL 2: Auto Plant Watering (Unit 2)</option>
+                    <option value="6_penghasilan">PBL 3: Penghasilan Produk (Unit 3)</option>
                   </select>
                 </div>
               </div>
             </div>
 
             <div style="background:var(--bg); border:1px solid var(--surface-border); border-radius:8px; padding:0.6rem 0.85rem; margin-bottom:1rem; display:flex; align-items:center; gap:0.5rem; flex-wrap:wrap;">
-              <span style="font-size:0.8rem; font-weight:700; color:var(--text);"><i class="fa-solid fa-arrow-down-1-9" style="color:var(--primary);"></i> Susunan Mengikut Unit:</span>
-              <button type="button" class="btn btn-sm" onclick="loadPblRbtTemplate('4_pengaturcaraan')" style="background:#fce7f3; color:#be185d; border:1px solid #f472b6; font-size:0.75rem;">
-                T4 U1: Scratch
-              </button>
-              <button type="button" class="btn btn-sm" onclick="loadPblRbtTemplate('4_pen3d')" style="background:#e0f2fe; color:#0369a1; border:1px solid #38bdf8; font-size:0.75rem;">
-                T4 U2: Pen 3D
-              </button>
-              <button type="button" class="btn btn-sm" onclick="loadPblRbtTemplate('4_jahitan')" style="background:#fdf2f8; color:#9d174d; border:1px solid #fbcfe8; font-size:0.75rem;">
-                T4 U3: Jahitan
-              </button>
-              <button type="button" class="btn btn-sm" onclick="loadPblRbtTemplate('4_kotak')" style="background:#dcfce7; color:#15803d; border:1px solid #4ade80; font-size:0.75rem;">
-                T4 U4: Eco-Box
-              </button>
-              <button type="button" class="btn btn-sm" onclick="loadPblRbtTemplate('5_rumah_tangga')" style="background:#ede9fe; color:#6b21a8; border:1px solid #ddd6fe; font-size:0.75rem;">
-                T5 U1: Rumah Tangga
-              </button>
-              <button type="button" class="btn btn-sm" onclick="loadPblRbtTemplate('5_lampu_auto')" style="background:#fef3c7; color:#92400e; border:1px solid #fcd34d; font-size:0.75rem;">
-                T5 U2: Lampu Sensor
-              </button>
-              <button type="button" class="btn btn-sm" onclick="loadPblRbtTemplate('5_rumah_pintar')" style="background:#dbeafe; color:#1d4ed8; border:1px solid #60a5fa; font-size:0.75rem;">
-                T5 U3: Rumah Pintar
-              </button>
-              <button type="button" class="btn btn-sm" onclick="loadPblRbtTemplate('5_akuaponik')" style="background:#eff6ff; color:#1e40af; border:1px solid #bfdbfe; font-size:0.75rem;">
-                T5 U4: Akuaponik
-              </button>
-              <button type="button" class="btn btn-sm" onclick="loadPblRbtTemplate('6_penggera')" style="background:#faf5ff; color:#6b21a8; border:1px solid #e9d5ff; font-size:0.75rem;">
-                T6 U1: Penggera
-              </button>
-              <button type="button" class="btn btn-sm" onclick="loadPblRbtTemplate('6_robotik')" style="background:#e0e7ff; color:#3730a3; border:1px solid #c7d2fe; font-size:0.75rem;">
-                T6 U2: Robotik
-              </button>
-              <button type="button" class="btn btn-sm" onclick="loadPblRbtTemplate('6_robot_solar')" style="background:#f3e8ff; color:#7e22ce; border:1px solid #c084fc; font-size:0.75rem;">
-                T6 U3: Robot Solar
-              </button>
-              <button type="button" class="btn btn-sm" onclick="loadPblRbtTemplate('6_kenderaan_solar')" style="background:#ede9fe; color:#5b21b6; border:1px solid #ddd6fe; font-size:0.75rem;">
-                T6 U4: Kereta Solar
-              </button>
-            </div>
-
-            <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap:1rem; margin-bottom:1rem;">
-              <div class="form-group">
-                <label class="form-label">Tingkatan / Modul Projek RBT (Ikut Unit 1 - 4)</label>
-                <select id="formRphTahap" class="form-select" onchange="loadPblRbtTemplate(this.value)">
-                  <optgroup label="Tahun 4 (Unit 1 - 4)">
-                    <option value="4_pengaturcaraan">Unit 1: Pengaturcaraan Asas & Algoritma</option>
-                    <option value="4_pen3d">Unit 2: Projek Inovasi Pen 3D</option>
-                    <option value="4_jahitan">Unit 3: Projek Artikel Jahitan Tangan</option>
-                    <option value="4_kotak">Unit 4: Pembungkusan Mesra Alam & Kod</option>
-                  </optgroup>
-                  <optgroup label="Tahun 5 (Unit 1 - 4)">
-                    <option value="5_rumah_tangga">Unit 1: Teknologi Rumah Tangga (Artikel Jahitan Hiasan)</option>
-                    <option value="5_lampu_auto">Unit 2: Tenaga Boleh Baharu (Lampu Keselamatan Sensor LDR)</option>
-                    <option value="5_rumah_pintar" selected>Unit 3: Reka Bentuk Pengaturcaraan (Model Rumah Pintar)</option>
-                    <option value="5_akuaponik">Unit 4: Teknologi Pertanian (Pertanian Bandar & Akuaponik)</option>
-                  </optgroup>
-                  <optgroup label="Tahun 6 (Unit 1 - 4)">
-                    <option value="6_penggera">Unit 1: Elektromekanikal (Sistem Penggera Penceroboh)</option>
-                    <option value="6_robotik">Unit 2: Pengenalan Robotik (Sistem Navigasi Halangan)</option>
-                    <option value="6_robot_solar">Unit 3: Robotik & Tenaga Solar (Robot Pembersih Pintar)</option>
-                    <option value="6_kenderaan_solar">Unit 4: Tenaga Boleh Baharu (Kereta Solar & Transmisi Gear)</option>
-                  </optgroup>
-                </select>
-              </div>
-              <div class="form-group">
-                <label class="form-label">Hari & Tarikh Sesi</label>
-                <input type="text" id="formRphHari" class="form-control" value="Isnin (8 September 2026)">
-              </div>
-              <div class="form-group">
-                <label class="form-label">Masa</label>
-                <input type="text" id="formRphMasa" class="form-control" value="08:00 - 09:30 (90 Minit)">
-              </div>
-              <div class="form-group">
-                <label class="form-label">Kelas</label>
-                <input type="text" id="formRphKelas" class="form-control" value="5 Inovatif">
-              </div>
-              <div class="form-group">
-                <label class="form-label">Subjek</label>
-                <input type="text" id="formRphSubjek" class="form-control" value="Reka Bentuk dan Teknologi (RBT)">
-              </div>
-              <div class="form-group">
-                <label class="form-label">Minggu Persekolahan</label>
-                <select id="formRphMinggu" class="form-select" onchange="syncRphWithWeek(this.value)">
-                  <!-- 1-42 -->
-                </select>
-              </div>
-            </div>
-
-            <div style="background: linear-gradient(135deg, rgba(26,115,232,0.05), rgba(234,67,53,0.05)); border: 1.5px solid rgba(26,115,232,0.25); border-radius: 8px; padding: 0.9rem; margin-bottom: 1rem; display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 1rem;">
-              <div class="form-group" style="margin-bottom:0;">
-                <label class="form-label" style="color:var(--primary); font-weight:700;">
-                  <i class="fa-solid fa-calendar-week"></i> Minggu Pelaksanaan PBL
-                </label>
-                <input type="text" id="formPblMingguPelaksanaan" class="form-control" value="Minggu 12 hingga Minggu 15 (4 Minggu)" oninput="autoGenerateSmartRph()" placeholder="cth: Minggu 12 - Minggu 15">
-              </div>
-              <div class="form-group" style="margin-bottom:0;">
-                <label class="form-label" style="color:#059669; font-weight:700;">
-                  <i class="fa-solid fa-play"></i> Tarikh Mula PBL
-                </label>
-                <input type="date" id="formPblTarikhMula" class="form-control" value="2026-09-08" onchange="autoGenerateSmartRph()" style="font-weight:600;">
-              </div>
-              <div class="form-group" style="margin-bottom:0;">
-                <label class="form-label" style="color:#dc2626; font-weight:700;">
-                  <i class="fa-solid fa-flag-checkered"></i> Tarikh Hantar PBL (Tarikh Akhir)
-                </label>
-                <input type="date" id="formPblTarikhHantar" class="form-control" value="2026-09-29" onchange="autoGenerateSmartRph()" style="font-weight:600; border-color:#fca5a5;">
-              </div>
+              <span style="font-size:0.8rem; font-weight:700; color:var(--text);"><i class="fa-solid fa-arrow-down-1-9" style="color:var(--primary);"></i> Akses Pantas:</span>
+              <button type="button" class="btn btn-sm" onclick="loadPblRbtTemplate('4_kereta_idamanku')" style="background:#fce7f3; color:#be185d; border:1px solid #f472b6; font-size:0.75rem;">T4 U2: Kereta</button>
+              <button type="button" class="btn btn-sm" onclick="loadPblRbtTemplate('4_pen3d')" style="background:#e0f2fe; color:#0369a1; border:1px solid #38bdf8; font-size:0.75rem;">T4 U3: Pen 3D</button>
+              <button type="button" class="btn btn-sm" onclick="loadPblRbtTemplate('4_jahitan')" style="background:#fdf2f8; color:#9d174d; border:1px solid #fbcfe8; font-size:0.75rem;">T4 U3: Jahitan</button>
+              <button type="button" class="btn btn-sm" onclick="loadPblRbtTemplate('4_pembungkusan')" style="background:#dcfce7; color:#15803d; border:1px solid #4ade80; font-size:0.75rem;">T4 U4: Bungkus</button>
+              <button type="button" class="btn btn-sm" onclick="loadPblRbtTemplate('4_makanan')" style="background:#fef3c7; color:#92400e; border:1px solid #fcd34d; font-size:0.75rem;">T4 U5: Makanan</button>
+              <button type="button" class="btn btn-sm" onclick="loadPblRbtTemplate('4_pengaturcaraan')" style="background:#ede9fe; color:#6b21a8; border:1px solid #ddd6fe; font-size:0.75rem;">T4 U6: Scratch</button>
+              
+              <button type="button" class="btn btn-sm" onclick="loadPblRbtTemplate('5_rumah_tangga')" style="background:#ede9fe; color:#6b21a8; border:1px solid #ddd6fe; font-size:0.75rem;">T5 U1: R.Tangga</button>
+              <button type="button" class="btn btn-sm" onclick="loadPblRbtTemplate('5_kipas_solar')" style="background:#fef3c7; color:#92400e; border:1px solid #fcd34d; font-size:0.75rem;">T5 U2: Kipas Solar</button>
+              <button type="button" class="btn btn-sm" onclick="loadPblRbtTemplate('5_atmega')" style="background:#dbeafe; color:#1d4ed8; border:1px solid #60a5fa; font-size:0.75rem;">T5 U3: ATMEGA</button>
+              <button type="button" class="btn btn-sm" onclick="loadPblRbtTemplate('5_tanaman')" style="background:#eff6ff; color:#1e40af; border:1px solid #bfdbfe; font-size:0.75rem;">T5 U4: Tanaman</button>
+              
+              <button type="button" class="btn btn-sm" onclick="loadPblRbtTemplate('6_kereta_kawalan')" style="background:#faf5ff; color:#6b21a8; border:1px solid #e9d5ff; font-size:0.75rem;">T6 U1: Kereta K</button>
+              <button type="button" class="btn btn-sm" onclick="loadPblRbtTemplate('6_auto_plant')" style="background:#e0e7ff; color:#3730a3; border:1px solid #c7d2fe; font-size:0.75rem;">T6 U2: Auto Plant</button>
+              <button type="button" class="btn btn-sm" onclick="loadPblRbtTemplate('6_penghasilan')" style="background:#f3e8ff; color:#7e22ce; border:1px solid #c084fc; font-size:0.75rem;">T6 U3: Produk</button>
             </div>
 
             <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap:1rem;">
@@ -2863,436 +2774,332 @@ Abaikan maklumat tandatangan pentadbir, cuti umum, atau kepala surat yang tidak 
     }
 
     const PBL_TEMPLATES = {
-      "4_jahitan": {
-        tahap: "4_jahitan",
-        kelas: "4 Dinamik",
-        subjek: "Reka Bentuk dan Teknologi (RBT)",
-        tajuk: "Projek Artikel Jahitan: Sarung Aksesori Berpoket & Hiasan Butang",
-        bukuTeks: "Buku Teks RBT Tahun 4 (Unit 3: Artikel Jahitan, ms 42-58)",
-        sk: "4.3 Reka Bentuk Artikel Jahitan",
-        sp: "4.3.2 Menjana idea bagi menghasilkan lakaran; 4.3.4 Menyediakan alatan, bahan dan pola; 4.3.5 Menghasilkan artikel jahitan tangan.",
-        integrasi: "Sains (Sifat Bahan Fabrik & Kekuatan Gentian), Matematik (Ukuran Pola, Perimeter Kelim & Bajet Kos), Bahasa Melayu (Manual Langkah Kerja Bertulis), PSV (Prinsip Estetika & Susun Atur Butang)",
-        drivingQuestion: `"Bagaimanakah kita sebagai pereka cilik boleh menghasilkan sebuah artikel jahitan serbaguna yang kemas, kukuh, dan estetik menggunakan teknik mata jahitan tangan bagi menyimpan aksesori peribadi tanpa mudah tercicir?"`,
-        integrasiRows: `
-          <tr><td><strong>RBT (Teras)</strong></td><td>Mengenal pasti alatan jahitan (roda surih, kertas karbon tukang jahit, jarum jahit tangan), menyediakan pola kain, memotong fabrik, dan menjahit dengan jahitan jelujur, jahitan kia, jahitan insang pari serta memasang butang.</td></tr>
-          <tr><td><strong>Sains</strong></td><td>Mengkaji sifat bahan fabrik (gentian kapas vs sintetik), penyerapan warna, ketahanan regangan benang, dan kebolehsuaian fabrik terhadap geseran.</td></tr>
-          <tr><td><strong>Matematik</strong></td><td>Mengukur dimensi pola mengikut skala sentimeter (cm), mengira elaun kelim 1.5 cm di sekeliling kain, serta menghitung jumlah kos perbelanjaan bahan hiasan.</td></tr>
-          <tr><td><strong>Bahasa Melayu</strong></td><td>Menulis urutan langkah kerja penghasilan artikel jahitan menggunakan penanda wacana yang tepat dan membentangkan fungsi produk secara lisan.</td></tr>
-          <tr><td><strong>Pendidikan Seni Visual</strong></td><td>Mengaplikasikan prinsip harmoni warna, corak jalinan tampak fabrik, dan imbangan susun atur hiasan renda atau butang pada artikel jahitan.</td></tr>
-        `,
-        objektif: [
-          "Mengenal pasti sekurang-kurangnya 3 jenis mata jahitan tangan (jahitan jelujur, kia, insang pari) berserta fungsinya dengan betul.",
-          "Menghasilkan artikel jahitan berpoket menggunakan alatan jahitan dengan mematuhi langkah keselamatan dan susunan pola yang tepat.",
-          "Menerangkan perkaitan ukuran elaun kelim (Matematik) dan sifat fabrik (Sains) semasa menghasilkan produk jahitan tangan."
+    "4_kereta_idamanku": {
+        "tahap": "4_kereta_idamanku",
+        "kelas": "4 Dinamik",
+        "subjek": "Reka Bentuk dan Teknologi (RBT)",
+        "tajuk": "PBL 1: Reka Bentuk 'Kereta Idamanku' (Unit 2)",
+        "bukuTeks": "Buku Teks RBT Tahun 4 (Unit 2: Reka Bentuk Produk, ms 30-44)",
+        "sk": "2.2 Reka Bentuk Produk Tema Kenderaan",
+        "sp": "2.2.1 Mengenal pasti komponen; 2.2.3 Menghasilkan lakaran kereta; 2.2.4 Menghasilkan model; 2.2.5 Membuat penilaian.",
+        "integrasi": "Sains (Sifat Bahan), Matematik (Ukuran), Bahasa Melayu (Pembentangan)",
+        "drivingQuestion": "\"Bagaimanakah kita dapat merekabentuk sebuah kereta mainan idaman menggunakan bahan terpakai yang kukuh dan estetik?\"",
+        "integrasiRows": "<tr><td><strong>RBT (Teras)</strong></td><td>Mengenal pasti dan membina model reka bentuk kenderaan.</td></tr><tr><td><strong>Sains</strong></td><td>Memilih bahan kitar semula yang sesuai.</td></tr><tr><td><strong>Matematik</strong></td><td>Mengukur dan memotong bahan mengikut lakaran.</td></tr>",
+        "objektif": [
+            "Mengenal pasti komponen reka bentuk kenderaan.",
+            "Menghasilkan satu model kereta idaman menggunakan bahan kitar semula."
         ],
-        kriteria: [
-          "Murid dapat memindahkan tanda pola ke fabrik menggunakan kertas karbon tukang jahit dan roda surih dengan jelas.",
-          "Mata jahitan tangan yang dihasilkan rapat, kukuh, lurus, dan benang dimatikan dengan sempurna.",
-          "Artikel jahitan siap dipasang butang atau pelekat velcro dan dapat menampung aksesori contoh."
+        "kriteria": [
+            "Model kereta mempunyai 4 roda yang seimbang.",
+            "Binaan kukuh dan menarik."
         ],
-        setInduksi: "Guru menunjukkan bekas alat tulis atau sarung telefon yang koyak serta pelbagai sampel artikel jahitan yang menarik. Guru mengemukakan soalan pencetus: 'Bagaimanakah jarum dan seutas benang dapat menghasilkan produk yang kukuh dan bernilai tinggi tanpa mesin jahit?' Murid mengemukakan idea awal.",
-        langkah: `
-          • <strong>Langkah 1 (Penyediaan Pola & Pengukuran - 20 minit):</strong> Murid menyemak lakaran reka bentuk artikel jahitan berpoket. Mengukur dan melukis pola di atas kertas kad tebal dengan penambahan elaun kelim 1.5 cm menggunakan pembaris (Aplikasi Matematik).<br>
-          • <strong>Langkah 2 (Pemotongan Fabrik & Menjahit - 45 minit):</strong> Murid menyemat pola pada fabrik menggunakan jarum peniti, menggunting kain dengan gunting fabrik, dan memindahkan tanda pola. Murid menjahit bahagian tepi menggunakan jahitan kia (untuk cantuman kukuh) dan jahitan insang pari pada bahagian poket (Aplikasi RBT & PSV).<br>
-          • <strong>Langkah 3 (Pemasangan Kancing & Kemasan - 25 minit):</strong> Murid menjahit butang dua lubang atau menjahit pelekat velcro pada penutup poket artikel jahitan. Menguji ketahanan cantuman dan membersihkan lebihan benang (Aplikasi Sains & RBT).
-        `,
-        penutup: "Sesi 'Gallery Walk' di mana setiap murid mempamerkan artikel jahitan masing-masing. Rakan sekelas memberikan skor penilaian berdasarkan kekemasan mata jahitan dan ketepatan fungsi artikel.",
-        bbm: "Fabrik Felt / Kapas, Benang Jahit, Jarum Jahit Tangan, Gunting Fabrik, Roda Surih, Kertas Karbon Tukang Jahit, Butang, Hub RBT SEPORA",
-        rubrik: "• TP1-TP2: Menamakan alatan jahitan dan mengenal pasti mata jahitan tangan asas.<br>• TP3-TP4: Menyediakan alatan, bahan, memindahkan pola, dan menjahit artikel mengikut langkah kerja teratur.<br>• TP5-TP6: Menghasilkan artikel jahitan tangan yang kemas, kukuh, berfungsi, mempunyai nilai estetika tinggi serta boleh dicontohi."
-      },
-      "4_pen3d": {
-        tahap: "4_pen3d",
-        kelas: "4 Dinamik",
-        subjek: "Reka Bentuk dan Teknologi (RBT)",
-        tajuk: "Projek Inovasi Reka Bentuk Pen 3D: Pemegang Telefon Pintar & Aksesori Ergonomik",
-        bukuTeks: "Buku Teks RBT Tahun 4 (Unit 2: Reka Bentuk Produk Menggunakan Pen 3D, ms 30-44)",
-        sk: "2.2 Reka Bentuk Produk Menggunakan Pen 3D",
-        sp: "2.2.1 Mengenal pasti fungsi komponen pen 3D; 2.2.3 Menghasilkan lakaran 3D bermaklumat; 2.2.4 Menghasilkan model produk menggunakan pen 3D; 2.2.5 Menilai dan membuat penambahbaikan.",
-        integrasi: "Sains (Takat Lebur Polimer PLA, Pemejalan Haba & Ketumpatan Bahan), Matematik (Geometri Ruang 3D, Sudut Kestabilan 60° & Pengiraan Panjang Filamen), Bahasa Melayu (Pitching Produk & Laporan Ringkas), PSV (Reka Bentuk Bentuk Ergonomik & Nilai Estetika)",
-        drivingQuestion: `"Bagaimanakah kita sebagai jurutera cilik boleh memanfaatkan teknologi pen 3D dan filamen terbiodegradasi untuk membina sebuah pemegang telefon pintar yang ergonomik, stabil, dan ringan bagi memudahkan sesi pembelajaran digital?"`,
-        integrasiRows: `
-          <tr><td><strong>RBT (Teras)</strong></td><td>Mengenal pasti komponen pen 3D (nozel pemanas, butang suapan filamen, pengawal kelajuan), memasang bekalan kuasa, memasukkan filamen, menyemperit filamen mengikut lakaran, dan mencantumkan komponen model 3D.</td></tr>
-          <tr><td><strong>Sains</strong></td><td>Memahami proses perubahan fasa bahan polimer termoplastik (filamen pepejal mencair pada nozel panas dan memejal semula apabila terdedah pada suhu bilik) serta keselamatan mengendalikan sumber haba.</td></tr>
-          <tr><td><strong>Matematik</strong></td><td>Menentukan sudut kecondongan pemegang telefon (antara 45° hingga 60°) bagi kestabilan graviti, mengukur perimeter tapak, dan mengira anggaran panjang filamen (meter) yang digunakan.</td></tr>
-          <tr><td><strong>Bahasa Melayu</strong></td><td>Menyampaikan pembentangan ciri-ciri keistimewaan pemegang telefon 3D dengan sebutan baku, intonasi meyakinkan, dan istilah teknologi yang tepat.</td></tr>
-          <tr><td><strong>Pendidikan Seni Visual</strong></td><td>Menerapkan prinsip imbangan simetri, kepelbagaian warna filamen, dan keselesaan sentuhan (reka bentuk ergonomik) pada produk 3D.</td></tr>
-        `,
-        objektif: [
-          "Mengenal pasti sekurang-kurangnya 4 bahagian utama pen 3D dan mengamalkan peraturan keselamatan pengoperasian haba dengan tepat.",
-          "Menghasilkan model pemegang telefon pintar 3D yang kukuh dan mampu menyokong peranti mengikut lakaran stensil yang ditetapkan.",
-          "Menerangkan konsep perubahan haba filamen (Sains) dan sudut kestabilan tapak (Matematik) yang diaplikasikan pada produk."
+        "setInduksi": "Guru menunjukkan pelbagai jenis kereta mainan. Guru bersoal jawab dengan murid tentang kereta idaman mereka.",
+        "langkah": "• <strong>Langkah 1 (Lakaran - 20 minit):</strong> Murid melukis lakaran reka bentuk kereta idaman.<br>• <strong>Langkah 2 (Pembinaan - 45 minit):</strong> Memotong kotak, menyambung roda dan menghias.<br>• <strong>Langkah 3 (Pembentangan - 25 minit):</strong> Murid menguji kereta dan membentangkan kepada kelas.",
+        "penutup": "Sesi pembentangan dan soal jawab. Guru membuat kesimpulan.",
+        "bbm": "Kotak, Penutup Botol, Lidi, Gam, Gunting, Hub RBT SEPORA",
+        "rubrik": "• TP1-TP2: Menyatakan komponen asas.<br>• TP3-TP4: Membina kereta idaman mengikut lakaran.<br>• TP5-TP6: Menghasilkan kereta idaman yang inovatif, kukuh dan kemas."
+    },
+    "4_pen3d": {
+        "tahap": "4_pen3d",
+        "kelas": "4 Dinamik",
+        "subjek": "Reka Bentuk dan Teknologi (RBT)",
+        "tajuk": "PBL 2: Pengenalan Kepada Teknologi Keychain 3D Pen (Unit 3)",
+        "bukuTeks": "Buku Teks RBT Tahun 4 (Unit 3, ms 45-60)",
+        "sk": "2.2 Reka Bentuk Produk Menggunakan Pen 3D",
+        "sp": "2.2.1 Mengenal pasti fungsi pen 3D; 2.2.4 Menghasilkan model produk menggunakan pen 3D.",
+        "integrasi": "Sains (Takat Lebur Polimer PLA), Matematik (Geometri Ruang 3D)",
+        "drivingQuestion": "\"Bagaimanakah kita dapat memanfaatkan teknologi pen 3D untuk membuat keychain nama yang unik dan menarik?\"",
+        "integrasiRows": "<tr><td><strong>RBT (Teras)</strong></td><td>Menghasilkan keychain menggunakan pen 3D.</td></tr><tr><td><strong>Sains</strong></td><td>Memahami proses pemanasan dan pemejalan plastik.</td></tr>",
+        "objektif": [
+            "Mengenal pasti bahagian utama pen 3D.",
+            "Menghasilkan keychain berhuruf nama sendiri menggunakan pen 3D."
         ],
-        kriteria: [
-          "Murid berjaya memanaskan pen 3D pada suhu yang betul dan mengawal kelajuan suapan filamen tanpa nozel tersumbat.",
-          "Model 3D berupaya memegang telefon pintar secara menegak dan melintang tanpa tumbang.",
-          "Cantuman antara lapisan filamen kemas, sekata, dan permukaan tapak rata."
+        "kriteria": [
+            "Keychain dapat dibaca dengan jelas dan kukuh.",
+            "Cantuman lapisan filamen sekata."
         ],
-        setInduksi: "Guru mempamerkan sebuah pen 3D yang sedang menyemperitkan filamen berwarna-warni membentuk objek terapung di udara. Guru mengemukakan soalan: 'Pernahkah kamu membayangkan melukis secara terus dalam ruang 3 dimensi untuk menyelesaikan masalah harian?' Murid menzahirkan rasa ingin tahu.",
-        langkah: `
-          • <strong>Langkah 1 (Penyediaan Lakaran & Stensil - 20 minit):</strong> Murid menyemak lakaran berlabel pemegang peranti. Murid melukis stensil komponen 2D (tapak sokongan, penahan hadapan, dan penyokong belakang bersudut 60°) di atas kertas lapik tahan haba (Aplikasi Matematik).<br>
-          • <strong>Langkah 2 (Pengoperasian Pen 3D & Penyemperitan - 45 minit):</strong> Murid memanaskan pen 3D, memasukkan filamen PLA, dan mengawal kelajuan aliran. Murid melukis garisan sempadan dan mengisi permukaan stensil secara jalinan silang yang kukuh (Aplikasi Sains & RBT).<br>
-          • <strong>Langkah 3 (Pencantuman 3D & Ujian Beban - 25 minit):</strong> Murid mencantumkan komponen-komponen 2D menjadi model struktur 3D menggunakan semburan filamen pen 3D sebagai pelekat. Menguji kestabilan beban dengan meletakkan peranti contoh (Aplikasi RBT & PSV).
-        `,
-        penutup: "Sesi demonstrasi fungsi produk pemegang telefon 3D di hadapan kelas. Murid membuat penilaian kendiri dan menyenaraikan idea penambahbaikan reka bentuk.",
-        bbm: "Pen 3D, Filamen PLA Mesra Alam (Pelbagai Warna), Kertas Alas / Stensil Tahan Haba, Sarung Jari Silikon Keselamatan, Hub RBT SEPORA",
-        rubrik: "• TP1-TP2: Mengetahui fungsi bahagian pen 3D dan langkah keselamatan asas.<br>• TP3-TP4: Mengendalikan pen 3D dan membina model mengikut lakaran stensil dengan betul.<br>• TP5-TP6: Menghasilkan produk 3D yang inovatif, kukuh menampung beban, ergonomik, serta mempunyai kemasan yang cemerlang."
-      },
-      "4_kotak": {
-        tahap: "4_kotak",
-        kelas: "4 Dinamik",
-        subjek: "Reka Bentuk dan Teknologi (RBT)",
-        tajuk: "Projek Pembungkusan Makanan Mesra Alam Pintar (Smart Eco-Packaging)",
-        bukuTeks: "Buku Teks RBT Tahun 4 (Unit 3: Reka Bentuk Pembungkusan & Kod Arahan, ms 32-48)",
-        sk: "3.1 Reka Bentuk Pembungkusan / 4.1 Reka Bentuk Pengaturcaraan",
-        sp: "3.1.4 Menghasilkan lakaran bermaklumat pembungkusan produk; 3.1.5 Membina model pembungkusan; 4.1.2 Algoritma dan pseudokod arahan.",
-        integrasi: "Sains (Sifat Bahan & Kitar Semula), Matematik (Bentangan Geometri 3D & Luas Permukaan), Bahasa Melayu (Slogan & Label Nutrisi), PSV (Prinsip Estetika Reka Bentuk)",
-        drivingQuestion: `"Bagaimanakah kita sebagai pencipta cilik boleh menghasilkan pembungkusan makanan bawa pulang (takeaway) daripada bahan terbiodegradasi yang kukuh, estetik, dan bermaklumat untuk mengurangkan lambakan sisa plastik di sekolah?"`,
-        integrasiRows: `
-          <tr><td><strong>RBT (Teras)</strong></td><td>Membina model pembungkusan berlabel, memilih bahan mesra alam, dan menyusun algoritma jujukan penghasilan produk.</td></tr>
-          <tr><td><strong>Sains</strong></td><td>Mengkaji sifat bahan (kebolehtelapan air, ketahanan haba) dan proses penguraian bahan biodegradasi vs plastik.</td></tr>
-          <tr><td><strong>Matematik</strong></td><td>Melukis bentangan poligon 3D (kubus/kuboid), mengukur dimensi (cm), dan mengira luas permukaan bahan bagi mengelakkan pembaziran.</td></tr>
-          <tr><td><strong>Bahasa Melayu</strong></td><td>Menulis label penerangan bahan, maklumat nutrisi, serta mencipta slogan promosi produk yang menarik dan kreatif.</td></tr>
-          <tr><td><strong>Pendidikan Seni Visual</strong></td><td>Menerapkan teori warna kontras, susun atur tipografi, dan ilustrasi grafik pada muka hadapan kotak pembungkusan.</td></tr>
-        `,
-        objektif: [
-          "Menghasilkan sekurang-kurangnya satu lakaran bentangan pembungkusan 3D lengkap dengan dimensi ukuran.",
-          "Membina prototaip pembungkusan makanan menggunakan kadbod mesra alam mengikut lakaran yang dipersetujui.",
-          "Menyatakan sekurang-kurangnya 2 kelebihan bahan biodegradasi berbanding polistirena semasa sesi pameran bilik darjah."
+        "setInduksi": "Guru menunjukkan video pembuatan keychain menggunakan pen 3D.",
+        "langkah": "• <strong>Langkah 1 (Lakaran & Stensil - 20 minit):</strong> Murid melukis huruf di atas kertas lapik.<br>• <strong>Langkah 2 (Pengoperasian Pen 3D - 45 minit):</strong> Menyemperit filamen mengikut huruf.<br>• <strong>Langkah 3 (Kemasan - 25 minit):</strong> Memasang cincin keychain pada huruf.",
+        "penutup": "Murid mempamerkan hasil keychain 3D. Guru memberi peneguhan positif.",
+        "bbm": "Pen 3D, Filamen PLA, Kertas Alas, Cincin Keychain, Hub RBT SEPORA",
+        "rubrik": "• TP1-TP2: Mengetahui fungsi pen 3D.<br>• TP3-TP4: Menggunakan pen 3D dengan betul.<br>• TP5-TP6: Menghasilkan keychain yang sangat kemas dan kreatif."
+    },
+    "4_jahitan": {
+        "tahap": "4_jahitan",
+        "kelas": "4 Dinamik",
+        "subjek": "Reka Bentuk dan Teknologi (RBT)",
+        "tajuk": "PBL 3: Pengenalan Kepada Teknologi Jahitan (Unit 3)",
+        "bukuTeks": "Buku Teks RBT Tahun 4 (Unit 3: Artikel Jahitan, ms 42-58)",
+        "sk": "4.3 Reka Bentuk Artikel Jahitan",
+        "sp": "4.3.4 Menyediakan alatan, bahan dan pola; 4.3.5 Menghasilkan artikel jahitan tangan.",
+        "integrasi": "Sains (Sifat Bahan Fabrik), Matematik (Ukuran Pola)",
+        "drivingQuestion": "\"Bagaimanakah kita boleh menggunakan jahitan tangan untuk membina bekas simpanan alatan kecil yang berguna?\"",
+        "integrasiRows": "<tr><td><strong>RBT (Teras)</strong></td><td>Mengenal pasti alatan jahitan dan menjahit jahitan asas.</td></tr>",
+        "objektif": [
+            "Mengenal pasti jenis mata jahitan.",
+            "Menghasilkan artikel jahitan berpoket mudah."
         ],
-        kriteria: [
-          "Murid dapat memotong dan melipat bentangan kadbod dengan tepat tanpa merosakkan sambungan tab pelekat.",
-          "Model pembungkusan mampu menampung beban makanan contoh tanpa bocor atau koyak.",
-          "Label produk mengandungi nama produk, senarai bahan, tarikh luput, dan logo kitar semula."
+        "kriteria": [
+            "Mata jahitan lurus dan kukuh.",
+            "Cantuman fabrik tidak tertetas."
         ],
-        setInduksi: "Guru memperlihatkan longgokan bekas polistirena dan sisa plastik di kantin sekolah. Guru mencetuskan perbincangan: 'Bolehkah kita mencipta bekas makanan mesra alam yang boleh terurai sendiri dan menarik?'",
-        langkah: `
-          • <strong>Langkah 1 (Lakaran Bentangan - 20 minit):</strong> Murid meneliti bentuk makanan yang dipilih. Murid mengukur dimensi dan melukis lakaran bentangan geometri 3D menggunakan pembaris (Aplikasi Matematik).<br>
-          • <strong>Langkah 2 (Fabrikasi & Penstrukturan - 30 minit):</strong> Murid memindahkan lakaran ke atas kadbod kitar semula, memotong mengikut garisan, dan menyambungkan tab perekat. Murid mereka cipta logo dan label slogan (Aplikasi PSV & Bahasa Melayu).<br>
-          • <strong>Langkah 3 (Ujian Ketahanan & Kualiti - 20 minit):</strong> Murid menguji kekukuhan bekas dengan memasukkan sampel beban dan menguji ketahanan sedikit titisan minyak/air (Aplikasi Sains).
-        `,
-        penutup: "Sesi 'Show & Tell' di mana setiap kumpulan mempamerkan produk pembungkusan mesra alam mereka dan menerima penilaian rakan sebaya (peer assessment).",
-        bbm: "Kadbod Kitar Semula, Gam PVA, Pembaris, Gunting Keselamatan, Bahan Pameran Hub RBT SEPORA",
-        rubrik: "• TP1-TP2: Menyatakan fungsi pembungkusan makanan dan melakar lakaran asas.<br>• TP3-TP4: Membina model pembungkusan mengikut bentangan ukuran tepat.<br>• TP5-TP6: Menghasilkan reka bentuk pembungkusan inovatif yang kukuh, bermaklumat, dan mampu menjadi contoh."
-      },
-      "4_pengaturcaraan": {
-        tahap: "4_pengaturcaraan",
-        kelas: "4 Dinamik",
-        subjek: "Reka Bentuk dan Teknologi (RBT)",
-        tajuk: "Projek Pengekodan Kreatif: Algoritma Jujukan & Animasi Interaktif Scratch",
-        bukuTeks: "Buku Teks RBT Tahun 4 (Unit 1: Reka Bentuk Pengaturcaraan, ms 1-28)",
-        sk: "1.1 Asas Reka Bentuk Pengaturcaraan",
-        sp: "1.1.2 Mengenal pasti algoritma, pseudokod dan carta alir; 1.1.4 Membangunkan algoritma penyelesaian masalah.",
-        integrasi: "Matematik (Satah Koordinat X-Y, Sudut Putaran), Sains (Simulasi Habitat Haiwan), Bahasa Melayu (Dialog Watak Cerita)",
-        drivingQuestion: `"Bagaimanakah kita dapat membina sebuah animasi interaktif penceritaan keselamatan di bengkel RBT menggunakan blok Scratch?"`,
-        integrasiRows: `
-          <tr><td><strong>RBT (Teras)</strong></td><td>Membina pseudokod, melukis carta alir dan memindahkan logik jujukan ke blok pengaturcaraan Scratch.</td></tr>
-          <tr><td><strong>Matematik</strong></td><td>Menggunakan paksi koordinat X-Y untuk kedudukan sprite watak dan darjah putaran objek (90° / 180°).</td></tr>
-          <tr><td><strong>Sains</strong></td><td>Menerapkan prinsip sebab-akibat (kondisi IF-THEN) dalam tindak balas pergerakan sprite.</td></tr>
-          <tr><td><strong>Bahasa Melayu</strong></td><td>Menulis skrip dialog nasihat peraturan keselamatan bengkel yang bertatasusila.</td></tr>
-        `,
-        objektif: [
-          "Menghasilkan carta alir jujukan aktiviti keselamatan bengkel sekurang-kurangnya 4 langkah.",
-          "Memasukkan blok kod Scratch (Motion, Looks, Events) untuk menggerakkan sprite mengikut carta alir."
+        "setInduksi": "Guru menunjukkan sarung telefon atau bekas pensel yang dijahit tangan.",
+        "langkah": "• <strong>Langkah 1 (Penyediaan Pola - 20 minit):</strong> Melukis dan memindahkan pola ke fabrik.<br>• <strong>Langkah 2 (Menjahit - 45 minit):</strong> Menjahit menggunakan jahitan jelujur dan kia.<br>• <strong>Langkah 3 (Kemasan - 25 minit):</strong> Menghias artikel dan menyembunyikan hujung benang.",
+        "penutup": "Gallery walk artikel jahitan.",
+        "bbm": "Fabrik, Benang, Jarum Jahit Tangan, Gunting, Hub RBT SEPORA",
+        "rubrik": "• TP1-TP2: Mengenal pasti alatan dan jenis mata jahitan asas.<br>• TP5-TP6: Menghasilkan artikel jahitan tangan yang sangat kukuh dan cantik."
+    },
+    "4_pembungkusan": {
+        "tahap": "4_pembungkusan",
+        "kelas": "4 Dinamik",
+        "subjek": "Reka Bentuk dan Teknologi (RBT)",
+        "tajuk": "PBL 4: Reka Bentuk Pembungkusan (Unit 4)",
+        "bukuTeks": "Buku Teks RBT Tahun 4 (Unit 4: Pembungkusan, ms 60-70)",
+        "sk": "3.1 Reka Bentuk Pembungkusan",
+        "sp": "3.1.4 Menghasilkan lakaran bermaklumat pembungkusan; 3.1.5 Membina model pembungkusan.",
+        "integrasi": "Sains (Kitar Semula), Matematik (Bentangan Geometri 3D)",
+        "drivingQuestion": "\"Bagaimanakah kita dapat menghasilkan pembungkusan kotak cenderamata yang unik daripada bahan kitar semula?\"",
+        "integrasiRows": "<tr><td><strong>RBT (Teras)</strong></td><td>Membina model pembungkusan berlabel.</td></tr>",
+        "objektif": [
+            "Menghasilkan lakaran bentangan pembungkusan.",
+            "Membina model pembungkusan menggunakan kadbod."
         ],
-        kriteria: [
-          "Sprite watak bertindak balas apabila bendera hijau ditekan tanpa ralat logik pergerakan.",
-          "Kotak dialog nasihat terpapar tepat pada masa yang ditetapkan."
+        "kriteria": [
+            "Model terbentuk dengan betul daripada bentangan.",
+            "Pembungkusan kukuh untuk menampung objek ringan."
         ],
-        setInduksi: "Guru memaparkan animasi pendek sprite kucing Scratch yang menyapa murid. Guru bertanyakan: 'Bagaimanakah komputer tahu bila perlu bersuara dan bergerak?'",
-        langkah: `
-          • <strong>Langkah 1 (Perancangan Algoritma - 20 minit):</strong> Murid menulis pseudokod dan melukis simbol carta alir jujukan di papan putih mini.<br>
-          • <strong>Langkah 2 (Pengekodan Blok Scratch - 45 minit):</strong> Murid menyusun blok kod pada antara muka Scratch, memilih latar belakang (backdrop) dan menguji pergerakan sprite.<br>
-          • <strong>Langkah 3 (Ujian Ralat & Nyahpepijat - 25 minit):</strong> Murid menguji animasi bersama rakan dan membetulkan masa penangguhan (wait seconds).
-        `,
-        penutup: "Tayangan showcase animasi kumpulan di layar LCD dan refleksi logik algoritma.",
-        bbm: "Komputer Makmal / Chromebook, Perisian Scratch, Modul Scratch Hub RBT SEPORA",
-        rubrik: "• TP1-TP2: Menyatakan maksud algoritma dan pseudokod.<br>• TP3-TP4: Membina carta alir dan memindahkan ke kod blok.<br>• TP5-TP6: Menghasilkan animasi kreatif bebas ralat yang menarik dan boleh dicontohi."
-      },
-      4: null,
-      5: {
-        tahap: 5,
-        kelas: "5 Inovatif",
-        subjek: "Reka Bentuk dan Teknologi (RBT)",
-        tajuk: "Projek Rumah Pintar Hijau & Sistem Pengairan Sensor Automatik",
-        bukuTeks: "Buku Teks RBT Tahun 5 (Unit 3: Reka Bentuk Pengaturcaraan, ms 40-52)",
-        sk: "6.5 Reka Bentuk Pengaturcaraan / 5.1 Pertanian Bandar",
-        sp: "6.5.2 Menghasilkan carta alir kawalan automatik; 6.5.3 Membina litar dan menguji perkakasan mikropengawal.",
-        integrasi: "Sains (Kitaran Air & Elektrik), Matematik (Ukuran & Pengiraan Bajet), Bahasa Melayu (Lisan / Pembentangan Produk), PSV (Reka Bentuk Estetika)",
-        drivingQuestion: `"Bagaimanakah kita sebagai pereka cilik inovatif dapat membina sebuah model rumah pintar mesra alam yang mampu menyiram tanaman secara automatik apabila kita tiada di rumah tanpa membazirkan bekalan air?"`,
-        integrasiRows: `
-          <tr><td><strong>RBT (Teras)</strong></td><td>Merekabentuk binaan model, litar sensor kelembapan tanah, pengaturcaraan mikropengawal serta penyambungan pam air mini.</td></tr>
-          <tr><td><strong>Sains</strong></td><td>Memahami keperluan asas tumbuhan (air & cahaya), proses transpirasi tumbuhan, serta prinsip litar elektrik tertutup.</td></tr>
-          <tr><td><strong>Matematik</strong></td><td>Mengukur dimensi tapak rumah hijau (cm), menghitung isipadu air tangki (ml), dan menyusun belanjawan kos bahan kitar semula.</td></tr>
-          <tr><td><strong>Bahasa Melayu</strong></td><td>Menyampaikan pembentangan produk secara lisan dengan sebutan jelas, yakin, dan beretika dalam sesi "Product Pitching".</td></tr>
-          <tr><td><strong>Pendidikan Seni Visual</strong></td><td>Menerapkan prinsip estetika susun atur, keharmonian warna bahan kitar semula, dan kekemasan reka bentuk model prototaip.</td></tr>
-        `,
-        objektif: [
-          "Membina litar sambungan mikropengawal dengan penderia kelembapan tanah dan pam air mini mengikut rajah litar dengan tepat.",
-          "Menghasilkan dan memuat naik blok pengaturcaraan ringkas supaya pam air berfungsi secara automatik apabila tahap kelembapan tanah rendah.",
-          "Menerangkan sekurang-kurangnya 2 integrasi ilmu (Sains/Matematik) yang diaplikasikan dalam prototaip semasa sesi perkongsian kumpulan."
+        "setInduksi": "Guru menunjuk pelbagai contoh pembungkusan produk di pasaran.",
+        "langkah": "• <strong>Langkah 1 (Lakaran - 20 minit):</strong> Melukis bentangan 3D.<br>• <strong>Langkah 2 (Pemotongan & Lipatan - 45 minit):</strong> Memotong kadbod dan melipat ikut garisan.<br>• <strong>Langkah 3 (Hiasan - 25 minit):</strong> Menghias kotak dengan label bermaklumat.",
+        "penutup": "Pembentangan kumpulan.",
+        "bbm": "Kadbod Kitar Semula, Pembaris, Gunting, Gam, Hub RBT SEPORA",
+        "rubrik": "• TP1-TP2: Melakar pembungkusan asas.<br>• TP5-TP6: Menghasilkan pembungkusan kukuh, bermaklumat dan menarik."
+    },
+    "4_makanan": {
+        "tahap": "4_makanan",
+        "kelas": "4 Dinamik",
+        "subjek": "Reka Bentuk dan Teknologi (RBT)",
+        "tajuk": "PBL 5: Reka Bentuk Makanan (Unit 5)",
+        "bukuTeks": "Buku Teks RBT Tahun 4 (Unit 5: Reka Bentuk Makanan)",
+        "sk": "5.1 Reka Bentuk Makanan",
+        "sp": "5.1.3 Melakar reka bentuk pembungkusan makanan; 5.1.4 Menghasilkan reka bentuk makanan.",
+        "integrasi": "Sains (Khasiat Pemakanan), PSV (Warna dan Bentuk)",
+        "drivingQuestion": "\"Bagaimanakah kita dapat menyediakan dan menyusun bekal bento makanan yang sihat serta menarik untuk murid sekolah?\"",
+        "integrasiRows": "<tr><td><strong>RBT (Teras)</strong></td><td>Menghasilkan susunan reka bentuk makanan dalam bento.</td></tr>",
+        "objektif": [
+            "Merancang menu sihat.",
+            "Menyediakan bento makanan yang kreatif dan menarik."
         ],
-        kriteria: [
-          "Murid berjaya menyambung wayar jumper pada pin board micro:bit/mikropengawal tanpa litar pintas.",
-          "Pam air berupaya memancutkan air secara automatik semasa penderia dimasukkan ke dalam tanah kering dan berhenti apabila tanah basah.",
-          "Murid berjaya mencatat kos bahan kitar semula dan mengira jumlah perbelanjaan projek dengan tepat."
+        "kriteria": [
+            "Bento mempunyai keseimbangan nutrisi.",
+            "Kreativiti dan kekemasan susun atur makanan."
         ],
-        setInduksi: "Guru menayangkan klip video pendek situasi tanaman layu selepas musim cuti sekolah. Guru membangkitkan soalan pencetus: 'Apakah teknologi yang boleh kita cipta untuk menyelamatkan tanaman ini secara mandiri?' Murid mengemukakan idea awal secara sumbang saran.",
-        langkah: `
-          • <strong>Langkah 1 (Kolaborasi Reka Bentuk - 20 minit):</strong> Murid dalam kumpulan menyemak lakaran berlabel dan mengagihkan peranan (Ketua Projek, Jurutera Litar, Pengaturcara Kod, Akauntan Bahan). Mengukur dimensi tapak model (Aplikasi Matematik).<br>
-          • <strong>Langkah 2 (Pemasangan & Pengkodan - 30 minit):</strong> Murid membina rangka rumah hijau daripada bahan kitar semula. Kumpulan menyambungkan penderia kelembapan tanah kepada mikropengawal dan memindahkan kod blok (IF soil_moisture &lt; 30 THEN pump ON).<br>
-          • <strong>Langkah 3 (Ujian Lapangan & Simulasi - 20 minit):</strong> Murid menguji prototaip dengan dua sampel tanah (tanah kering vs tanah basah). Murid mencatat pemerhatian proses aliran air dan membuat penambahbaikan (Aplikasi Sains).
-        `,
-        penutup: "Setiap kumpulan membuat pembentangan pantas 1 minit (Elevator Pitch) mengenai keberhasilan fungsi sistem pengairan mereka. Guru dan rakan memberikan 'Two Stars and a Wish'.",
-        bbm: "Kit Mikropengawal (micro:bit), Sensor Kelembapan, Pam Air Mini 5V, Hub RBT SEPORA",
-        rubrik: "• TP1-TP2: Mengetahui komponen penderia kelembapan dan fungsi mikropengawal.<br>• TP3-TP4: Membina litar perkakasan, memuat naik kod pengaturcaraan, dan menguji kefungsian sistem automatik.<br>• TP5-TP6: Menganalisis data ujian, membuat penambahbaikan inovatif, serta membentangkan produk secara kreatif."
-      },
-      "5_rumah_tangga": {
-        tahap: "5_rumah_tangga",
-        kelas: "5 Inovatif",
-        subjek: "Reka Bentuk dan Teknologi (RBT)",
-        tajuk: "Projek Artikel Jahitan Hiasan & Beg Serbaguna Fabrik",
-        bukuTeks: "Buku Teks RBT Tahun 5 (Unit 1: Teknologi Rumah Tangga, ms 1-18)",
-        sk: "4.3 Reka Bentuk Artikel Jahitan",
-        sp: "4.3.4 Menyediakan bahan dan alatan jahitan; 4.3.5 Menghasilkan artikel jahitan dengan hiasan sulaman.",
-        integrasi: "Sains (Kekuatan Gentian Fabrik), Matematik (Ukuran Pola & Anggaran Kos Bahan), PSV (Prinsip Harmoni Warna & Sulaman)",
-        drivingQuestion: `"Bagaimanakah kita boleh menghasilkan artikel jahitan hiasan serbaguna yang tahan lasak dan menarik menggunakan jahitan tangan serta sulaman kreatif?"`,
-        integrasiRows: `
-          <tr><td><strong>RBT (Teras)</strong></td><td>Menyediakan alatan jahitan, memotong kain berpandukan pola dan menjahit artikel hiasan menggunakan pelbagai mata jahitan tangan.</td></tr>
-          <tr><td><strong>Sains</strong></td><td>Mengkaji kekuatan regangan gentian benang dan sifat penyerapan pelbagai jenis kain.</td></tr>
-          <tr><td><strong>Matematik</strong></td><td>Mengukur perimeter kain dan mengira jumlah kos perbelanjaan bahan.</td></tr>
-          <tr><td><strong>PSV</strong></td><td>Merekabentuk motif corak sulaman yang harmoni dan estetik.</td></tr>
-        `,
-        objektif: [
-          "Menghasilkan artikel jahitan dengan sekurang-kurangnya 3 jenis mata jahitan tangan yang kemas.",
-          "Membentangkan fungsi dan keistimewaan artikel jahitan yang dihasilkan."
+        "setInduksi": "Guru menayangkan gambar bento dari Jepun yang kreatif dan comel.",
+        "langkah": "• <strong>Langkah 1 (Perancangan Menu - 20 minit):</strong> Melakar susun atur bento.<br>• <strong>Langkah 2 (Penyediaan Makanan - 45 minit):</strong> Menyusun bahan makanan sedia dimakan ke dalam bekas.<br>• <strong>Langkah 3 (Hiasan - 25 minit):</strong> Menghias bento dengan potongan sayur/buah.",
+        "penutup": "Sesi menilai bento kawan-kawan.",
+        "bbm": "Bekas Bento, Buah-buahan, Sayuran, Roti, Hub RBT SEPORA",
+        "rubrik": "• TP1-TP2: Menyatakan jenis-jenis makanan.<br>• TP5-TP6: Bento dihasilkan dengan sangat kreatif, bersih dan seimbang nutrisi."
+    },
+    "4_pengaturcaraan": {
+        "tahap": "4_pengaturcaraan",
+        "kelas": "4 Dinamik",
+        "subjek": "Reka Bentuk dan Teknologi (RBT)",
+        "tajuk": "PBL 6: Reka Bentuk Pengaturcaraan (Unit 6)",
+        "bukuTeks": "Buku Teks RBT Tahun 4 (Unit 6: Pengaturcaraan Scratch)",
+        "sk": "1.1 Asas Reka Bentuk Pengaturcaraan",
+        "sp": "1.1.2 Mengenal pasti algoritma; 1.1.4 Membangunkan algoritma penyelesaian masalah.",
+        "integrasi": "Matematik (Koordinat), Sains (Logik)",
+        "drivingQuestion": "\"Bagaimanakah kita dapat menghasilkan pergerakan dan bunyi watak (sprite) dalam perisian Scratch mengikut urutan yang betul?\"",
+        "integrasiRows": "<tr><td><strong>RBT (Teras)</strong></td><td>Membina pseudokod dan memindahkan logik ke blok Scratch.</td></tr>",
+        "objektif": [
+            "Membina algoritma untuk pergerakan sprite.",
+            "Menguji pengaturcaraan di dalam Scratch."
         ],
-        kriteria: [
-          "Mata jahitan lurus dan cantuman kain tidak mudah terbuka.",
-          "Kemasan tepi artikel dan hiasan sulaman siap dengan sempurna."
+        "kriteria": [
+            "Sprite bergerak mengikut arahan kod blok tanpa ralat.",
+            "Memasukkan bunyi dan teks pada masa yang tepat."
         ],
-        setInduksi: "Guru mempamerkan pelbagai artikel jahitan kreatif (beg uncang, sarung kusyen kecil) dan mengajak murid meneliti kehalusan mata jahitannya.",
-        langkah: `
-          • <strong>Langkah 1 (Lakaran & Pola - 20 minit):</strong> Murid melukis pola artikel jahitan di atas kertas dan memindahkan tanda ke fabrik.<br>
-          • <strong>Langkah 2 (Menjahit & Mencantum - 45 minit):</strong> Murid menjahit bahagian tepi menggunakan jahitan kia dan jahitan jelujur.<br>
-          • <strong>Langkah 3 (Kemasan & Sulaman - 25 minit):</strong> Menghias permukaan artikel dengan sulaman butang atau renda.
-        `,
-        penutup: "Pameran hasil kerja murid dan sesi saling menilai kekemasan jahitan.",
-        bbm: "Fabrik, Benang, Jarum Jahit Tangan, Gunting Fabrik, Kertas Karbon, Hub RBT SEPORA",
-        rubrik: "• TP1-TP2: Mengenal pasti alatan dan jenis mata jahitan.<br>• TP3-TP4: Menjahit artikel mengikut langkah kerja bersistematik.<br>• TP5-TP6: Menghasilkan artikel jahitan yang kemas, kreatif, bernilai komersial serta boleh dicontohi."
-      },
-      "5_rumah_pintar": null,
-      "5_akuaponik": {
-        tahap: "5_akuaponik",
-        kelas: "5 Inovatif",
-        subjek: "Reka Bentuk dan Teknologi (RBT)",
-        tajuk: "Projek Sistem Akuaponik & Pengairan Automatik Bandar",
-        bukuTeks: "Buku Teks RBT Tahun 5 (Unit 4: Teknologi Pertanian, ms 70-88)",
-        sk: "5.1 Reka Bentuk Pertanian Bandar",
-        sp: "5.1.3 Melakar reka bentuk sistem takungan; 5.1.4 Menghasilkan model sistem takungan dengan pam air.",
-        integrasi: "Sains (Simbiosis Ikan & Tumbuhan, Kitaran Nitrogen), Matematik (Nisbah Kuantiti Air & Pengiraan Laju Aliran), PSV (Reka Bentuk Tapak Bertingkat)",
-        drivingQuestion: `"Bagaimanakah kita dapat memanfaatkan sisa buangan ikan sebagai nutrien semula jadi untuk tanaman sayuran di ruang terhad melalui sistem akuaponik kitaran tertutup?"`,
-        integrasiRows: `
-          <tr><td><strong>RBT (Teras)</strong></td><td>Membina sistem paip fertigasi mini, memilih pam tenggelam (submersible pump) dan menyusun takungan bio-filter.</td></tr>
-          <tr><td><strong>Sains</strong></td><td>Mengkaji bakteria pengurai yang menukar ammonia daripada sisa ikan kepada nitrat berguna untuk akar tumbuhan.</td></tr>
-          <tr><td><strong>Matematik</strong></td><td>Mengira kadar aliran air (liter per jam) dan nisbah saiz akuarium dengan jumlah pasu tanaman.</td></tr>
-          <tr><td><strong>PSV</strong></td><td>Menyusun reka bentuk susun atur paip PVC bertingkat yang menjimatkan ruang balkoni sekolah.</td></tr>
-        `,
-        objektif: [
-          "Membina model sistem akuaponik takungan bertingkat dengan paip penyambung tanpa kebocoran.",
-          "Menerangkan kitaran nutrien antara ikan dan tanaman sayuran semasa pembentangan."
+        "setInduksi": "Guru menunjukkan animasi mudah yang dihasilkan dari perisian Scratch.",
+        "langkah": "• <strong>Langkah 1 (Perancangan - 20 minit):</strong> Menulis carta alir pergerakan.<br>• <strong>Langkah 2 (Pengekodan - 45 minit):</strong> Menyusun blok kod pada antara muka Scratch.<br>• <strong>Langkah 3 (Nyahpepijat - 25 minit):</strong> Menguji kod dan membaiki kesilapan.",
+        "penutup": "Tayangan hasil pengaturcaraan setiap murid.",
+        "bbm": "Komputer/Laptop, Perisian Scratch, Hub RBT SEPORA",
+        "rubrik": "• TP1-TP2: Mengenal antara muka Scratch.<br>• TP5-TP6: Pengaturcaraan bebas ralat, menarik dan menggunakan pelbagai blok arahan."
+    },
+    "5_rumah_tangga": {
+        "tahap": "5_rumah_tangga",
+        "kelas": "5 Inovatif",
+        "subjek": "Reka Bentuk dan Teknologi (RBT)",
+        "tajuk": "PBL 1: Teknologi Rumah Tangga Artikel Jahitan (Unit 1)",
+        "bukuTeks": "Buku Teks RBT Tahun 5 (Unit 1: Teknologi Rumah Tangga, ms 1-18)",
+        "sk": "4.3 Reka Bentuk Artikel Jahitan",
+        "sp": "4.3.4 Menyediakan bahan; 4.3.5 Menghasilkan artikel jahitan dengan hiasan sulaman.",
+        "integrasi": "Sains (Kekuatan Gentian), PSV (Prinsip Harmoni Warna)",
+        "drivingQuestion": "\"Bagaimanakah kita boleh menghasilkan artikel jahitan hiasan serbaguna yang tahan lasak dan menarik?\"",
+        "integrasiRows": "<tr><td><strong>RBT (Teras)</strong></td><td>Memotong kain berpandukan pola dan menjahit artikel hiasan.</td></tr>",
+        "objektif": [
+            "Menghasilkan artikel jahitan dengan mata jahitan yang kemas.",
+            "Menghias artikel jahitan dengan hiasan tambahan."
         ],
-        kriteria: [
-          "Air berjaya dipam naik dari takungan bawah ke palung atas dan mengalir semula melalui sifon loceng.",
-          "Sayuran hidroponik (contoh: kangkung/sawi) diletakkan kukuh dalam cawan jaring hidroton."
+        "kriteria": [
+            "Jahitan kukuh dan tidak tertetas.",
+            "Hiasan dipasang dengan kemas dan menarik."
         ],
-        setInduksi: "Guru memaparkan foto akuarium ikan berserta tanaman herba di atas penutupnya yang subur menghijau. Guru mencetuskan idea: 'Bolehkah kita bercucuk tanam tanpa tanah dan tanpa membaja?'",
-        langkah: `
-          • <strong>Langkah 1 (Penyediaan Komponen - 20 minit):</strong> Murid menyemak lakaran berlabel sistem akuaponik takungan dan memotong paip PVC mengikut ukuran tepat.<br>
-          • <strong>Langkah 2 (Pemasangan Pam & Palung - 40 minit):</strong> Murid menyambungkan paip limpah, memasang pam air mini 5V dan mengisi medium hidroton / batu leca.<br>
-          • <strong>Langkah 3 (Ujian Kitaran Air - 30 minit):</strong> Menguji aliran kitaran air dan memeriksa kestabilan palung takungan.
-        `,
-        penutup: "Refleksi kumpulan tentang penjimatan air dan kelestarian pertanian bandar.",
-        bbm: "Palung Plastik, Pam Submersible 5V, Paip PVC & Penyambung Siku, Media Hidroton, Hub RBT SEPORA",
-        rubrik: "• TP1-TP2: Mengenal pasti sistem pertanian takungan.<br>• TP3-TP4: Memasang palung dan pam air mengikut prosedur amali.<br>• TP5-TP6: Menghasilkan sistem akuaponik berfungsi cemerlang dengan kitaran air graviti yang lancar."
-      },
-      "5_lampu_auto": {
-        tahap: "5_lampu_auto",
-        kelas: "5 Inovatif",
-        subjek: "Reka Bentuk dan Teknologi (RBT)",
-        tajuk: "Projek Sistem Lampu Keselamatan Automatik Mikropengawal (Sensor LDR)",
-        bukuTeks: "Buku Teks RBT Tahun 5 (Unit 2: Tenaga Boleh Baharu, ms 20-38)",
-        sk: "6.5 Reka Bentuk Pengaturcaraan",
-        sp: "6.5.3 Membina litar dengan peranti input output; 6.5.4 Menulis kod logik keadaan cahaya.",
-        integrasi: "Sains (Keamatan Cahaya & Rintangan Elektrik LDR), Matematik (Graf Nilai Ambang Analog 0-1023), Bahasa Melayu (Penjelasan Fungsi Sistem)",
-        drivingQuestion: `"Bagaimanakah kita boleh membina lampu jalan pintar lorong sekolah yang menyala secara automatik hanya apabila suasana gelap bagi menjimatkan bil elektrik sekolah?"`,
-        integrasiRows: `
-          <tr><td><strong>RBT (Teras)</strong></td><td>Menyambung penderia cahaya (LDR), modul geganti (relay) dan LED kuasa tinggi ke pin mikropengawal.</td></tr>
-          <tr><td><strong>Sains</strong></td><td>Konsep rintangan peka cahaya (apabila cahaya berkurangan, rintangan meningkat mencetuskan suis elektronik).</td></tr>
-          <tr><td><strong>Matematik</strong></td><td>Memplot nilai ambang keamatan cahaya (threshold: IF light_level < 200 THEN LED=ON).</td></tr>
-          <tr><td><strong>Bahasa Melayu</strong></td><td>Menerangkan kelebihan automasi pencahayaan dalam mengurangkan jejak karbon.</td></tr>
-        `,
-        objektif: [
-          "Menyambung litar penderia LDR dan LED pada mikropengawal dengan betul.",
-          "Mengatur cara mikropengawal untuk menghidupkan LED apabila penderia dilindungi tangan."
+        "setInduksi": "Guru mempamerkan hasil jahitan sarung kusyen.",
+        "langkah": "• <strong>Langkah 1 (Lakaran - 20 minit):</strong> Melukis pola artikel.<br>• <strong>Langkah 2 (Menjahit - 45 minit):</strong> Mencantumkan kain dengan jahitan tangan.<br>• <strong>Langkah 3 (Kemasan - 25 minit):</strong> Menghias permukaan dengan butang/renda.",
+        "penutup": "Pameran dan penilaian rakan sebaya.",
+        "bbm": "Fabrik, Benang, Jarum Jahit Tangan, Renda/Butang, Hub RBT SEPORA",
+        "rubrik": "• TP1-TP2: Mengenal pasti alatan jahitan.<br>• TP5-TP6: Artikel jahitan sangat kemas, kreatif dan bernilai komersial."
+    },
+    "5_kipas_solar": {
+        "tahap": "5_kipas_solar",
+        "kelas": "5 Inovatif",
+        "subjek": "Reka Bentuk dan Teknologi (RBT)",
+        "tajuk": "PBL 2: Tabung Kipas Solar (Unit 2)",
+        "bukuTeks": "Buku Teks RBT Tahun 5 (Unit 2: Tenaga Boleh Baharu)",
+        "sk": "6.5 Reka Bentuk Tenaga Boleh Baharu",
+        "sp": "6.5.3 Membina litar dengan peranti output; 6.5.4 Menguji fungsi panel solar dan kipas.",
+        "integrasi": "Sains (Tenaga Suria), Matematik (Anggaran Kos)",
+        "drivingQuestion": "\"Bagaimanakah kita boleh merekabentuk tabung yang dilengkapi kipas mini berkuasa solar untuk menyejukkan bilik kecil?\"",
+        "integrasiRows": "<tr><td><strong>RBT (Teras)</strong></td><td>Membina tabung dari bahan kitar semula dan melengkapkannya dengan litar solar.</td></tr>",
+        "objektif": [
+            "Membina bekas tabung yang kukuh.",
+            "Menyambungkan panel solar mini dengan motor kipas."
         ],
-        kriteria: [
-          "LED menyala serta-merta apabila sensor gelap dan terpadam semula apabila terkena cahaya terang.",
-          "Tiada litar pintas atau rintangan yang tersilap sambung."
+        "kriteria": [
+            "Kipas berfungsi di bawah cahaya matahari langsung.",
+            "Binaan tabung kemas dan kreatif."
         ],
-        setInduksi: "Guru menutup suis lampu kelas dan menunjukkan lampu malam sensor bilik. Guru menyoal: 'Apakah mata rahsia yang membolehkan alat ini melihat kegelapan?'",
-        langkah: `
-          • <strong>Langkah 1 (Lakaran Skematik - 20 minit):</strong> Murid menyemak rajah skematik sambungan perintang peka cahaya dan perintang 10k ohm.<br>
-          • <strong>Langkah 2 (Pemasangan Litar - 40 minit):</strong> Murid memasang komponen pada breadboard / breakout board micro:bit.<br>
-          • <strong>Langkah 3 (Pengkodan & Kalibrasi - 30 minit):</strong> Murid memuat naik kod blok pengaturcaraan dan mengkalibrasi bacaan sensor LDR.
-        `,
-        penutup: "Demonstrasi simulasi waktu malam menggunakan kotak tertutup dan sesi soal jawab.",
-        bbm: "Sensor LDR, Perintang, Modul LED, Papan Micro:bit, Hub RBT SEPORA",
-        rubrik: "• TP1-TP2: Mengetahui fungsi LDR dan LED.<br>• TP3-TP4: Memasang litar perkakasan dan kod blok kawalan.<br>• TP5-TP6: Menghasilkan lampu pintar responsif dengan penjimatan tenaga yang inovatif."
-      },
-      6: {
-        tahap: 6,
-        kelas: "6 Cemerlang",
-        subjek: "Reka Bentuk dan Teknologi (RBT)",
-        tajuk: "Projek Prototaip Robot Pembersih Pintar Berkuasa Solar (Autonomous Solar Eco-Cleaner)",
-        bukuTeks: "Buku Teks RBT Tahun 6 (Unit 3: Robotik & Tenaga Solar, ms 45-68)",
-        sk: "5.2 Reka Bentuk Sistem Robotik / 6.5 Tenaga Boleh Baharu",
-        sp: "5.2.2 Menjelaskan fungsi elemen robotik (sensor, pengawal, aktuator); 5.2.4 Memasang perkakasan dan memuat naik atur cara; 6.5.4 Menguji fungsi panel solar & motor.",
-        integrasi: "Sains (Tenaga Solar & Mekanikal Gear), Matematik (Kelajuan Laju=Jarak/Masa & Sudut Navigasi), Bahasa Melayu (Manual Operasi & Pembentangan), PSV (Aerodinamik Badan Robot)",
-        drivingQuestion: `"Bagaimanakah kita dapat merekabentuk sebuah robot pembersih lantai pintar yang bergerak secara autonomi mengelak halangan dan dicas menggunakan tenaga suria boleh baharu untuk kegunaan bengkel sekolah?"`,
-        integrasiRows: `
-          <tr><td><strong>RBT (Teras)</strong></td><td>Memasang sasis robotik, motor DC dengan gear penurun, penderia ultrasonik/inframerah, serta panel solar mini.</td></tr>
-          <tr><td><strong>Sains</strong></td><td>Prinsip penukaran tenaga suria kepada tenaga elektrik, konsep geseran roda getah, dan pantulan gelombang bunyi sensor.</td></tr>
-          <tr><td><strong>Matematik</strong></td><td>Menghitung halaju pergerakan robot (Laju = Jarak ÷ Masa), mengira sudut belokan (90° / 45°), dan perimeter kawasan pembersihan.</td></tr>
-          <tr><td><strong>Bahasa Melayu</strong></td><td>Menyediakan risalah manual panduan pengguna (User Operating Manual) dengan laras bahasa teknikal yang mudah difahami.</td></tr>
-          <tr><td><strong>Pendidikan Seni Visual</strong></td><td>Merekabentuk kerangka luar (casing) robot berunsurkan aerodinamik moden menggunakan bahan terbuang yang dikemaskan.</td></tr>
-        `,
-        objektif: [
-          "Memasang komponen sasis, motor gear DC, dan sensor ultrasonik pada mikropengawal dengan kukuh.",
-          "Menulis blok atur cara arahan navigasi: jika jarak halangan < 15cm, robot berhenti dan membelok 90 darjah ke kanan.",
-          "Menghubungkan panel solar mini 6V bagi mengecas pek bateri serta menguji kelajuan pergerakan robot."
+        "setInduksi": "Guru menayangkan video alat mainan berkuasa solar.",
+        "langkah": "• <strong>Langkah 1 (Binaan Asas - 25 minit):</strong> Menyediakan botol/kotak sebagai tabung.<br>• <strong>Langkah 2 (Pemasangan Litar - 35 minit):</strong> Menyambungkan wayar dari panel solar ke motor DC.<br>• <strong>Langkah 3 (Pengujian - 30 minit):</strong> Menguji kipas di luar kelas (kawasan bercahaya matahari).",
+        "penutup": "Perbincangan kepentingan tenaga hijau.",
+        "bbm": "Botol Plastik/Kotak, Motor DC Kecil, Kipas Mini, Panel Solar Mini, Wayar, Hub RBT SEPORA",
+        "rubrik": "• TP1-TP2: Mengetahui fungsi panel solar.<br>• TP5-TP6: Litar berfungsi cemerlang dan reka bentuk kotak tabung sangat kreatif."
+    },
+    "5_atmega": {
+        "tahap": "5_atmega",
+        "kelas": "5 Inovatif",
+        "subjek": "Reka Bentuk dan Teknologi (RBT)",
+        "tajuk": "PBL 3: Pengaturcaraan Kit ATMEGA328P (Unit 3)",
+        "bukuTeks": "Buku Teks RBT Tahun 5 (Unit 3: Reka Bentuk Pengaturcaraan)",
+        "sk": "6.5 Reka Bentuk Pengaturcaraan",
+        "sp": "6.5.2 Menghasilkan carta alir; 6.5.3 Membina litar dan memuat naik atur cara pada mikropengawal.",
+        "integrasi": "Sains (Litar Elektrik), Bahasa Inggeris (Kosa kata kod pengaturcaraan)",
+        "drivingQuestion": "\"Bagaimanakah kita dapat memprogramkan cip ATMEGA328P untuk mengawal nyalaan lampu LED?\"",
+        "integrasiRows": "<tr><td><strong>RBT (Teras)</strong></td><td>Menulis baris kod (atau blok) untuk mengawal litar LED menggunakan kit ATMEGA328P.</td></tr>",
+        "objektif": [
+            "Menyambungkan litar LED ke papan mikropengawal.",
+            "Memuat naik program untuk menyalakan dan memadamkan LED (Blink)."
         ],
-        kriteria: [
-          "Robot berupaya mengesan halangan pada jarak 15 cm dan mengelak tanpa melanggar dinding.",
-          "Panel solar berjaya membekalkan voltan yang mencukupi untuk menggerakkan kedua-dua motor DC.",
-          "Murid menghasilkan dokumen carta aliran dan manual operasi ringkas produk."
+        "kriteria": [
+            "Sambungan litar betul tanpa ralat.",
+            "LED berkelip mengikut masa (delay) yang ditetapkan dalam kod."
         ],
-        setInduksi: "Guru menunjukkan masalah habuk dan serpihan kayu di lantai bengkel RBT selepas kerja amali. Guru memaparkan video robot penyedut hampagas pintar dan membimbing murid memikirkan versi berkuasa solar.",
-        langkah: `
-          • <strong>Langkah 1 (Pemasangan Mekanikal - 25 minit):</strong> Murid memasang roda bergear dan casis robot mengikut panduan litar bergambar. Memasang penyapu mikro di bahagian bawah robot.<br>
-          • <strong>Langkah 2 (Pengaturcaraan Sensor Ultrasonik - 25 minit):</strong> Murid menyambungkan penderia ultrasonik dan panel solar. Membina logik pergerakan dan memuat turun kod hex ke mikropengawal.<br>
-          • <strong>Langkah 3 (Ujian Litar Halangan & Kelajuan - 20 minit):</strong> Menguji robot di dalam arena berhalangan. Mengukur masa yang diambil untuk menavigasi kawasan 2m x 2m (Aplikasi Matematik & Sains).
-        `,
-        penutup: "Pertandingan mini ketangkasan robot mengelak halangan dan sesi perkongsian refleksi mengenai kestabilan kuasa panel solar.",
-        bbm: "Kit Robotik RBT Tahun 6, Panel Solar Mini 6V, Sensor Ultrasonik HC-SR04, Hub RBT SEPORA",
-        rubrik: "• TP1-TP2: Menerangkan fungsi perkakasan sensor, mikropengawal, dan aktuator.<br>• TP3-TP4: Memasang komponen mekanikal robotik dan memuat naik logik kod navigasi.<br>• TP5-TP6: Menghasilkan robot pembersih autonomi berfungsi sepenuhnya dengan sumber solar dan manual pengguna yang lengkap."
-      },
-      "6_robot_solar": null,
-      "6_robotik": {
-        tahap: "6_robotik",
-        kelas: "6 Cemerlang",
-        subjek: "Reka Bentuk dan Teknologi (RBT)",
-        tajuk: "Projek Sistem Navigasi Halangan Autonomi & Penderia Ultrasonik",
-        bukuTeks: "Buku Teks RBT Tahun 6 (Unit 2: Pengenalan Sistem Robotik, ms 24-44)",
-        sk: "5.2 Reka Bentuk Sistem Robotik",
-        sp: "5.2.2 Menjelaskan fungsi elemen robotik; 5.2.3 Melakar reka bentuk robot halangan; 5.2.4 Memasang dan menguji atur cara robotik.",
-        integrasi: "Sains (Gelombang Pantulan Ultrasonik), Matematik (Sudut Putaran & Jarak cm), Bahasa Melayu (Laporan Pembentangan Ujian)",
-        drivingQuestion: `"Bagaimanakah sebuah robot autonomi dapat mengelak perlanggaran dengan halangan secara pintar tanpa kawalan manusia?"`,
-        integrasiRows: `
-          <tr><td><strong>RBT (Teras)</strong></td><td>Memasang penderia ultrasonik HC-SR04 pada sasis robot dan memprogramkan algoritma pusingan motor.</td></tr>
-          <tr><td><strong>Sains</strong></td><td>Prinsip pantulan gelombang bunyi berfrekuensi tinggi untuk mengukur jarak objek.</td></tr>
-          <tr><td><strong>Matematik</strong></td><td>Menetapkan jarak ambang halangan dalam sentimeter (cm) dan sudut belokan roda 90 darjah.</td></tr>
-          <tr><td><strong>Bahasa Melayu</strong></td><td>Menulis laporan pemerhatian ketepatan sistem navigasi robotik.</td></tr>
-        `,
-        objektif: [
-          "Memasang sensor ultrasonik pada port mikropengawal dengan betul.",
-          "Memprogramkan robot supaya berundur dan membelok apabila mengesan halangan pada jarak kurang 15 cm."
+        "setInduksi": "Guru menunjukkan papan litar mikropengawal (Arduino/ATMEGA) yang sedang berkelip.",
+        "langkah": "• <strong>Langkah 1 (Lakaran Skematik - 20 minit):</strong> Melakar litar asas LED & Perintang ke Pin 13.<br>• <strong>Langkah 2 (Pemasangan - 30 minit):</strong> Menyambung komponen di atas breadboard.<br>• <strong>Langkah 3 (Pengaturcaraan - 40 minit):</strong> Menaip dan memuat naik kod (Blink/Blockly) dan memerhati hasilnya.",
+        "penutup": "Membincangkan aplikasi mikropengawal dalam mesin basuh atau lampu isyarat.",
+        "bbm": "Kit ATMEGA328P / Arduino Uno, Breadboard, LED, Perintang, Kabel USB, Hub RBT SEPORA",
+        "rubrik": "• TP1-TP2: Mengenal pasti komponen asas papan.<br>• TP5-TP6: Murid berjaya memuat naik kod, mengubah masa kelipan, dan litar berfungsi sempurna."
+    },
+    "5_tanaman": {
+        "tahap": "5_tanaman",
+        "kelas": "5 Inovatif",
+        "subjek": "Reka Bentuk dan Teknologi (RBT)",
+        "tajuk": "PBL 4: Tanaman Konvensional (Unit 4)",
+        "bukuTeks": "Buku Teks RBT Tahun 5 (Unit 4: Teknologi Pertanian)",
+        "sk": "5.1 Reka Bentuk Pertanian",
+        "sp": "5.1.3 Melakar sistem penanaman; 5.1.4 Menanam benih di dalam bekas.",
+        "integrasi": "Sains (Keperluan Tumbesaran Tumbuhan), Matematik (Nisbah Tanah)",
+        "drivingQuestion": "\"Bagaimanakah kita boleh merancang dan mengurus projek penanaman sayuran berdaun menggunakan kaedah konvensional di kawasan sekolah?\"",
+        "integrasiRows": "<tr><td><strong>RBT (Teras)</strong></td><td>Menyediakan medium tanaman, menyemai biji benih, dan merawat anak benih.</td></tr>",
+        "objektif": [
+            "Menyediakan campuran medium tanaman yang betul (nisbah J.I.S).",
+            "Menyemai biji benih sayuran berdaun ke dalam polibeg/bekas."
         ],
-        kriteria: [
-          "Robot bergerak lancar di dalam trek dan tidak melanggar halangan dinding.",
-          "Kod atur cara berfungsi mengikut carta alir yang dirancang."
+        "kriteria": [
+            "Nisbah campuran tanah mematuhi standard.",
+            "Anak benih tumbuh dan disiram dengan cara yang betul."
         ],
-        setInduksi: "Guru menunjukkan demonstrasi kelawar terbang dalam kegelapan menggunakan pantulan bunyi (ekolokasi) dan mengaitkannya dengan penderia ultrasonik robot.",
-        langkah: `
-          • <strong>Langkah 1 (Lakaran & Skematik - 20 minit):</strong> Murid menyemak rajah pendawaian sensor ultrasonik (VCC, Trig, Echo, GND).<br>
-          • <strong>Langkah 2 (Pemasangan & Pengkodan - 40 minit):</strong> Memasang sensor pada bahagian hadapan casis robot dan menyusun blok kod pengaturcaraan.<br>
-          • <strong>Langkah 3 (Ujian Lapangan Arena - 30 minit):</strong> Menguji robot mengelak kotak halangan di atas lantai.
-        `,
-        penutup: "Refleksi murid mengenai aplikasi sistem penderia autonomi dalam kereta pintar masa kini.",
-        bbm: "Kit Robotik, Penderia Ultrasonik, Mikropengawal, Hub RBT SEPORA",
-        rubrik: "• TP1-TP2: Menamakan elemen sistem robotik.<br>• TP3-TP4: Memasang dan menguji fungsi sensor navigasi robotik.<br>• TP5-TP6: Menghasilkan robot autonomi pintar yang cekap mengelak halangan dan mendokumentasikan hasil projek dengan cemerlang."
-      },
-      "6_penggera": {
-        tahap: "6_penggera",
-        kelas: "6 Cemerlang",
-        subjek: "Reka Bentuk dan Teknologi (RBT)",
-        tajuk: "Projek Sistem Penggera Keselamatan Penceroboh Elektromekanikal",
-        bukuTeks: "Buku Teks RBT Tahun 6 (Unit 1: Aplikasi Sistem Elektromekanikal, ms 2-22)",
-        sk: "1.1 Aplikasi Reka Bentuk Elektromekanikal",
-        sp: "1.1.2 Mengenal pasti elemen elektromekanikal; 1.1.4 Membina litar penggera keselamatan berfungsi.",
-        integrasi: "Sains (Suis Had Mikro, Gelombang Bunyi Buzzer, Litar Selari), Matematik (Voltan & Arus Elektrik V=IR), Bahasa Melayu (Laporan Kemalangan & Keselamatan)",
-        drivingQuestion: `"Bagaimanakah kita dapat membina sebuah sistem penggera keselamatan pintu bengkel yang akan membunyikan siren dan menyalakan lampu amaran apabila pintu dibuka tanpa kebenaran?"`,
-        integrasiRows: `
-          <tr><td><strong>RBT (Teras)</strong></td><td>Memasang suis mikro mekanikal, suis magnetik (reed switch), buzzer amaran dan geganti 12V.</td></tr>
-          <tr><td><strong>Sains</strong></td><td>Prinsip litar elektrik tertutup/terbuka dan penukaran tenaga elektrik kepada tenaga bunyi berfrekuensi tinggi.</td></tr>
-          <tr><td><strong>Matematik</strong></td><td>Pengiraan pembahagian voltan bateri dan masa lengah aktif siren (timer delay).</td></tr>
-          <tr><td><strong>Bahasa Melayu</strong></td><td>Menulis prosedur standard operasi (SOP) tindakan kecemasan keselamatan sekolah.</td></tr>
-        `,
-        objektif: [
-          "Menyambung suis had elektromekanikal dengan buzzer dan lampu amaran LED.",
-          "Menguji kefungsian sistem amaran keselamatan semasa pintu model dibuka."
+        "setInduksi": "Guru membawa beberapa polibeg berisi anak pokok sayuran.",
+        "langkah": "• <strong>Langkah 1 (Persediaan - 30 minit):</strong> Murid menyukat dan mencampur tanah loam, bahan organik dan pasir laut.<br>• <strong>Langkah 2 (Semaian - 30 minit):</strong> Memasukkan medium ke dalam polibeg dan menyemai biji benih.<br>• <strong>Langkah 3 (Penyelenggaraan - 30 minit):</strong> Meletakkan tag nama tanaman, menyiram dan menempatkan polibeg di ruang redup.",
+        "penutup": "Guru menasihatkan murid menjadualkan penyiraman bergilir.",
+        "bbm": "Polibeg, Tanah Loam, Baja Organik, Pasir, Biji Benih Sayuran, Sudip Tangan, Hub RBT SEPORA",
+        "rubrik": "• TP1-TP2: Menyatakan medium tanaman.<br>• TP5-TP6: Campuran tepat, tanaman diurus dengan komitmen tinggi sehingga bercambah sihat."
+    },
+    "6_kereta_kawalan": {
+        "tahap": "6_kereta_kawalan",
+        "kelas": "6 Cemerlang",
+        "subjek": "Reka Bentuk dan Teknologi (RBT)",
+        "tajuk": "PBL 1: Kereta Kawalan Saya (Unit 1)",
+        "bukuTeks": "Buku Teks RBT Tahun 6 (Unit 1: Aplikasi Sistem Elektromekanikal)",
+        "sk": "1.1 Aplikasi Reka Bentuk Elektromekanikal",
+        "sp": "1.1.2 Mengenal pasti elemen; 1.1.4 Membina sistem kereta kawalan asas.",
+        "integrasi": "Sains (Litar & Motor), Matematik (Kelajuan)",
+        "drivingQuestion": "\"Bagaimanakah kita boleh membina sebuah kereta kawalan yang boleh bergerak maju dan undur menggunakan sistem motor dan suis kawalan berwayar?\"",
+        "integrasiRows": "<tr><td><strong>RBT (Teras)</strong></td><td>Membina dan menyambung litar motor kenderaan kawalan.</td></tr>",
+        "objektif": [
+            "Memasang komponen mekanikal roda dan motor.",
+            "Menyambungkan litar suis untuk mengawal arah putaran motor (maju/undur)."
         ],
-        kriteria: [
-          "Buzzer berbunyi nyaring serta-merta apabila tuil suis terlepas daripada bingkai pintu.",
-          "Suis keselamatan boleh dimatikan secara manual menggunakan kunci induk (master switch)."
+        "kriteria": [
+            "Kereta dapat bergerak apabila butang ditekan.",
+            "Arah pergerakan motor terkawal dan tidak berlaku litar pintas."
         ],
-        setInduksi: "Guru memainkan bunyi siren keselamatan dan menunjukkan kes kecurian alatan bengkel di berita. Guru bertanyakan: 'Bagaimanakah litar mudah boleh menjaga bengkel kita 24 jam?'",
-        langkah: `
-          • <strong>Langkah 1 (Analisis Suis Elektromekanikal - 20 minit):</strong> Murid menyemak fungsi suis had (limit switch) dan suis magnet.<br>
-          • <strong>Langkah 2 (Pendawaian Litar - 40 minit):</strong> Murid menyambungkan bateri 9V, suis had, buzzer piezo dan LED penunjuk.<br>
-          • <strong>Langkah 3 (Pemasangan Pada Model Pintu - 30 minit):</strong> Memasang litar pada model pintu kayu mini dan menjalankan ujian ketahanan picu.
-        `,
-        penutup: "Demonstrasi ujian pencerobohan dan perbincangan nilai integriti serta tanggungjawab menjaga harta sekolah.",
-        bbm: "Suis Mikro / Suis Magnetik, Buzzer 9V, LED, Bateri 9V & Pemegang, Hub RBT SEPORA",
-        rubrik: "• TP1-TP2: Menyatakan komponen sistem elektromekanikal.<br>• TP3-TP4: Memasang litar suis had dan menguji fungsi buzzer.<br>• TP5-TP6: Menghasilkan sistem penggera keselamatan yang kukuh, boleh dipercayai, dan dilengkapi sistem suis kunci selamat."
-      },
-      "6_kenderaan_solar": {
-        tahap: "6_kenderaan_solar",
-        kelas: "6 Cemerlang",
-        subjek: "Reka Bentuk dan Teknologi (RBT)",
-        tajuk: "Projek Kenderaan Pintar Generasi Hijau: Kereta Solar & Sistem Transmisi Gear",
-        bukuTeks: "Buku Teks RBT Tahun 6 (Unit 4: Tenaga Boleh Baharu & Mekanikal, ms 70-92)",
-        sk: "6.5 Reka Bentuk Tenaga Boleh Baharu",
-        sp: "6.5.2 Menerangkan sumber tenaga solar; 6.5.3 Memasang panel suria dan transmisi gear pada kenderaan.",
-        integrasi: "Sains (Sudut Penerimaan Cahaya Matahari, Nisbah Gear), Matematik (Kelajuan Purata Jarak/Masa, Kiraan RPM Motor), PSV (Reka Bentuk Casis Aerodinamik)",
-        drivingQuestion: `"Bagaimanakah kita boleh mereka cipta sebuah kenderaan lumba mini yang bergerak laju hanya bergantung kepada kuasa cahaya matahari tanpa sebarang bateri pakai buang?"`,
-        integrasiRows: `
-          <tr><td><strong>RBT (Teras)</strong></td><td>Menyambung panel solar fotovoltaik, motor DC kelajuan tinggi, transmisi gear taji (spur gear), gandar dan roda.</td></tr>
-          <tr><td><strong>Sains</strong></td><td>Konsep kesan fotovoltaik, geseran permukaan trek, serta nisbah gear pemacu dan gear dipacu.</td></tr>
-          <tr><td><strong>Matematik</strong></td><td>Mengukur masa dan jarak larian untuk menghitung kelajuan (cm/saat) dan membandingkan sudut condong panel.</td></tr>
-          <tr><td><strong>PSV</strong></td><td>Membina badan kenderaan aerodinamik berbentuk titisan air (teardrop) daripada bahan kitar semula.</td></tr>
-        `,
-        objektif: [
-          "Memasang transmisi gear pemacu dan gear dipacu pada gandar roda belakang dengan nisbah yang betul.",
-          "Menyambung panel solar ke motor DC dan menguji pergerakan kenderaan di bawah sinaran cahaya."
+        "setInduksi": "Guru menunjukkan sebuah kereta mainan remote control dan membongkar cara ia beroperasi.",
+        "langkah": "• <strong>Langkah 1 (Pemasangan Casis - 30 minit):</strong> Memasang roda, gandar, dan motor DC pada casis.<br>• <strong>Langkah 2 (Pendawaian Alat Kawalan - 40 minit):</strong> Memateri atau menyambung wayar dari kotak suis ke motor DC (litar H-Bridge asas / suis togol).<br>• <strong>Langkah 3 (Pengujian - 20 minit):</strong> Menguji kereta di lantai kelas.",
+        "penutup": "Ujian ketangkasan pergerakan kereta di laluan lurus.",
+        "bbm": "Kit Kereta Mainan, Motor DC, Suis Togol, Bateri AA & Pemegang, Hub RBT SEPORA",
+        "rubrik": "• TP1-TP2: Mengenal pasti komponen motor dan suis.<br>• TP5-TP6: Kereta dapat dikawal maju undur dengan sempurna dan reka bentuk kemas."
+    },
+    "6_auto_plant": {
+        "tahap": "6_auto_plant",
+        "kelas": "6 Cemerlang",
+        "subjek": "Reka Bentuk dan Teknologi (RBT)",
+        "tajuk": "PBL 2: Auto Plant Watering (Unit 2)",
+        "bukuTeks": "Buku Teks RBT Tahun 6 (Unit 2)",
+        "sk": "5.2 Reka Bentuk Sistem Robotik",
+        "sp": "5.2.2 Menjelaskan fungsi elemen sensor dan pam; 5.2.4 Memuat naik atur cara mikropengawal.",
+        "integrasi": "Sains (Keperluan Tumbuhan & Elektrik), Matematik (Sipadu cecair)",
+        "drivingQuestion": "\"Bagaimanakah kita dapat membina sebuah sistem pintar yang menyiram tanaman secara automatik apabila kelembapan tanah kritikal?\"",
+        "integrasiRows": "<tr><td><strong>RBT (Teras)</strong></td><td>Memasang penderia kelembapan tanah, pam air, mikropengawal dan mengkod logik automatik.</td></tr>",
+        "objektif": [
+            "Menyambung pam air mini dan penderia kelembapan pada mikropengawal.",
+            "Memprogram mikropengawal untuk mengaktifkan pam apabila tanah kering."
         ],
-        kriteria: [
-          "Kereta bergerak lurus tanpa tergelincir sejauh sekurang-kurangnya 3 meter di bawah cahaya lampu/matahari.",
-          "Putaran gear lancar tanpa sangkut atau geseran berlebihan pada gandar."
+        "kriteria": [
+            "Pam air menyiram air tepat ke sasaran apabila tanah kering.",
+            "Sistem berhenti secara automatik setelah tanah cukup lembap."
         ],
-        setInduksi: "Guru memegang panel solar kecil yang dipautkan kepada motor berbaling. Apabila disuluh lampu suluh, baling-baling berpusing ligat. Murid melihat penukaran tenaga secara nyata.",
-        langkah: `
-          • <strong>Langkah 1 (Pemasangan Mekanikal Casis - 25 minit):</strong> Murid memasang gandar roda, bearing dan memadankan gear pinan pada aci motor DC.<br>
-          • <strong>Langkah 2 (Penyambungan Panel Suria - 35 minit):</strong> Murid memasang panel solar 5V pada pendakap bersudut boleh laras di atas casis.<br>
-          • <strong>Langkah 3 (Ujian Trek & Perlumbaan Masa - 30 minit):</strong> Menguji kereta di atas trek terbuka dan mencatat masa bagi jarak 5 meter.
-        `,
-        penutup: "Refleksi kumpulan mengenai potensi tenaga solar di Malaysia dan cara meningkatkan kecekapan tenaga boleh baharu.",
-        bbm: "Kit Kereta Solar Mini, Panel Solar 5V 100mA, Motor DC, Gear Taji, Gandar Keluli, Hub RBT SEPORA",
-        rubrik: "• TP1-TP2: Menamakan sumber tenaga boleh baharu dan sistem transmisi gear.<br>• TP3-TP4: Memasang mekanisme transmisi gear dan litar panel solar kenderaan.<br>• TP5-TP6: Menghasilkan kereta solar yang stabil, laju, mempunyai reka bentuk aerodinamik kemas serta catatan rekod masa terbaik."
-      }
-    };
-    PBL_TEMPLATES[4] = PBL_TEMPLATES["4_pengaturcaraan"];
-    PBL_TEMPLATES["5_rumah_pintar"] = PBL_TEMPLATES[5];
-    PBL_TEMPLATES["6_robot_solar"] = PBL_TEMPLATES[6];
+        "setInduksi": "Guru menayangkan projek pengairan pintar berskala besar dan mengajak murid menirunya dalam skala pasu bunga.",
+        "langkah": "• <strong>Langkah 1 (Pemasangan Litar - 30 minit):</strong> Menyambung sensor kelembapan tanah dan relay pam ke pin mikropengawal.<br>• <strong>Langkah 2 (Pengkodan - 30 minit):</strong> Menyusun blok arahan (Jika lembapan < 30% -> Hidupkan Pam).<br>• <strong>Langkah 3 (Ujian Lapangan - 30 minit):</strong> Memasukkan sensor ke tanah pasu yang berbeza (kering vs basah) dan mencatat pemerhatian.",
+        "penutup": "Pembentangan projek pengairan pintar kumpulan.",
+        "bbm": "Mikropengawal, Sensor Kelembapan, Pam Air 5V, Relay, Bateri/USB Power, Pasu Tanaman, Hub RBT SEPORA",
+        "rubrik": "• TP1-TP2: Mengenal pasti penderia dan mikropengawal.<br>• TP5-TP6: Sistem berfungsi 100% automatik, kalibrasi penderia tepat dan pembentangan meyakinkan."
+    },
+    "6_penghasilan": {
+        "tahap": "6_penghasilan",
+        "kelas": "6 Cemerlang",
+        "subjek": "Reka Bentuk dan Teknologi (RBT)",
+        "tajuk": "PBL 3: Penghasilan Produk (Unit 3)",
+        "bukuTeks": "Buku Teks RBT Tahun 6 (Unit 3)",
+        "sk": "6.5 Reka Bentuk Produk Gabungan",
+        "sp": "6.5.3 Membina produk gabungan teknologi; 6.5.4 Menguji, menilai fungsi dan membuat penambahbaikan.",
+        "integrasi": "Sains (Teknologi bahan), Seni Visual (Reka Bentuk Luaran & Estetika)",
+        "drivingQuestion": "\"Bagaimanakah kita dapat menggabungkan dua atau lebih teknologi asas (elektromekanikal, mikropengawal, sensor) ke dalam satu reka bentuk produk baharu yang inovatif?\"",
+        "integrasiRows": "<tr><td><strong>RBT (Teras)</strong></td><td>Menghasilkan produk berfungsi sepenuhnya menggabungkan pelbagai aplikasi pengetahuan.</td></tr>",
+        "objektif": [
+            "Merancang lakaran produk inovasi.",
+            "Membina sebuah produk gabungan teknologi yang menyelesaikan masalah dalam kehidupan harian."
+        ],
+        "kriteria": [
+            "Produk mempunyai elemen mekanikal/elektrik/pengaturcaraan.",
+            "Binaan kukuh, selamat dan kemas."
+        ],
+        "setInduksi": "Guru membincangkan pertandingan inovasi peringkat daerah dan memberi dorongan murid untuk mereka cipta.",
+        "langkah": "• <strong>Langkah 1 (Perbincangan Idea & Lakaran - 30 minit):</strong> Mengilhamkan produk (contoh: kipas meja pintar berlampu).<br>• <strong>Langkah 2 (Proses Penghasilan - 40 minit):</strong> Membina kerangka produk dan memasang komponen teknologi yang digabungkan.<br>• <strong>Langkah 3 (Pembentangan & Showcase - 20 minit):</strong> Murid membentangkan kos, kelebihan, dan kelemahan untuk ditambah baik.",
+        "penutup": "Pameran hasil inovasi kelas.",
+        "bbm": "Bahan kitar semula, Gam Panas, Motor DC, Lampu LED, Suis/Sensor, Bateri, Hub RBT SEPORA",
+        "rubrik": "• TP1-TP2: Boleh menyatakan produk gabungan.<br>• TP5-TP6: Projek gabungan teknologi sangat unik, berfungsi dengan lancar, selamat, dan dibentangkan dengan jelas dan yakin."
+    }
+};
 
     function handleDropdownTahunChange(tahun, projectKey) {
       if (!projectKey) return;
@@ -3326,11 +3133,11 @@ Abaikan maklumat tandatangan pentadbir, cuti umum, atau kepala surat yang tidak 
 
     function loadPblRbtTemplate(levelKey) {
       let key = levelKey;
-      if (key == 4 || key == "4") key = "4_pengaturcaraan";
-      if (key == 5 || key == "5") key = "5_rumah_pintar";
-      if (key == 6 || key == "6") key = "6_robot_solar";
+      if (key == 4 || key == "4") key = "4_kereta_idamanku";
+      if (key == 5 || key == "5") key = "5_rumah_tangga";
+      if (key == 6 || key == "6") key = "6_kereta_kawalan";
 
-      const tmpl = PBL_TEMPLATES[key] || PBL_TEMPLATES["5_rumah_pintar"] || PBL_TEMPLATES[5];
+      const tmpl = PBL_TEMPLATES[key] || PBL_TEMPLATES["4_kereta_idamanku"];
 
       const formTahap = document.getElementById('formRphTahap');
       const formKelas = document.getElementById('formRphKelas');
@@ -3359,11 +3166,11 @@ Abaikan maklumat tandatangan pentadbir, cuti umum, atau kepala surat yang tidak 
         if (d5) d5.selectedIndex = 0;
         if (d6) d6.selectedIndex = 0;
       } else if (key.startsWith('5_') || key == 5) {
-        if (d5) d5.value = key == 5 ? '5_rumah_pintar' : key;
+        if (d5) d5.value = key;
         if (d4) d4.selectedIndex = 0;
         if (d6) d6.selectedIndex = 0;
       } else if (key.startsWith('6_') || key == 6) {
-        if (d6) d6.value = key == 6 ? '6_robot_solar' : key;
+        if (d6) d6.value = key;
         if (d4) d4.selectedIndex = 0;
         if (d5) d5.selectedIndex = 0;
       }
@@ -3374,11 +3181,11 @@ Abaikan maklumat tandatangan pentadbir, cuti umum, atau kepala surat yang tidak 
     }
 
     function autoGenerateSmartRph() {
-      let formTahapVal = document.getElementById('formRphTahap')?.value || "5_rumah_pintar";
-      if (formTahapVal == "4") formTahapVal = "4_pengaturcaraan";
-      if (formTahapVal == "5") formTahapVal = "5_rumah_pintar";
-      if (formTahapVal == "6") formTahapVal = "6_robot_solar";
-      const tmpl = PBL_TEMPLATES[formTahapVal] || PBL_TEMPLATES["5_rumah_pintar"] || PBL_TEMPLATES[5];
+      let formTahapVal = document.getElementById('formRphTahap')?.value || "4_kereta_idamanku";
+      if (formTahapVal == "4") formTahapVal = "4_kereta_idamanku";
+      if (formTahapVal == "5") formTahapVal = "5_rumah_tangga";
+      if (formTahapVal == "6") formTahapVal = "6_kereta_kawalan";
+      const tmpl = PBL_TEMPLATES[formTahapVal] || PBL_TEMPLATES["4_kereta_idamanku"];
 
       // Kemas kini maklumat asas & parameter
       const pMinggu = document.getElementById('previewMinggu');
@@ -3457,18 +3264,19 @@ Abaikan maklumat tandatangan pentadbir, cuti umum, atau kepala surat yang tidak 
 
     function openSeporaRphBankModal() {
       const collectionKeys = [
-        { key: "4_pengaturcaraan", tahun: "4", unit: "Unit 1", tajuk: "Algoritma & Pengaturcaraan Blok Scratch", subjek: "RBT Tahun 4", tema: "Pengaturcaraan" },
-        { key: "4_pen3d", tahun: "4", unit: "Unit 2", tajuk: "Inovasi Reka Bentuk Pen 3D & Aksesori Ergonomik", subjek: "RBT Tahun 4", tema: "Reka Bentuk Pen 3D" },
-        { key: "4_jahitan", tahun: "4", unit: "Unit 3", tajuk: "Artikel Jahitan Tangan Berpoket & Hiasan Butang", subjek: "RBT Tahun 4", tema: "Jahitan Tangan" },
-        { key: "4_kotak", tahun: "4", unit: "Unit 4", tajuk: "Pembungkusan Makanan Mesra Alam (Eco-Packaging)", subjek: "RBT Tahun 4", tema: "Pembungkusan" },
-        { key: "5_rumah_tangga", tahun: "5", unit: "Unit 1", tajuk: "Teknologi Rumah Tangga: Artikel Hiasan Sulaman", subjek: "RBT Tahun 5", tema: "Rumah Tangga" },
-        { key: "5_lampu_auto", tahun: "5", unit: "Unit 2", tajuk: "Lampu Keselamatan Automatik Sensor LDR", subjek: "RBT Tahun 5", tema: "Tenaga Boleh Baharu" },
-        { key: "5_rumah_pintar", tahun: "5", unit: "Unit 3", tajuk: "Model Rumah Pintar Hijau & Pengairan Automatik", subjek: "RBT Tahun 5", tema: "Mikropengawal" },
-        { key: "5_akuaponik", tahun: "5", unit: "Unit 4", tajuk: "Sistem Akuaponik & Pertanian Takungan Bandar", subjek: "RBT Tahun 5", tema: "Pertanian Bandar" },
-        { key: "6_penggera", tahun: "6", unit: "Unit 1", tajuk: "Aplikasi Elektromekanikal: Sistem Penggera Penceroboh", subjek: "RBT Tahun 6", tema: "Elektromekanikal" },
-        { key: "6_robotik", tahun: "6", unit: "Unit 2", tajuk: "Pengenalan Robotik: Navigasi Pengesan Halangan Ultrasonik", subjek: "RBT Tahun 6", tema: "Robotik" },
-        { key: "6_robot_solar", tahun: "6", unit: "Unit 3", tajuk: "Robot Pembersih Pintar Berkuasa Solar Autonomi", subjek: "RBT Tahun 6", tema: "Solar & Robotik" },
-        { key: "6_kenderaan_solar", tahun: "6", unit: "Unit 4", tajuk: "Kenderaan Pintar Hijau: Kereta Solar & Transmisi Gear", subjek: "RBT Tahun 6", tema: "Tenaga Solar" }
+        { key: "4_kereta_idamanku", tahun: "4", unit: "Unit 2", tajuk: "PBL 1: Reka Bentuk 'Kereta Idamanku'", subjek: "RBT Tahun 4", tema: "Kenderaan" },
+        { key: "4_pen3d", tahun: "4", unit: "Unit 3", tajuk: "PBL 2: Keychain 3D Pen", subjek: "RBT Tahun 4", tema: "Pen 3D" },
+        { key: "4_jahitan", tahun: "4", unit: "Unit 3", tajuk: "PBL 3: Teknologi Jahitan", subjek: "RBT Tahun 4", tema: "Jahitan" },
+        { key: "4_pembungkusan", tahun: "4", unit: "Unit 4", tajuk: "PBL 4: Reka Bentuk Pembungkusan", subjek: "RBT Tahun 4", tema: "Pembungkusan" },
+        { key: "4_makanan", tahun: "4", unit: "Unit 5", tajuk: "PBL 5: Reka Bentuk Makanan", subjek: "RBT Tahun 4", tema: "Makanan" },
+        { key: "4_pengaturcaraan", tahun: "4", unit: "Unit 6", tajuk: "PBL 6: Reka Bentuk Pengaturcaraan", subjek: "RBT Tahun 4", tema: "Scratch" },
+        { key: "5_rumah_tangga", tahun: "5", unit: "Unit 1", tajuk: "PBL 1: Teknologi Rumah Tangga Artikel Jahitan", subjek: "RBT Tahun 5", tema: "Rumah Tangga" },
+        { key: "5_kipas_solar", tahun: "5", unit: "Unit 2", tajuk: "PBL 2: Tabung Kipas Solar", subjek: "RBT Tahun 5", tema: "Tenaga Solar" },
+        { key: "5_atmega", tahun: "5", unit: "Unit 3", tajuk: "PBL 3: Pengaturcaraan Kit ATMEGA328P", subjek: "RBT Tahun 5", tema: "Mikropengawal" },
+        { key: "5_tanaman", tahun: "5", unit: "Unit 4", tajuk: "PBL 4: Tanaman Konvensional", subjek: "RBT Tahun 5", tema: "Pertanian" },
+        { key: "6_kereta_kawalan", tahun: "6", unit: "Unit 1", tajuk: "PBL 1: Kereta Kawalan Saya", subjek: "RBT Tahun 6", tema: "Elektromekanikal" },
+        { key: "6_auto_plant", tahun: "6", unit: "Unit 2", tajuk: "PBL 2: Auto Plant Watering", subjek: "RBT Tahun 6", tema: "Robotik" },
+        { key: "6_penghasilan", tahun: "6", unit: "Unit 3", tajuk: "PBL 3: Penghasilan Produk", subjek: "RBT Tahun 6", tema: "Inovasi" }
       ];
 
       const html = `
@@ -3479,7 +3287,7 @@ Abaikan maklumat tandatangan pentadbir, cuti umum, atau kepala surat yang tidak 
             </div>
             <div>
               <h3 style="font-size:1.1rem; line-height:1.2;">Bank Koleksi RPH Sedia Ada (Hub RBT SEPORA)</h3>
-              <span style="font-size:0.75rem; color:var(--text-muted);">Pilih templat rancangan pengajaran lengkap mengikut sukatan DSKP Unit 1-4</span>
+              <span style="font-size:0.75rem; color:var(--text-muted);">Pilih templat rancangan pengajaran lengkap (PBL) mengikut DSKP RBT</span>
             </div>
           </div>
           <button class="btn-icon" onclick="closeModalDirectly()"><i class="fa-solid fa-xmark"></i></button>
