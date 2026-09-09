@@ -788,7 +788,22 @@
         display: block;
       }
     }
-  </style>
+  
+/* Sel meta RPH boleh edit terus (klik & taip) */
+.rph-editable, td[contenteditable="true"] {
+  cursor: text;
+  outline: none;
+  border-bottom: 1px dashed #94a3b8;
+  border-radius: 3px;
+  transition: background 0.15s ease, box-shadow 0.15s ease;
+}
+.rph-editable:hover, td[contenteditable="true"]:hover { background: #fef9c3; }
+.rph-editable:focus, td[contenteditable="true"]:focus {
+  background: #fefce8; box-shadow: 0 0 0 2px #f59e0b55; border-bottom-style: solid;
+}
+.rph-edit-hint { font-size: 0.65rem; color: #94a3b8; font-weight: 600; margin-left: 4px; }
+
+</style>
 </head>
 <body>
 
@@ -1356,15 +1371,15 @@
             <table class="rph-meta-table">
               <tr>
                 <td class="rph-meta-label">Minggu / Fasa</td>
-                <td id="previewMinggu">Minggu 12 (Fasa 2 & 3)</td>
+                <td id="previewMinggu" class="rph-editable" contenteditable="true" title="Klik untuk edit">Minggu 12 (Fasa 2 &amp; 3)</td>
                 <td class="rph-meta-label">Hari / Tarikh</td>
-                <td id="previewHariTarikh">Isnin (8 September 2026)</td>
+                <td id="previewHariTarikh" class="rph-editable" contenteditable="true" title="Klik untuk edit">Isnin (8 September 2026)</td>
               </tr>
               <tr>
                 <td class="rph-meta-label" style="background:#e0f2fe; color:#0369a1; font-weight:700;">
-                  <i class="fa-solid fa-calendar-days"></i> Tempoh Pelaksanaan PBL
+                  <i class="fa-solid fa-calendar-days"></i> Tempoh Pelaksanaan PBL <span class="rph-edit-hint"><i class="fa-solid fa-pen"></i> klik untuk edit</span>
                 </td>
-                <td id="previewPblMingguTempoh" style="font-weight:600; color:#0369a1;">
+                <td id="previewPblMingguTempoh" class="rph-editable" contenteditable="true" title="Klik untuk edit" style="font-weight:600; color:#0369a1;">
                   Minggu 12 hingga Minggu 15 (4 Minggu)
                 </td>
                 <td class="rph-meta-label" style="background:#fee2e2; color:#b91c1c; font-weight:700;">
@@ -1372,24 +1387,24 @@
                 </td>
                 <td id="previewPblTarikhGabung" style="vertical-align:middle;">
                   <span style="display:inline-flex; align-items:center; gap:4px; margin-right:12px; font-size:0.85rem;">
-                    <i class="fa-solid fa-play" style="color:#059669; font-size:0.75rem;"></i> <strong>Mula:</strong> <span id="previewPblTarikhMula">08/09/2026</span>
+                    <i class="fa-solid fa-play" style="color:#059669; font-size:0.75rem;"></i> <strong>Mula:</strong> <span id="previewPblTarikhMula" class="rph-editable" contenteditable="true" title="Klik untuk edit tarikh">08/09/2026</span>
                   </span>
                   <span style="display:inline-flex; align-items:center; gap:4px; font-size:0.85rem; color:#b91c1c; font-weight:700; background:#fef2f2; padding:3px 8px; border-radius:4px; border:1px solid #fecaca;">
-                    <i class="fa-solid fa-flag-checkered" style="color:#dc2626;"></i> <strong>Hantar:</strong> <span id="previewPblTarikhHantar">29/09/2026</span>
+                    <i class="fa-solid fa-flag-checkered" style="color:#dc2626;"></i> <strong>Hantar:</strong> <span id="previewPblTarikhHantar" class="rph-editable" contenteditable="true" title="Klik untuk edit tarikh">29/09/2026</span>
                   </span>
                 </td>
               </tr>
               <tr>
                 <td class="rph-meta-label">Masa</td>
-                <td id="previewMasa">08:00 - 09:30 (90 Minit)</td>
+                <td id="previewMasa" class="rph-editable" contenteditable="true" title="Klik untuk edit">08:00 - 09:30 (90 Minit)</td>
                 <td class="rph-meta-label">Kelas</td>
-                <td id="previewKelas">5 Inovatif</td>
+                <td id="previewKelas" class="rph-editable" contenteditable="true" title="Klik untuk edit">5 Inovatif</td>
               </tr>
               <tr>
                 <td class="rph-meta-label">Mata Pelajaran Teras</td>
-                <td id="previewSubjek" style="font-weight:600;">Reka Bentuk dan Teknologi (RBT)</td>
+                <td id="previewSubjek" class="rph-editable" contenteditable="true" title="Klik untuk edit" style="font-weight:600;">Reka Bentuk dan Teknologi (RBT)</td>
                 <td class="rph-meta-label">Kehadiran Murid</td>
-                <td contenteditable="true" style="color:var(--text-muted); font-style:italic;">___ / 30 orang</td>
+                <td class="rph-editable" contenteditable="true" title="Klik untuk edit" style="color:var(--text-muted);">___ / 30 orang <span class="rph-edit-hint"><i class="fa-solid fa-pen"></i> edit</span></td>
               </tr>
             </table>
 
