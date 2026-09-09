@@ -4054,7 +4054,46 @@ Abaikan maklumat tandatangan pentadbir, cuti umum, atau kepala surat yang tidak 
       showToast(`Templat ${labelTajuk} dimuatkan!`);
     }
 
-    function autoGenerateSmartRph() {
+    
+      // ===== PBL: auto-kira Tempoh Pelaksanaan (Minggu X hingga Minggu Y) mengikut tarikh Mula/Hantar yang diedit =====
+      function pblParseDMY(t) {
+        const m = String(t || '').trim().match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
+        return m ? new Date(Number(m[3]), Number(m[2]) - 1, Number(m[1])) : null;
+      }
+      function pblBaseWeek() {
+        const elT = document.getElementById('previewPblMingguTempoh');
+        const elM = document.getElementById('previewPblTarikhMula');
+        if (elM && elM.dataset && elM.dataset.startWeek) return parseInt(elM.dataset.startWeek, 10);
+        if (elT) { const mm = (elT.innerText.match(/Minggu\s*(\d+)/) || [])[1]; if (mm) return parseInt(mm, 10); }
+        return (typeof currentWeek !== 'undefined' && currentWeek) ? parseInt(currentWeek) : 12;
+      }
+      function recalcPblTempoh() {
+        const elT = document.getElementById('previewPblMingguTempoh');
+        const elM = document.getElementById('previewPblTarikhMula');
+        const elH = document.getElementById('previewPblTarikhHantar');
+        if (!elT || !elM || !elH) return;
+        const dM = pblParseDMY(elM.innerText), dH = pblParseDMY(elH.innerText);
+        if (!dM || !dH || isNaN(dM) || isNaN(dH)) return;
+        if (elM.dataset && !elM.dataset.startDate) elM.dataset.startDate = elM.innerText;
+        const baseD = pblParseDMY(elM.dataset ? elM.dataset.startDate : null) || dM;
+        const wBase = pblBaseWeek();
+        const hari = Math.round((dH - dM) / 86400000);
+        if (hari < 0) return;
+        const nWk = Math.max(1, Math.ceil(hari / 7));
+        const offset = Math.round((dM - baseD) / (7 * 86400000));
+        const w1 = wBase + offset;
+        const w2 = w1 + nWk - 1;
+        elT.innerText = 'Minggu ' + w1 + ' hingga Minggu ' + w2 + ' (' + nWk + ' Minggu)';
+      }
+      function pblBindDateEdit() {
+        ['previewPblTarikhMula', 'previewPblTarikhHantar'].forEach(function (id) {
+          const el = document.getElementById(id);
+          if (el) { el.addEventListener('input', recalcPblTempoh); el.addEventListener('blur', recalcPblTempoh); }
+        });
+      }
+      try { pblBindDateEdit(); } catch (e) { /* preview mungkin belum sedia */ }
+
+function autoGenerateSmartRph() {
       let formTahapVal = document.getElementById('formRphTahap')?.value || "4_kereta_idamanku";
       if (formTahapVal == "4") formTahapVal = "4_kereta_idamanku";
       if (formTahapVal == "5") formTahapVal = "5_rumah_tangga";
@@ -4091,6 +4130,12 @@ Abaikan maklumat tandatangan pentadbir, cuti umum, atau kepala surat yang tidak 
       if (pPblHantar) {
         const parts = pblHantar.split('-');
         pPblHantar.innerText = parts.length === 3 ? `${parts[2]}/${parts[1]}/${parts[0]}` : pblHantar;
+      }
+      // Simpan asas tarikh & minggu utk auto-kira tempoh bila guru edit tarikh
+      if (pPblMula && pPblHantar && pPblTempoh) {
+        if (pPblMula.dataset) { pPblMula.dataset.startDate = pPblMula.innerText; pPblHantar.dataset.startDate = pPblHantar.innerText; }
+        const mm = (pPblTempoh.innerText.match(/Minggu\s*(\d+)/) || [])[1];
+        if (pPblMula.dataset) pPblMula.dataset.startWeek = mm || String(_wkNow);
       }
 
       const valMinggu = document.getElementById('formRphMinggu')?.value || currentWeek;
