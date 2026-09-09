@@ -1260,6 +1260,8 @@
                     <option value="5_kipas_solar">PBL 2: TABUNG KIPAS SOLAR (Unit 2)</option>
                     <option value="5_atmega">PBL 3: PENGATURCARAAN KIT ATMEGA328P (Unit 3)</option>
                     <option value="5_tanaman">PBL 4: Tanaman Konvensional (Unit 4)</option>
+                    <option value="5_pagar_keselamatan">PBL 5: Pagar Keselamatan Automatik (Unit 3: Pengaturcaraan)</option>
+                    <option value="5_alas_keledar">PBL 6: Alas Tali Pinggang Keledar (Unit 1: Jahitan)</option>
                   </select>
                 </div>
 
@@ -1278,8 +1280,12 @@
                     <option value="6_penghasilan">PBL 3: Penghasilan Produk (Unit 3)</option>
                     <option value="6_pintu_pagar">PBL 4: Pintu Pagar Elektrik (Unit 1: Elektromekanikal)</option>
                     <option value="6_robot_halangan">PBL 5: Robot Pengesan Halangan (Unit 2: Robotik)</option>
+                    <option value="6_robot_penjaga_air">PBL 6: Robot Penjaga Air Tanaman (Unit 2: Robotik)</option>
+                    <option value="6_bot_motor">PBL 7: Bot Berkuasa Motor (Unit 1: Elektromekanikal)</option>
                     <option value="6_pintu_pagar">PBL 4: Pintu Pagar Elektrik (Unit 1: Elektromekanikal)</option>
                     <option value="6_robot_halangan">PBL 5: Robot Pengesan Halangan (Unit 2: Robotik)</option>
+                    <option value="6_robot_penjaga_air">PBL 6: Robot Penjaga Air Tanaman (Unit 2: Robotik)</option>
+                    <option value="6_bot_motor">PBL 7: Bot Berkuasa Motor (Unit 1: Elektromekanikal)</option>
                   </select>
                 </div>
               </div>
@@ -1298,12 +1304,16 @@
               <button type="button" class="btn btn-sm" onclick="loadPblRbtTemplate('5_kipas_solar')" style="background:#fef3c7; color:#92400e; border:1px solid #fcd34d; font-size:0.75rem;">T5 U2: Kipas Solar</button>
               <button type="button" class="btn btn-sm" onclick="loadPblRbtTemplate('5_atmega')" style="background:#dbeafe; color:#1d4ed8; border:1px solid #60a5fa; font-size:0.75rem;">T5 U3: ATMEGA</button>
               <button type="button" class="btn btn-sm" onclick="loadPblRbtTemplate('5_tanaman')" style="background:#eff6ff; color:#1e40af; border:1px solid #bfdbfe; font-size:0.75rem;">T5 U4: Tanaman</button>
+              <button type="button" class="btn btn-sm" onclick="loadPblRbtTemplate('5_pagar_keselamatan')" style="background:#fef2f2; color:#b91c1c; border:1px solid #fecaca; font-size:0.75rem;">T5 U3: Pagar Auto</button>
+              <button type="button" class="btn btn-sm" onclick="loadPblRbtTemplate('5_alas_keledar')" style="background:#f0fdfa; color:#0f766e; border:1px solid #99f6e4; font-size:0.75rem;">T5 U1: Alas Keledar</button>
               
               <button type="button" class="btn btn-sm" onclick="loadPblRbtTemplate('6_kereta_kawalan')" style="background:#faf5ff; color:#6b21a8; border:1px solid #e9d5ff; font-size:0.75rem;">T6 U1: Kereta K</button>
               <button type="button" class="btn btn-sm" onclick="loadPblRbtTemplate('6_auto_plant')" style="background:#e0e7ff; color:#3730a3; border:1px solid #c7d2fe; font-size:0.75rem;">T6 U2: Auto Plant</button>
               <button type="button" class="btn btn-sm" onclick="loadPblRbtTemplate('6_penghasilan')" style="background:#f3e8ff; color:#7e22ce; border:1px solid #c084fc; font-size:0.75rem;">T6 U3: Produk</button>
               <button type="button" class="btn btn-sm" onclick="loadPblRbtTemplate('6_pintu_pagar')" style="background:#f0fdf4; color:#15803d; border:1px solid #86efac; font-size:0.75rem;">T6 U1: Pintu Pagar</button>
               <button type="button" class="btn btn-sm" onclick="loadPblRbtTemplate('6_robot_halangan')" style="background:#fefce8; color:#a16207; border:1px solid #fde047; font-size:0.75rem;">T6 U2: Robot Elak Halangan</button>
+              <button type="button" class="btn btn-sm" onclick="loadPblRbtTemplate('6_robot_penjaga_air')" style="background:#ecfdf5; color:#047857; border:1px solid #6ee7b7; font-size:0.75rem;">T6 U2: Robot Jaga Air</button>
+              <button type="button" class="btn btn-sm" onclick="loadPblRbtTemplate('6_bot_motor')" style="background:#e0f2fe; color:#0369a1; border:1px solid #7dd3fc; font-size:0.75rem;">T6 U1: Bot Motor</button>
             </div>
 
             <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap:1rem;">
@@ -3648,6 +3658,243 @@ Abaikan maklumat tandatangan pentadbir, cuti umum, atau kepala surat yang tidak 
             "Matematik T6: Bab 4 Masa dan Waktu (ms 141-154); Bab 5 Ukuran dan Sukatan (ms 155-164)",
             "Bahasa Melayu T6: Tema 6 Unit 17 Teknologi Membantu Kita (ms 127-132)"
         ]
+    },
+    "5_pagar_keselamatan": {
+        "tahap": "5_pagar_keselamatan",
+        "kelas": "5 Inovatif",
+        "subjek": "Reka Bentuk dan Teknologi (RBT)",
+        "tajuk": "PBL 5: Pagar Keselamatan Automatik (Unit 3: Reka Bentuk Pengaturcaraan)",
+        "bukuTeks": "Buku Teks RBT Tahun 5 (Unit 3: Reka Bentuk Pengaturcaraan - Pagar Keselamatan, ms 38-63)",
+        "sk": "6.4 Pembangunan Atur Cara Dalam Mikropengawal",
+        "sp": "Mengenal pasti fitur-fitur pada antara muka perisian pengaturcaraan; Menghuraikan perkakasan yang akan digunakan bersama perisian pengaturcaraan; Menghasilkan carta alir kawalan perkakasan yang mengeluarkan cahaya, bunyi dan pergerakan; Membina atur cara yang dikehendaki berpandukan carta alir yang dibuat; Menghasilkan sambungan perkakasan yang mengeluarkan cahaya, bunyi dan pergerakan; Memindahkan atur cara yang telah dibina pada perkakasan dan menguji kefungsiannya; Membentangkan atur cara yang telah dihasilkan.",
+        "integrasi": "Sains (Litar Elektrik & Sensor), Matematik (Masa & Logik), Bahasa Melayu (Pembentangan)",
+        "drivingQuestion": "\"Bagaimanakah kita dapat membina palang pagar keselamatan yang bergerak automatik dengan lampu isyarat dan bunyi amaran menggunakan mikropengawal?\"",
+        "integrasiRows": "<tr><td><strong>RBT (Teras)</strong></td><td>Membina palang pagar automatik dan atur cara kawalan (LED, palang servo, pembaz).</td></tr><tr><td><strong>Sains</strong></td><td>Memahami litar elektrik tertutup dan fungsi sensor/butang sebagai input.</td></tr><tr><td><strong>Matematik</strong></td><td>Menggunakan konsep masa (tempoh 10 saat) dalam atur cara.</td></tr><tr><td><strong>Bahasa Melayu</strong></td><td>Membentangkan carta alir dan menerangkan cara sistem berfungsi.</td></tr>",
+        "objektif": [
+            "Membina palang pagar keselamatan yang bergerak menggunakan motor servo.",
+            "Menghasilkan atur cara supaya lampu LED, palang dan pembaz berfungsi mengikut urutan yang betul."
+        ],
+        "kriteria": [
+            "Palang tertutup apabila suis ditekan dan LED merah menyala.",
+            "Selepas 10 saat palang terbuka dan LED hijau menyala.",
+            "Pembaz berbunyi sebagai amaran semasa palang bergerak.",
+            "Atur cara dimuat naik dan berfungsi tanpa ralat."
+        ],
+        "setInduksi": "Guru menunjukkan video lintasan kereta api atau palang parkir automatik dan bersoal jawab tentang kepentingan pagar keselamatan.",
+        "langkah": "• <strong>Langkah 1 (Carta Alir - 20 minit):</strong> Melukis carta alir kawalan (suis, LED, palang, pembaz).<br>• <strong>Langkah 2 (Pembinaan - 45 minit):</strong> Membina palang dari kadbod, memasang motor servo, LED dan pembaz pada mikropengawal.<br>• <strong>Langkah 3 (Pengaturcaraan & Ujian - 25 minit):</strong> Memuat naik atur cara (mBlock/MakeCode) dan menguji turutan pergerakan.",
+        "penutup": "Refleksi: murid membincangkan kepentingan sistem automatik dalam menjaga keselamatan.",
+        "bbm": "Kadbod, Motor Servo, LED Merah & Hijau, Pembaz (Buzzer), Papan Mikropengawal (Arduino/micro:bit), Suis, Wayar, Bateri, Gam, Gunting, Hub RBT SEPORA",
+        "rubrik": "• TP1-TP2: Mengenal pasti fitur perisian dan perkakasan.<br>• TP3-TP4: Membina palang dan menghasilkan atur cara ringkas.<br>• TP5-TP6: Sistem berfungsi mengikut urutan dengan sempurna dan dibentangkan secara kreatif.",
+        "tempoh": "4 Minggu",
+        "subjekGandingan": "Sains (Litar Elektrik), Matematik (Masa & Logik), Bahasa Melayu (Pembentangan)",
+        "fasaProjek": [
+            {
+                "minggu": "Minggu 1",
+                "fasa": "PLAN",
+                "tajuk": "Perancangan & Idea (PLAN)",
+                "aktiviti": "• Kenal pasti masalah keselamatan di lintasan/persimpangan. • Bincang komponen yang diperlukan (LED, servo, pembaz, suis, mikropengawal). • Lukis carta alir kawalan: suis ditekan → palang tutup + LED merah → 10 saat → palang buka + LED hijau. • Senaraikan bahan dan anggaran kos."
+            },
+            {
+                "minggu": "Minggu 2",
+                "fasa": "DO",
+                "tajuk": "Pembinaan / Pelaksanaan (DO)",
+                "aktiviti": "• Kumpul bahan dan bina palang pagar daripada kadbod. • Pasang motor servo pada palang dan sambung LED, pembaz serta suis ke papan mikropengawal. • Dokumentasikan proses pemasangan."
+            },
+            {
+                "minggu": "Minggu 3",
+                "fasa": "CHECK",
+                "tajuk": "Pengujian & Penilaian (CHECK)",
+                "aktiviti": "• Muat naik atur cara dan uji sistem: adakah turunan betul? Adakah LED, palang dan pembaz berfungsi mengikut carta alir? • Catat masalah dan baiki atur cara atau sambungan."
+            },
+            {
+                "minggu": "Minggu 4",
+                "fasa": "ACT",
+                "tajuk": "Kemasan, Dokumentasi & Pembentangan (ACT)",
+                "aktiviti": "• Kemaskan model dan pastikan semua fungsi berjalan lancar. • Sediakan laporan ringkas dan carta alir akhir. • Bentangkan projek serta tunjuk cara sistem berfungsi."
+            }
+        ],
+        "integrasiRujukan": [
+            "Sains T5: Unit 5 Elektrik (litar & komponen, ms 115-144)",
+            "Matematik T5: Bab Masa dan Waktu (konsep masa dalam atur cara)",
+            "Bahasa Melayu T5: Tema 6 Sains, Teknologi dan Inovasi (ms 119-142)"
+        ]
+    },
+    "5_alas_keledar": {
+        "tahap": "5_alas_keledar",
+        "kelas": "5 Inovatif",
+        "subjek": "Reka Bentuk dan Teknologi (RBT)",
+        "tajuk": "PBL 6: Alas Tali Pinggang Keledar (Unit 1: Teknologi Rumah Tangga)",
+        "bukuTeks": "Buku Teks RBT Tahun 5 (Unit 1: Teknologi Rumah Tangga - Artikel Jahitan, ms 18-25)",
+        "sk": "4.3 Artikel Jahitan",
+        "sp": "Mengenal pasti jenis mata jahitan tangan pada artikel jahitan; Menerangkan fungsi alatan jahitan; Melakar reka bentuk artikel jahitan yang akan dihasilkan; Menilai lakaran yang dipilih dan membuat penambahbaikan; Mengira dan membuat anggaran kos bahan bagi menghasilkan artikel jahitan; Menghasilkan artikel jahitan secara sistematik dan menggunakan bahan serta alatan yang sesuai; Membuat pembentangan artikel jahitan yang telah dihasilkan.",
+        "integrasi": "Sains (Sifat Bahan Fabrik), Matematik (Ukuran & Kos), Pendidikan Moral (Keselamatan Diri)",
+        "drivingQuestion": "\"Bagaimanakah kita dapat menghasilkan alas tali pinggang keledar yang selesa dan menarik untuk penumpang?\"",
+        "integrasiRows": "<tr><td><strong>RBT (Teras)</strong></td><td>Menghasilkan artikel jahitan (alas tali pinggang keledar) dengan mata jahitan yang sesuai.</td></tr><tr><td><strong>Sains</strong></td><td>Memilih fabrik dan span yang sesuai serta selesa.</td></tr><tr><td><strong>Matematik</strong></td><td>Mengukur saiz, memotong pola dan mengira anggaran kos.</td></tr><tr><td><strong>Pendidikan Moral</strong></td><td>Mengamalkan nilai keselamatan diri dan tanggungjawab.</td></tr>",
+        "objektif": [
+            "Menghasilkan alas tali pinggang keledar yang selesa menggunakan fabrik dan span.",
+            "Menjahit artikel dengan kemas menggunakan mata jahitan yang sesuai."
+        ],
+        "kriteria": [
+            "Alas dapat dipasang dan digunakan pada tali pinggang keledar dengan selesa.",
+            "Jahitan kemas, kukuh dan tidak tertetas.",
+            "Anggaran kos dicatat dengan teliti."
+        ],
+        "setInduksi": "Guru mempamerkan gambar situasi kanak-kanak tidak selesa memakai tali pinggang keledar dan berbincang tentang penyelesaiannya.",
+        "langkah": "• <strong>Langkah 1 (Lakaran - 20 minit):</strong> Melakar 2-3 reka bentuk alas dan memilih satu lakaran terbaik.<br>• <strong>Langkah 2 (Menjahit - 45 minit):</strong> Memotong fabrik dan span mengikut pola, kemudian menjahit dan memasang velkro.<br>• <strong>Langkah 3 (Kemasan - 25 minit):</strong> Menghias dan menguji kesesuaian alas pada tali pinggang keledar.",
+        "penutup": "Refleksi: murid membincangkan kepentingan mematuhi peraturan keselamatan jalan raya.",
+        "bbm": "Fabrik, Span, Benang, Jarum, Velkro, Kapur Tukang, Gunting Fabrik, Renda (hiasan), Hub RBT SEPORA",
+        "rubrik": "• TP1-TP2: Mengenal pasti mata jahitan dan alatan.<br>• TP3-TP4: Menghasilkan alas mengikut lakaran dengan bimbingan.<br>• TP5-TP6: Artikel jahitan kemas, berfungsi dengan baik dan dibentangkan secara kreatif.",
+        "tempoh": "4 Minggu",
+        "subjekGandingan": "Sains (Sifat Fabrik), Matematik (Ukuran & Kos), Pendidikan Moral (Keselamatan)",
+        "fasaProjek": [
+            {
+                "minggu": "Minggu 1",
+                "fasa": "PLAN",
+                "tajuk": "Perancangan & Idea (PLAN)",
+                "aktiviti": "• Kenal pasti masalah: tali pinggang keledar tidak selesa dipakai. • Bincang penyelesaian (alas empuk). • Lakar 2-3 idea reka bentuk dan pilih satu lakaran terbaik. • Senaraikan fabrik, span, velkro dan anggaran kos."
+            },
+            {
+                "minggu": "Minggu 2",
+                "fasa": "DO",
+                "tajuk": "Pembinaan / Pelaksanaan (DO)",
+                "aktiviti": "• Sediakan pola mengikut ukuran tali pinggang. • Potong fabrik dan span mengikut pola. • Jahit kepingan fabrik, masukkan span dan pasang velkro menggunakan mata jahitan yang sesuai."
+            },
+            {
+                "minggu": "Minggu 3",
+                "fasa": "CHECK",
+                "tajuk": "Pengujian & Penilaian (CHECK)",
+                "aktiviti": "• Uji keselesaan dan kesesuaian alas pada tali pinggang keledar. • Periksa kualiti jahitan dan kemasan. • Minta maklum balas guru dan rakan, kemudian buat penambahbaikan."
+            },
+            {
+                "minggu": "Minggu 4",
+                "fasa": "ACT",
+                "tajuk": "Kemasan, Dokumentasi & Pembentangan (ACT)",
+                "aktiviti": "• Hiaskan artikel dan buat kemasan akhir. • Sediakan pameran hasil. • Bentangkan proses penghasilan dan kepentingan keselamatan jalan raya."
+            }
+        ],
+        "integrasiRujukan": [
+            "Sains T5: Unit 8 Jirim (sifat bahan, ms 177-198)",
+            "Matematik T5: Bab Panjang, Jisim dan Isi Padu Cecair (ukur & potong pola)",
+            "Pendidikan Moral T5: Unit Keselamatan Diri"
+        ]
+    },
+    "6_robot_penjaga_air": {
+        "tahap": "6_robot_penjaga_air",
+        "kelas": "6 Cemerlang",
+        "subjek": "Reka Bentuk dan Teknologi (RBT)",
+        "tajuk": "PBL 6: Robot Penjaga Air Tanaman (Unit 2: Robotik)",
+        "bukuTeks": "Buku Teks RBT Tahun 6 (Unit 2: Reka Bentuk Pengaturcaraan - Robot Penjaga Air Tanaman, ms 23-44)",
+        "sk": "6.5 Pengenalan Asas Sistem Robotik",
+        "sp": "Menyatakan elemen sistem robotik; Menghuraikan elemen sistem robotik yang terdapat pada robot; Menjelaskan pemasangan perkakasan pada reka bentuk sebuah robot; Melakar reka bentuk produk yang mempunyai elemen sistem robotik; Menilai lakaran yang dipilih untuk membuat penambahbaikan; Menghasilkan carta alir sebuah robot yang akan dibina; Menghasilkan atur cara yang dikehendaki berpandukan carta alir yang dibuat; Membina reka bentuk produk dan penyambungan perkakasan berdasarkan lakaran yang dibuat menggunakan peralatan yang sesuai; Memindahkan atur cara yang telah dihasilkan pada perkakasan dan menguji kefungsiannya; Membuat rumusan dan membentangkan produk yang telah dibina.",
+        "integrasi": "Sains (Kekonduksian Elektrik & Air), Matematik (Logik Atur Cara), Bahasa Melayu (Pembentangan)",
+        "drivingQuestion": "\"Bagaimanakah kita dapat membina robot yang memberi amaran apabila air takung tanaman hampir kering?\"",
+        "integrasiRows": "<tr><td><strong>RBT (Teras)</strong></td><td>Membina robot penjaga air tanaman dengan elemen sensor, kuasa, kawalan dan pergerakan.</td></tr><tr><td><strong>Sains</strong></td><td>Memahami kekonduksian elektrik dalam air (sensor paku).</td></tr><tr><td><strong>Matematik</strong></td><td>Menyusun logik atur cara (jika... maka...).</td></tr><tr><td><strong>Bahasa Melayu</strong></td><td>Menerangkan fungsi robot semasa pembentangan.</td></tr>",
+        "objektif": [
+            "Membina robot penjaga air tanaman yang berfungsi memberi amaran.",
+            "Memprogram mikropengawal supaya sensor, lampu, bunyi dan pergerakan bertindak balas dengan betul."
+        ],
+        "kriteria": [
+            "Robot memberi amaran (lampu LED, bunyi pembaz) apabila paras air rendah.",
+            "Tangan robot (motor servo) bergerak sebagai isyarat amaran.",
+            "Sambungan perkakasan kemas dan atur cara berfungsi tanpa ralat."
+        ],
+        "setInduksi": "Guru menunjukkan robot atau video robot penjaga air dan bersoal jawab tentang fungsi sensor dalam kehidupan.",
+        "langkah": "• <strong>Langkah 1 (Perancangan - 20 minit):</strong> Melakar robot dan carta alir amaran paras air.<br>• <strong>Langkah 2 (Pembinaan - 45 minit):</strong> Memasang badan robot, paku (sensor), motor servo, LED dan pembaz pada mikropengawal.<br>• <strong>Langkah 3 (Pengaturcaraan & Ujian - 25 minit):</strong> Memuat naik atur cara dan menguji tindak balas sensor dalam air.",
+        "penutup": "Refleksi: murid membincangkan kepentingan teknologi robotik dalam pertanian dan kehidupan harian.",
+        "bbm": "Kotak/Bekas Kitar Semula, Botol Plastik, Paku (sensor), Klip Buaya, Motor Servo, LED, Pembaz, Papan Mikropengawal, Wayar, Bateri, Gam, Gunting, Hub RBT SEPORA",
+        "rubrik": "• TP1-TP2: Mengenal pasti elemen sistem robotik.<br>• TP3-TP4: Membina robot dan menghasilkan atur cara ringkas.<br>• TP5-TP6: Robot berfungsi sepenuhnya memberi amaran dan dibentangkan secara kreatif.",
+        "tempoh": "4 Minggu",
+        "subjekGandingan": "Sains (Kekonduksian & Litar), Matematik (Logik), Bahasa Melayu (Pembentangan)",
+        "fasaProjek": [
+            {
+                "minggu": "Minggu 1",
+                "fasa": "PLAN",
+                "tajuk": "Perancangan & Idea (PLAN)",
+                "aktiviti": "• Kenal pasti masalah: tanaman layu kerana air takung kering tanpa disedari. • Bincang elemen sistem robotik (sensor, kuasa, kawalan, pergerakan). • Lakar reka bentuk robot dan carta alir (air cukup → senyap; air rendah → amaran). • Senaraikan bahan."
+            },
+            {
+                "minggu": "Minggu 2",
+                "fasa": "DO",
+                "tajuk": "Pembinaan / Pelaksanaan (DO)",
+                "aktiviti": "• Kumpul dan susun bahan (kotak, botol, paku, servo, LED, pembaz, mikropengawal). • Bina badan robot dan leher dari botol. • Sambungkan perkakasan: paku ke pin sensor, servo, LED dan pembaz ke papan mikropengawal."
+            },
+            {
+                "minggu": "Minggu 3",
+                "fasa": "CHECK",
+                "tajuk": "Pengujian & Penilaian (CHECK)",
+                "aktiviti": "• Muat naik atur cara (MakeCode/mBlock). • Uji: masukkan sensor dalam air - LED/pembaz/tangan robot patut bertindak balas bila air rendah. • Catat masalah dan buat penambahbaikan."
+            },
+            {
+                "minggu": "Minggu 4",
+                "fasa": "ACT",
+                "tajuk": "Kemasan, Dokumentasi & Pembentangan (ACT)",
+                "aktiviti": "• Kemaskan badan robot dan pastikan semua fungsi berjalan. • Sediakan dokumentasi dan pameran. • Bentangkan projek serta terangkan setiap elemen robotik."
+            }
+        ],
+        "integrasiRujukan": [
+            "Sains T6: Unit 4 Interaksi antara Hidupan (ms 51-66)",
+            "Matematik T6: Bab 5 Ukuran dan Sukatan (ms 155-164)",
+            "Bahasa Melayu T6: Tema 7 Unit 20 Rezeki daripada Tanah (ms 151-156)"
+        ]
+    },
+    "6_bot_motor": {
+        "tahap": "6_bot_motor",
+        "kelas": "6 Cemerlang",
+        "subjek": "Reka Bentuk dan Teknologi (RBT)",
+        "tajuk": "PBL 7: Bot Berkuasa Motor (Unit 1: Elektromekanikal)",
+        "bukuTeks": "Buku Teks RBT Tahun 6 (Unit 1: Aplikasi Reka Bentuk Teknologi Kejuruteraan, ms 1-22)",
+        "sk": "5.2 Reka Bentuk Produk Elektromekanikal",
+        "sp": "5.2.1 Menyatakan elemen elektromekanikal; 5.2.2 Menerangkan elemen elektromekanikal; 5.2.3 Melakar reka bentuk produk elektromekanikal yang akan dihasilkan; 5.2.4 Menilai lakaran yang dipilih untuk membuat penambahbaikan; 5.2.5 Membuat produk berdasarkan lakaran dengan menggunakan bahan dan peralatan yang sesuai; 5.2.6 Membentangkan produk yang dihasilkan.",
+        "integrasi": "Sains (Daya & Tenaga), Matematik (Ukuran & Kos), Bahasa Melayu (Pembentangan)",
+        "drivingQuestion": "\"Bagaimanakah kita dapat membina bot yang bergerak menggunakan motor dan kipas tanpa tenggelam?\"",
+        "integrasiRows": "<tr><td><strong>RBT (Teras)</strong></td><td>Membina bot berkuasa motor DC dengan komponen elektrik dan mekanikal.</td></tr><tr><td><strong>Sains</strong></td><td>Memahami daya tolakan kipas, keapungan dan litar elektrik.</td></tr><tr><td><strong>Matematik</strong></td><td>Mengukur dimensi bot dan mengira anggaran kos bahan.</td></tr><tr><td><strong>Bahasa Melayu</strong></td><td>Membentangkan hasil projek dan menjawab soalan.</td></tr>",
+        "objektif": [
+            "Membina bot yang dapat bergerak di atas air menggunakan motor DC dan kipas.",
+            "Mengenal pasti elemen elektromekanikal pada bot yang dihasilkan."
+        ],
+        "kriteria": [
+            "Bot bergerak dengan lancar apabila bateri disambung.",
+            "Bot tidak mudah tenggelam dan sambungan litar selamat.",
+            "Binaan kemas, kukuh dan menarik."
+        ],
+        "setInduksi": "Guru menunjukkan bot mainan atau video bot berkuasa motor dan bersoal jawab tentang cara ia bergerak.",
+        "langkah": "• <strong>Langkah 1 (Lakaran - 20 minit):</strong> Melakar reka bentuk bot (bentuk badan, kedudukan motor dan kipas).<br>• <strong>Langkah 2 (Pembinaan - 45 minit):</strong> Membentuk badan bot dari bahan kitar semula, memasang motor, kipas dan bateri.<br>• <strong>Langkah 3 (Pengujian - 25 minit):</strong> Menguji bot di dalam besen air dan membuat penambahbaikan.",
+        "penutup": "Refleksi: murid membincangkan aplikasi elektromekanikal dalam pengangkutan air.",
+        "bbm": "Botol Plastik/Stereofoam/Kotak Tetra Pak, Motor DC, Kipas Mini, Bateri & Pemegang, Suis, Wayar, Gam Panas, Gunting, Hub RBT SEPORA",
+        "rubrik": "• TP1-TP2: Mengenal pasti elemen elektromekanikal.<br>• TP3-TP4: Membina bot mengikut lakaran.<br>• TP5-TP6: Bot berfungsi dengan lancar, kemas dan dibentangkan secara kreatif.",
+        "tempoh": "4 Minggu",
+        "subjekGandingan": "Sains (Daya & Keapungan), Matematik (Ukuran & Kos), Bahasa Melayu (Pembentangan)",
+        "fasaProjek": [
+            {
+                "minggu": "Minggu 1",
+                "fasa": "PLAN",
+                "tajuk": "Perancangan & Idea (PLAN)",
+                "aktiviti": "• Kenal pasti masalah: bagaimana bot bergerak tanpa dayung? • Bincang elemen elektromekanikal (motor, kipas, bateri, suis). • Lakar 2-3 idea bot dan pilih satu lakaran terbaik. • Senaraikan bahan kitar semula dan anggaran kos."
+            },
+            {
+                "minggu": "Minggu 2",
+                "fasa": "DO",
+                "tajuk": "Pembinaan / Pelaksanaan (DO)",
+                "aktiviti": "• Kumpul bahan (botol/stereofoam, motor, kipas, bateri). • Bentuk badan bot dan pasang motor dengan kipas. • Sambungkan litar motor-bateri-suis dengan kemas. • Dokumentasikan proses pembinaan."
+            },
+            {
+                "minggu": "Minggu 3",
+                "fasa": "CHECK",
+                "tajuk": "Pengujian & Penilaian (CHECK)",
+                "aktiviti": "• Uji bot di dalam besen air. • Periksa: bot bergerak? Lurus? Tidak bocor/tenggelam? Sambungan litar selamat? • Kenal pasti masalah dan buat penambahbaikan (berat, kedudukan kipas)."
+            },
+            {
+                "minggu": "Minggu 4",
+                "fasa": "ACT",
+                "tajuk": "Kemasan, Dokumentasi & Pembentangan (ACT)",
+                "aktiviti": "• Kemaskan bot dan pastikan ia berfungsi sepenuhnya. • Sediakan laporan ringkas dan pameran. • Bentangkan projek dan jalankan pertandingan bot laju."
+            }
+        ],
+        "integrasiRujukan": [
+            "Sains T6: Unit 6 Daya (ms 87-112); Unit 7 Kelajuan (ms 113-126)",
+            "Matematik T6: Bab 5 Ukuran dan Sukatan (ms 155-164)",
+            "Bahasa Melayu T6: Tema 6 Unit 17 Teknologi Membantu Kita (ms 127-132)"
+        ]
     }
 };
 
@@ -3856,11 +4103,15 @@ Abaikan maklumat tandatangan pentadbir, cuti umum, atau kepala surat yang tidak 
         { key: "5_kipas_solar", tahun: "5", unit: "Unit 2", tajuk: "PBL 2: Tabung Kipas Solar", subjek: "RBT Tahun 5", tema: "Tenaga Solar" },
         { key: "5_atmega", tahun: "5", unit: "Unit 3", tajuk: "PBL 3: Pengaturcaraan Kit ATMEGA328P", subjek: "RBT Tahun 5", tema: "Mikropengawal" },
         { key: "5_tanaman", tahun: "5", unit: "Unit 4", tajuk: "PBL 4: Tanaman Konvensional", subjek: "RBT Tahun 5", tema: "Pertanian" },
+        { key: "5_pagar_keselamatan", tahun: "5", unit: "Unit 3", tajuk: "PBL 5: Pagar Keselamatan Automatik", subjek: "RBT Tahun 5", tema: "Pengaturcaraan" },
+        { key: "5_alas_keledar", tahun: "5", unit: "Unit 1", tajuk: "PBL 6: Alas Tali Pinggang Keledar", subjek: "RBT Tahun 5", tema: "Jahitan" },
         { key: "6_kereta_kawalan", tahun: "6", unit: "Unit 1", tajuk: "PBL 1: Kereta Kawalan Saya", subjek: "RBT Tahun 6", tema: "Elektromekanikal" },
         { key: "6_auto_plant", tahun: "6", unit: "Unit 2", tajuk: "PBL 2: Auto Plant Watering", subjek: "RBT Tahun 6", tema: "Robotik" },
         { key: "6_penghasilan", tahun: "6", unit: "Unit 3", tajuk: "PBL 3: Penghasilan Produk", subjek: "RBT Tahun 6", tema: "Inovasi" },
         { key: "6_pintu_pagar", tahun: "6", unit: "Unit 1", tajuk: "PBL 4: Pintu Pagar Elektrik", subjek: "RBT Tahun 6", tema: "Elektromekanikal" },
-        { key: "6_robot_halangan", tahun: "6", unit: "Unit 2", tajuk: "PBL 5: Robot Pengesan Halangan", subjek: "RBT Tahun 6", tema: "Robotik" }
+        { key: "6_robot_halangan", tahun: "6", unit: "Unit 2", tajuk: "PBL 5: Robot Pengesan Halangan", subjek: "RBT Tahun 6", tema: "Robotik" },
+        { key: "6_robot_penjaga_air", tahun: "6", unit: "Unit 2", tajuk: "PBL 6: Robot Penjaga Air Tanaman", subjek: "RBT Tahun 6", tema: "Robotik" },
+        { key: "6_bot_motor", tahun: "6", unit: "Unit 1", tajuk: "PBL 7: Bot Berkuasa Motor", subjek: "RBT Tahun 6", tema: "Elektromekanikal" }
       ];
 
       const html = `
