@@ -18,6 +18,18 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/docx@8.5.0/build/index.umd.js"></script>
 
+  <!-- ===== PWA: boleh dipasang pada telefon & laptop (ikon + offline) ===== -->
+  <link rel="manifest" href="/manifest.webmanifest">
+  <meta name="theme-color" content="#1a73e8">
+  <meta name="application-name" content="SEPORA RBT TOOLKIT">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="SEPORA RBT">
+  <meta name="description" content="Sistem Pembina RPH & Inovasi PBL RBT - arkib RPH, cetak PDF/Word, sandaran Google Drive DELIMa.">
+  <link rel="icon" type="image/png" sizes="32x32" href="/icons/favicon-32.png">
+  <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">
+
   <style>
     :root {
       --primary: #1a73e8;
@@ -805,6 +817,48 @@
 }
 .rph-edit-hint { font-size: 0.65rem; color: #94a3b8; font-weight: 600; margin-left: 4px; }
 
+
+    /* ===== PWA & gerbang log masuk DELIMa ===== */
+    .hidden { display: none !important; }
+    #driveStatusChip {
+      display: inline-flex; align-items: center; gap: 6px; cursor: pointer;
+      font-size: 0.72rem; font-weight: 600; padding: 5px 10px; border-radius: 20px;
+      border: 1px solid var(--surface-border); color: var(--text-muted); background: var(--surface);
+      max-width: 260px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+    }
+    #driveStatusChip:hover { border-color: var(--primary); color: var(--primary); }
+    #installAppBtn { display: none; }
+    .delima-gate {
+      position: fixed; inset: 0; z-index: 5000; display: flex; align-items: center; justify-content: center;
+      padding: 1rem; background: linear-gradient(135deg, #0b57d0 0%, #1a73e8 45%, #34a853 100%);
+      overflow-y: auto;
+    }
+    .delima-card {
+      width: 100%; max-width: 430px; background: var(--surface); border-radius: 18px; padding: 1.6rem 1.4rem;
+      box-shadow: 0 24px 60px rgba(0,0,0,0.35); text-align: center; margin: auto;
+    }
+    .delima-card h1 { font-size: 1.25rem; font-weight: 800; margin: 0.75rem 0 0.15rem; letter-spacing: 0.4px; }
+    .delima-card .delima-sub { font-size: 0.8rem; color: var(--text-muted); margin-bottom: 1.1rem; }
+    .delima-google {
+      width: 100%; display: flex; align-items: center; justify-content: center; gap: 10px;
+      background: #fff; color: #3c4043; border: 1.5px solid #dadce0; border-radius: 10px;
+      padding: 0.8rem 1rem; font-weight: 700; font-size: 0.95rem; cursor: pointer; transition: all .15s;
+    }
+    .delima-google:hover { border-color: #1a73e8; box-shadow: 0 2px 10px rgba(26,115,232,0.25); }
+    .delima-google i { color: #4285f4; font-size: 1.1rem; }
+    .delima-note { font-size: 0.75rem; color: var(--text-muted); margin: 0.7rem 0 0.9rem; line-height: 1.45; text-align: left; }
+    .delima-status {
+      font-size: 0.78rem; padding: 0.55rem 0.7rem; border-radius: 8px; background: var(--primary-light);
+      color: var(--primary); margin-bottom: 0.85rem; text-align: left; line-height: 1.4;
+    }
+    .delima-toggle {
+      background: none; border: none; color: var(--text-muted); font-size: 0.78rem; cursor: pointer;
+      text-decoration: underline; padding: 4px;
+    }
+    .delima-foot { margin-top: 1rem; font-size: 0.7rem; color: var(--text-muted); }
+    .delima-foot span:hover { color: var(--primary); }
+    .delima-local { text-align: left; margin-top: 0.9rem; border-top: 1px dashed var(--surface-border); padding-top: 0.9rem; }
+
 </style>
 </head>
 <body>
@@ -881,6 +935,12 @@
         </div>
 
         <div class="header-right">
+          <span id="driveStatusChip" onclick="openDrivePanel()" title="Status sandaran Google Drive (ID DELIMa)">
+            <i class="fa-solid fa-cloud"></i> Drive: belum log masuk
+          </span>
+          <button class="btn btn-outline btn-sm" id="installAppBtn" onclick="installApp()" title="Pasang aplikasi pada peranti ini" style="border-color:#10b981; color:#047857; white-space:nowrap;">
+            <i class="fa-solid fa-download"></i> Pasang
+          </button>
           <button class="btn-icon" id="themeToggleBtn" onclick="toggleDarkMode()" title="Tukar Tema Gelap/Cerah">
             <i class="fa-solid fa-moon"></i>
           </button>
@@ -1343,6 +1403,9 @@
               <button type="button" class="btn btn-sm" onclick="loadPblRbtTemplate('6_bot_motor')" style="background:#e0f2fe; color:#0369a1; border:1px solid #7dd3fc; font-size:0.75rem;">T6 U1: Bot Motor</button>
             </div>
 
+            <!-- Kunci templat PBL yang sedang aktif (dibaca oleh autoGenerateSmartRph & Arkib RPH) -->
+            <input type="hidden" id="formRphTahap" value="4_kereta_idamanku">
+
             <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap:1rem;">
               <div class="form-group">
                 <label class="form-label">Jenis Pendekatan / Tajuk Projek</label>
@@ -1677,7 +1740,34 @@
             </div>
           </div>
 
-          <div class="card">
+          <div class="card" style="border-left:4px solid #059669;">
+            <div class="card-header">
+              <h3 style="font-size:1.05rem;"><i class="fa-solid fa-box-archive" style="color:#059669; margin-right:6px;"></i> Simpan, Edit &amp; Guna Semula RPH</h3>
+              <span style="font-size:0.8rem; color:var(--text-muted);">Janaan tersimpan automatik &bull; boleh diedit &amp; diguna untuk RPH berikutnya</span>
+            </div>
+            <p style="font-size:0.85rem; color:var(--text-muted); margin-bottom:0.75rem;">
+              Setiap kali <strong>Jana RPH</strong> ditekan, RPH terus masuk Arkib sebagai <em>Draf Dijana</em>.
+              Tekan <strong>Simpan Janaan Semasa</strong> untuk mengunci rekod + menyimpan salinan penuh dokumen (termasuk suntingan tajuk/tarikh pada dokumen).
+            </p>
+            <div style="display:flex; gap:0.5rem; flex-wrap:wrap; align-items:center;">
+              <button class="btn btn-primary" onclick="saveCurrentGeneratedRph()"><i class="fa-solid fa-floppy-disk"></i> Simpan Janaan Semasa</button>
+              <button class="btn btn-outline" onclick="saveCurrentGeneratedRph(true)"><i class="fa-solid fa-plus"></i> Simpan sebagai Rekod Baharu</button>
+              <button class="btn btn-outline" onclick="updateArkibFromPreview()"><i class="fa-solid fa-rotate"></i> Kemas Kini Rekod Terpilih</button>
+              <button class="btn btn-outline" style="border-color:#c4b5fd; color:#6d28d9;" onclick="exportArkibJson()"><i class="fa-solid fa-file-export"></i> Eksport Arkib (JSON)</button>
+              <button class="btn btn-outline" style="border-color:#c4b5fd; color:#6d28d9;" onclick="document.getElementById('arkibImportInput').click()"><i class="fa-solid fa-file-import"></i> Import Arkib (JSON)</button>
+              <input type="file" id="arkibImportInput" accept="application/json,.json" style="display:none" onchange="importArkibJson(event)">
+              <span style="width:1px; height:22px; background:var(--surface-border);"></span>
+              <button class="btn btn-outline" style="border-color:#93c5fd; color:#1d4ed8;" onclick="driveSave(false)"><i class="fa-solid fa-cloud-arrow-up"></i> Sandaran ke Drive</button>
+              <button class="btn btn-outline" style="border-color:#93c5fd; color:#1d4ed8;" onclick="driveRestore(false)"><i class="fa-solid fa-cloud-arrow-down"></i> Pulih dari Drive</button>
+              <label style="display:flex; align-items:center; gap:7px; font-size:0.8rem; color:var(--text-muted); font-weight:600;">
+                <input type="checkbox" id="driveAutoSync" onchange="toggleDriveAutoSync(this.checked)">
+                Auto-sandaran Drive
+              </label>
+            </div>
+            <div id="arkibSelectedInfo" style="margin-top:0.6rem; font-size:0.8rem; color:var(--text-muted);">Tiada rekod dipilih.</div>
+          </div>
+
+          <div class="card" style="margin-top:1rem;">
             <div class="table-container">
               <table>
                 <thead>
@@ -1706,6 +1796,53 @@
         <div>© 2026 <strong>hhrobotz</strong>. Hak Cipta Terpelihara.</div>
         <div>SEPORA RBT TOOLKIT • Inovasi oleh <strong>hhrobotz</strong></div>
       </footer>
+    </div>
+  </div>
+
+  <!-- ================= GERBANG LOG MASUK (WAJIB) - ID DELIMa / Mod Setempat ================= -->
+  <div id="privacyLockScreen" class="delima-gate">
+    <div class="delima-card">
+      <img src="/icons/icon-192.png" alt="SEPORA RBT TOOLKIT" style="width:66px;height:66px;border-radius:16px;">
+      <h1>SEPORA RBT TOOLKIT</h1>
+      <p class="delima-sub">Sistem Pembina RPH &amp; Inovasi PBL &bull; e-RPH RBT</p>
+
+      <button class="delima-google" id="delimaGoogleBtn" onclick="delimaLoginWithGoogle()">
+        <i class="fa-brands fa-google"></i> Log Masuk dengan ID DELIMa
+      </button>
+
+      <p class="delima-note">
+        Gunakan akaun <strong>@moe-dl.edu.my</strong> (DELIMa). Arkib RPH anda akan disandarkan ke
+        <strong>Google Drive akaun DELIMa anda sendiri</strong> supaya rekod kekal walaupun tukar telefon atau laptop.
+        Data juga disimpan dalam peranti ini untuk kegunaan offline.
+      </p>
+
+      <div id="delimaStatus" class="delima-status">Belum log masuk. Sila log masuk untuk mula menyimpan RPH anda.</div>
+
+      <button class="delima-toggle" onclick="toggleLocalLogin()"><i class="fa-solid fa-chevron-down"></i> Mod setempat (tanpa Drive)</button>
+
+      <form id="delimaLocalForm" class="delima-local hidden" onsubmit="handleLoginSubmit(event)">
+        <div class="form-group">
+          <label class="form-label">Emel / ID DELIMa</label>
+          <input type="text" id="loginInputEmail" class="form-control" value="cikgu.rahmah@moe-dl.edu.my" autocomplete="username">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Kata Laluan / PIN</label>
+          <input type="password" id="loginInputPassword" class="form-control" placeholder="PIN anda" autocomplete="current-password">
+        </div>
+        <label style="display:flex; align-items:center; gap:8px; font-size:0.78rem; color:var(--text-muted); margin-bottom:0.7rem;">
+          <input type="checkbox" id="rememberSessionCheck" checked> Ingat log masuk pada peranti ini
+        </label>
+        <button type="submit" class="btn btn-primary" style="width:100%;"><i class="fa-solid fa-right-to-bracket"></i> Masuk (setempat)</button>
+        <p style="font-size:0.72rem; color:var(--text-muted); margin-top:0.5rem; text-align:center;">
+          <span onclick="showDefaultLoginHelp(event)" style="cursor:pointer; text-decoration:underline;">Lupa PIN? Tunjuk log masuk asal</span>
+        </p>
+      </form>
+
+      <div class="delima-foot">
+        <span onclick="openGdriveSetupModal()">Setelan sandaran Google Drive (Client ID)</span>
+        &nbsp;•&nbsp;
+        <span onclick="openInstallHelpModal()">Cara pasang pada telefon/laptop</span>
+      </div>
     </div>
   </div>
 
@@ -2105,6 +2242,13 @@
         if (sidebar && sidebar.classList.contains('open')) {
           sidebar.classList.remove('open');
           if (backdrop) backdrop.classList.remove('active');
+        }
+
+        // Segarkan Arkib setiap kali tab Simpan/Cetak dibuka
+        if (tabId === 'simpan-cetak') {
+          renderSavedRphTable();
+          updateArkibBadge();
+          updateArkibSelectedInfo();
         }
       } catch (err) {
         console.error('Ralat pertukaran tab:', err);
@@ -4372,6 +4516,7 @@ Abaikan maklumat tandatangan pentadbir, cuti umum, atau kepala surat yang tidak 
       if (key == 6 || key == "6") key = "6_kereta_kawalan";
 
       const tmpl = PBL_TEMPLATES[key] || PBL_TEMPLATES["4_kereta_idamanku"];
+      window.__rphTemplKey = key;
 
       const formTahap = document.getElementById('formRphTahap');
       const formKelas = document.getElementById('formRphKelas');
@@ -4488,10 +4633,12 @@ Abaikan maklumat tandatangan pentadbir, cuti umum, atau kepala surat yang tidak 
     }
 
 function autoGenerateSmartRph() {
-      let formTahapVal = document.getElementById('formRphTahap')?.value || "4_kereta_idamanku";
+      let formTahapVal = document.getElementById('formRphTahap')?.value || window.__rphTemplKey || "4_kereta_idamanku";
       if (formTahapVal == "4") formTahapVal = "4_kereta_idamanku";
       if (formTahapVal == "5") formTahapVal = "5_rumah_tangga";
       if (formTahapVal == "6") formTahapVal = "6_kereta_kawalan";
+      if (!PBL_TEMPLATES[formTahapVal]) formTahapVal = "4_kereta_idamanku";
+      window.__rphTemplKey = formTahapVal;
       const tmpl = PBL_TEMPLATES[formTahapVal] || PBL_TEMPLATES["4_kereta_idamanku"];
 
       // Kemas kini maklumat asas & parameter
@@ -4656,6 +4803,8 @@ function autoGenerateSmartRph() {
       // Papar janaan terkini di sidebar & kira badge Arkib
       updateSidebarJanaan();
       updateArkibBadge();
+      // AUTO-SIMPAN: setiap janaan masuk Arkib (rekod sedia ada dikemas kini, bukan bertindih)
+      arkibAutoSimpan();
     }
 
     function openSeporaRphBankModal() {
@@ -4791,223 +4940,529 @@ function autoGenerateSmartRph() {
       autoGenerateSmartRph();
     }
 
-    function saveCurrentGeneratedRph() {
-      const rphData = {
-        id: Date.now(),
-        hari: document.getElementById('formRphHari')?.value || "Isnin",
-        masa: document.getElementById('formRphMasa')?.value || "08:00 - 09:30",
-        kelas: document.getElementById('formRphKelas')?.value || "5 Inovatif",
-        subjek: document.getElementById('formRphSubjek')?.value || "RBT",
-        minggu: document.getElementById('formRphMinggu')?.value || currentWeek,
-        pblMingguPelaksanaan: document.getElementById('formPblMingguPelaksanaan')?.value || `Minggu ${currentWeek} - ${currentWeek + 3}`,
-        pblTarikhMula: document.getElementById('formPblTarikhMula')?.value || "",
-        pblTarikhHantar: document.getElementById('formPblTarikhHantar')?.value || "",
-        tajuk: document.getElementById('formRphTajuk')?.value || "Projek PBL RBT",
-        sk: document.getElementById('formRphSk')?.value || "",
-        sp: document.getElementById('formRphSp')?.value || "",
-        bukuTeks: document.getElementById('formRphBukuTeks')?.value || "",
-        status: "Selesai Dijana"
-      };
+    /* ============================================================
+       ARKIB RPH v2 (2026-09-11)
+       - Setiap "Jana RPH" auto-simpan ke Arkib sebagai Draf Dijana
+       - "Simpan Janaan Semasa" kunci rekod + salinan dokumen penuh
+       - Edit rekod arkib (modal) / sunting dokumen contenteditable lalu kemas kini
+       - "Guna untuk RPH Baharu" = salinan rekod + tarikh dicadang +1 minggu
+       - Eksport / Import JSON sebagai sandaran (storan pelayar terhad)
+       ============================================================ */
+    let currentArkibId = null;
 
-      savedRphList.unshift(rphData);
-      localStorage.setItem('erph_saved', JSON.stringify(savedRphList));
-      renderSavedRphTable();
-      updateDashboardMetrics();
-      updateArkibBadge();
-      showToast("RPH lengkap dengan Tarikh Mula & Hantar PBL disimpan ke Arkib!");
+    function arkibNow() { return new Date().toISOString(); }
+    function escAttr(v) { return esc(String(v == null ? '' : v)).replace(/"/g, '&quot;'); }
+    function arkibDMY(t) {
+      const m = String(t == null ? '' : t).match(/(\d{1,2})\/(\d{1,2})\/(\d{4})/);
+      if (!m) return '';
+      return m[3] + '-' + ('0' + m[2]).slice(-2) + '-' + ('0' + m[1]).slice(-2);
+    }
+    function arkibISOtoDMY(d) {
+      const p = String(d || '').split('-');
+      return p.length === 3 ? p[2] + '/' + p[1] + '/' + p[0] : (d || '-');
+    }
+    function arkibShiftDate(iso, hari) {
+      const m = String(iso || '').match(/^(\d{4})-(\d{2})-(\d{2})$/);
+      if (!m) return iso || '';
+      const d = new Date(Number(m[1]), Number(m[2]) - 1, Number(m[3]));
+      d.setDate(d.getDate() + (hari || 7));
+      return d.getFullYear() + '-' + ('0' + (d.getMonth() + 1)).slice(-2) + '-' + ('0' + d.getDate()).slice(-2);
+    }
+    function arkibNormalize(list) {
+      if (!Array.isArray(list)) return [];
+      return list.map(function (r) {
+        r = r || {};
+        return {
+          id: Number(r.id) || Date.now(),
+          templateKey: r.templateKey || '',
+          hari: r.hari || 'Isnin',
+          masa: r.masa || '08:00 - 09:30',
+          kelas: r.kelas || '',
+          subjek: r.subjek || 'RBT',
+          minggu: r.minggu == null ? '' : String(r.minggu),
+          tajuk: r.tajuk || 'Projek PBL RBT',
+          sk: r.sk || '',
+          sp: r.sp || '',
+          bukuTeks: r.bukuTeks || '',
+          pblMingguPelaksanaan: r.pblMingguPelaksanaan || '',
+          pblTarikhMula: r.pblTarikhMula || '',
+          pblTarikhHantar: r.pblTarikhHantar || '',
+          nota: r.nota || '',
+          status: r.status || 'Disimpan',
+          saved: !!r.saved,
+          auto: !!r.auto,
+          created: r.created || '',
+          dikemas: r.dikemas || '',
+          docHtml: r.docHtml || ''
+        };
+      });
+    }
+    function arkibPersist() {
+      try {
+        localStorage.setItem('erph_saved', JSON.stringify(savedRphList));
+        driveMaybeAuto();
+        return true;
+      } catch (e) {
+        // Kuota pelayar penuh: kekalkan metadata, ringkaskan salinan dokumen rekod lama
+        let drop = 0;
+        for (let i = 5; i < savedRphList.length; i++) {
+          if (savedRphList[i].docHtml) { savedRphList[i].docHtml = ''; drop++; }
+        }
+        try {
+          localStorage.setItem('erph_saved', JSON.stringify(savedRphList));
+          if (drop) showToast('Storan hampir penuh - salinan dokumen ' + drop + ' rekod lama diringkaskan (tarikh & maklumat kekal).');
+          return true;
+        } catch (e2) {
+          showToast('Storan pelayar penuh. Guna "Eksport Arkib (JSON)" sebagai sandaran.');
+          return false;
+        }
+      }
+    }
+    function arkibFormVal(id) { const el = document.getElementById(id); return el && el.value ? String(el.value).trim() : ''; }
+    function arkibPrevTxt(id) { const el = document.getElementById(id); return el && el.innerText ? String(el.innerText).trim() : ''; }
+    function arkibSetVal(id, val) {
+      const el = document.getElementById(id);
+      if (!el || val == null || val === '') return;
+      if (el.tagName === 'SELECT') {
+        const ok = Array.prototype.some.call(el.options || [], function (o) { return String(o.value) === String(val) || String(o.text) === String(val); });
+        if (!ok) {
+          try { const opt = document.createElement('option'); opt.value = String(val); opt.text = String(val); el.appendChild(opt); } catch (e) { }
+        }
+        try { el.value = String(val); } catch (e) { }
+        return;
+      }
+      el.value = String(val);
+    }
+    function arkibSnapshot() {
+      return {
+        templateKey: arkibFormVal('formRphTahap') || (typeof window !== 'undefined' && window.__rphTemplKey ? window.__rphTemplKey : ''),
+        hari: arkibFormVal('formRphHari') || arkibPrevTxt('previewHariTarikh'),
+        masa: arkibFormVal('formRphMasa') || arkibPrevTxt('previewMasa'),
+        kelas: arkibFormVal('formRphKelas') || arkibPrevTxt('previewKelas'),
+        subjek: arkibFormVal('formRphSubjek') || arkibPrevTxt('previewSubjek'),
+        minggu: arkibFormVal('formRphMinggu') || String((typeof currentWeek !== 'undefined' && currentWeek) ? currentWeek : ''),
+        tajuk: arkibFormVal('formRphTajuk') || arkibPrevTxt('previewTajuk'),
+        sk: arkibFormVal('formRphSk') || arkibPrevTxt('previewSK'),
+        sp: arkibFormVal('formRphSp') || arkibPrevTxt('previewSP'),
+        bukuTeks: arkibFormVal('formRphBukuTeks') || arkibPrevTxt('previewBukuTeksRef'),
+        pblMingguPelaksanaan: arkibFormVal('formPblMingguPelaksanaan') || arkibPrevTxt('previewPblMingguTempoh'),
+        pblTarikhMula: arkibFormVal('formPblTarikhMula') || arkibDMY(arkibPrevTxt('previewPblTarikhMula')),
+        pblTarikhHantar: arkibFormVal('formPblTarikhHantar') || arkibDMY(arkibPrevTxt('previewPblTarikhHantar'))
+      };
+    }
+    function arkibDocHtml() {
+      const el = document.getElementById('rphPreviewContainer');
+      return el ? el.innerHTML : '';
+    }
+    function arkibSameTarget(a, b) {
+      return String(a.templateKey || '') === String(b.templateKey || '') &&
+        String(a.minggu || '') === String(b.minggu || '') &&
+        String(a.kelas || '') === String(b.kelas || '') &&
+        String(a.hari || '') === String(b.hari || '');
+    }
+    function arkibFindRecord(snap) {
+      if (currentArkibId) {
+        const cur = savedRphList.find(function (r) { return r.id === currentArkibId; });
+        if (cur && arkibSameTarget(cur, snap)) return cur;
+      }
+      return savedRphList.find(function (r) { return arkibSameTarget(r, snap); });
+    }
+    function applyArkibToForm(r) {
+      arkibSetVal('formRphTahap', r.templateKey);
+      arkibSetVal('formRphHari', r.hari);
+      arkibSetVal('formRphMasa', r.masa);
+      arkibSetVal('formRphKelas', r.kelas);
+      arkibSetVal('formRphSubjek', r.subjek);
+      arkibSetVal('formRphMinggu', r.minggu);
+      arkibSetVal('formRphTajuk', r.tajuk);
+      arkibSetVal('formRphSk', r.sk);
+      arkibSetVal('formRphSp', r.sp);
+      arkibSetVal('formRphBukuTeks', r.bukuTeks);
+      arkibSetVal('formPblMingguPelaksanaan', r.pblMingguPelaksanaan);
+      arkibSetVal('formPblTarikhMula', r.pblTarikhMula);
+      arkibSetVal('formPblTarikhHantar', r.pblTarikhHantar);
+    }
+    function updateArkibSelectedInfo() {
+      const box = document.getElementById('arkibSelectedInfo');
+      if (!box) return;
+      const r = currentArkibId ? savedRphList.find(function (x) { return x.id === currentArkibId; }) : null;
+      if (!r) { box.innerHTML = 'Tiada rekod dipilih. Klik <strong>Papar</strong> pada senarai di bawah untuk buka &amp; sunting sesuatu RPH.'; return; }
+      box.innerHTML = 'Rekod dipilih: <strong>' + esc(r.tajuk) + '</strong> &bull; ' + esc(r.kelas || '-') + ' &bull; M' + esc(r.minggu || '-') +
+        ' &bull; Status: <strong>' + esc(r.status || '-') + '</strong>' + (r.dikemas ? ' &bull; dikemas kini ' + esc(String(r.dikemas).slice(0, 16).replace('T', ' ')) : '');
     }
 
+    /* --- Auto-simpan setiap janaan (tanpa ganggu proses jana) --- */
+    // Guna arkibWithSuspend() bila kita muat semula rekod secara program (elak janaan dalaman
+    // menimpa rekod arkib dgn nilai form yang belum dikemas kini).
+    window.__arkibSuspend = false;
+    function arkibWithSuspend(fn) {
+      const prev = window.__arkibSuspend;
+      window.__arkibSuspend = true;
+      try { return fn(); } finally { window.__arkibSuspend = prev; }
+    }
+    function arkibAutoSimpan() {
+      if (window.__arkibSuspend) return;
+      try {
+        const snap = arkibSnapshot();
+        if (!snap.tajuk) return;
+        let rec = arkibFindRecord(snap);
+        if (rec) {
+          Object.assign(rec, snap, { dikemas: arkibNow() });
+          if (!rec.saved) rec.status = 'Draf Dijana';
+        } else {
+          rec = Object.assign({ id: Date.now(), created: arkibNow(), auto: true, saved: false, status: 'Draf Dijana', nota: '', docHtml: '' }, snap);
+          savedRphList.unshift(rec);
+        }
+        currentArkibId = rec.id;
+        arkibPersist();
+        renderSavedRphTable();
+        updateArkibBadge();
+        updateDashboardMetrics();
+        updateArkibSelectedInfo();
+      } catch (e) { /* jangan sesekali ganggu penjanaan RPH */ }
+    }
+
+    /* --- Simpan manual (kunci rekod + salinan dokumen penuh) --- */
+    function saveCurrentGeneratedRph(forceNew) {
+      const snap = arkibSnapshot();
+      if (!snap.tajuk) { showToast('Tiada RPH untuk disimpan. Tekan "Jana RPH" dahulu.'); return; }
+      const now = arkibNow();
+      let rec = forceNew ? null : arkibFindRecord(snap);
+      if (rec) {
+        Object.assign(rec, snap, { dikemas: now });
+        rec.saved = true;
+        if (!rec.status || rec.status === 'Draf Dijana') rec.status = 'Disimpan';
+      } else {
+        rec = Object.assign({ id: Date.now(), created: now, auto: false, saved: true, status: 'Disimpan', nota: '', docHtml: '' }, snap);
+        savedRphList.unshift(rec);
+      }
+      rec.docHtml = arkibDocHtml();
+      currentArkibId = rec.id;
+      arkibPersist();
+      renderSavedRphTable();
+      updateArkibBadge();
+      updateDashboardMetrics();
+      updateArkibSelectedInfo();
+      showToast('RPH "' + rec.tajuk + '" ' + (forceNew ? 'disimpan sebagai rekod baharu' : 'disimpan ke Arkib') + ' (' + (rec.pblMingguPelaksanaan || 'M' + rec.minggu) + ').');
+    }
+
+    /* --- Jadual arkib --- */
     function renderSavedRphTable() {
       const tbody = document.getElementById('savedRphTableBody');
       const recentList = document.getElementById('recentRphList');
       if (!tbody) return;
 
-      if (savedRphList.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="8" style="text-align:center; padding:1.5rem; color:var(--text-muted);">Belum ada RPH disimpan. Sila bina RPH pada modul Bina RPH.</td></tr>`;
+      if (!savedRphList.length) {
+        tbody.innerHTML = `<tr><td colspan="8" style="text-align:center; padding:1.5rem; color:var(--text-muted);">
+          Belum ada RPH disimpan. Bina RPH pada modul Bina RPH - setiap janaan akan tersimpan di sini secara automatik.<br>
+          <button class="btn btn-primary btn-sm" style="margin-top:0.6rem;" onclick="switchTab('bina-rph')"><i class="fa-solid fa-wand-magic-sparkles"></i> Bina RPH Sekarang</button>
+        </td></tr>`;
         if (recentList) {
           recentList.innerHTML = `<p style="color:var(--text-muted); font-size:0.85rem;">Tiada RPH dibina lagi. Mulakan dengan menekan butang <strong>Bina RPH</strong>.</p>`;
         }
+        updateArkibSelectedInfo();
         return;
       }
 
-      const formatTarikhPapar = (dateStr) => {
-        if (!dateStr) return "-";
-        const parts = dateStr.split('-');
-        return parts.length === 3 ? `${parts[2]}/${parts[1]}/${parts[0]}` : dateStr;
-      };
-
       tbody.innerHTML = savedRphList.map(r => `
-        <tr>
-          <td><strong>${r.hari}</strong></td>
-          <td><span class="badge" style="background:var(--primary-light); color:var(--primary); font-weight:700; padding:2px 8px; border-radius:4px;">M${r.minggu}</span></td>
+        <tr${r.id === currentArkibId ? ' style="background:rgba(26,115,232,0.06);"' : ''}>
+          <td><strong>${esc(r.hari)}</strong></td>
+          <td><span class="badge" style="background:var(--primary-light); color:var(--primary); font-weight:700; padding:2px 8px; border-radius:4px;">M${esc(r.minggu)}</span></td>
           <td>
-            <div style="font-size:0.8rem; font-weight:600; color:var(--primary);">${r.pblMingguPelaksanaan || '-'}</div>
+            <div style="font-size:0.8rem; font-weight:600; color:var(--primary);">${esc(r.pblMingguPelaksanaan || '-')}</div>
             <div style="font-size:0.75rem; color:#dc2626; margin-top:2px;">
-              <i class="fa-solid fa-flag-checkered"></i> <strong>Hantar:</strong> ${formatTarikhPapar(r.pblTarikhHantar)}
+              <i class="fa-solid fa-flag-checkered"></i> <strong>Hantar:</strong> ${esc(arkibISOtoDMY(r.pblTarikhHantar))}
             </div>
           </td>
-          <td>${r.masa}</td>
-          <td>${r.kelas} - ${r.subjek}</td>
-          <td>${r.tajuk}</td>
-          <td><span class="badge" style="background:var(--secondary-light); color:var(--secondary); font-weight:700; padding:2px 8px; border-radius:4px;"><i class="fa-solid fa-circle-check"></i> ${r.status || 'Disimpan'}</span></td>
+          <td>${esc(r.masa)}</td>
+          <td>${esc(r.kelas)} - ${esc(r.subjek)}</td>
+          <td>${esc(r.tajuk)}${r.nota ? ' <i class="fa-solid fa-note-sticky" title="Ada nota guru" style="color:#f59e0b;"></i>' : ''}</td>
+          <td>
+            <span class="badge" style="background:var(--secondary-light); color:var(--secondary); font-weight:700; padding:2px 8px; border-radius:4px;"><i class="fa-solid fa-circle-check"></i> ${esc(r.status || 'Disimpan')}</span>
+            <div style="font-size:0.68rem; color:var(--text-muted); margin-top:3px;">${esc(String(r.dikemas || r.created || '').slice(0, 16).replace('T', ' '))}</div>
+          </td>
           <td style="text-align:center; white-space:nowrap;">
-            <button class="btn btn-sm btn-primary" onclick="viewSavedRph(${r.id})" title="Buka Dokumen">
-              <i class="fa-solid fa-eye"></i> Papar
-            </button>
-            <button class="btn btn-sm btn-outline" style="color:var(--danger);" onclick="deleteSavedRph(${r.id})" title="Padam">
-              <i class="fa-solid fa-trash"></i>
-            </button>
+            <button class="btn btn-sm btn-primary" onclick="viewSavedRph(${r.id})" title="Buka dokumen RPH"><i class="fa-solid fa-eye"></i> Papar</button>
+            <button class="btn btn-sm btn-outline" onclick="openArkibEditModal(${r.id})" title="Edit maklumat rekod"><i class="fa-solid fa-pen-to-square"></i></button>
+            <button class="btn btn-sm btn-outline" style="color:#7c3aed; border-color:#c4b5fd;" onclick="reuseArkibRph(${r.id})" title="Guna rekod ini untuk RPH baharu (tarikh +1 minggu)"><i class="fa-solid fa-clone"></i></button>
+            <button class="btn btn-sm btn-outline" style="color:var(--danger);" onclick="deleteSavedRph(${r.id})" title="Padam rekod"><i class="fa-solid fa-trash"></i></button>
           </td>
         </tr>
       `).join('');
 
       if (recentList) {
         recentList.innerHTML = savedRphList.slice(0, 3).map(r => `
-          <div style="padding:0.75rem 0; border-bottom:1px solid var(--surface-border); display:flex; justify-content:space-between; align-items:center;">
+          <div style="padding:0.75rem 0; border-bottom:1px solid var(--surface-border); display:flex; justify-content:space-between; align-items:center; gap:0.5rem;">
             <div>
-              <div style="font-weight:600; font-size:0.9rem;">${r.tajuk}</div>
-              <div style="font-size:0.78rem; color:var(--text-muted);">${r.hari} • ${r.kelas} • M${r.minggu} | <span style="color:#dc2626; font-weight:600;">Hantar: ${formatTarikhPapar(r.pblTarikhHantar)}</span></div>
+              <div style="font-weight:600; font-size:0.9rem;">${esc(r.tajuk)}</div>
+              <div style="font-size:0.78rem; color:var(--text-muted);">${esc(r.hari)} &bull; ${esc(r.kelas)} &bull; M${esc(r.minggu)} | <span style="color:#dc2626; font-weight:600;">Hantar: ${esc(arkibISOtoDMY(r.pblTarikhHantar))}</span></div>
             </div>
             <button class="btn btn-sm btn-outline" onclick="viewSavedRph(${r.id})"><i class="fa-solid fa-arrow-right"></i></button>
           </div>
         `).join('');
       }
+      updateArkibSelectedInfo();
     }
 
     function viewSavedRph(id) {
       const r = savedRphList.find(item => item.id === id);
       if (!r) return;
-
-      document.getElementById('formRphHari').value = r.hari;
-      document.getElementById('formRphMasa').value = r.masa;
-      document.getElementById('formRphKelas').value = r.kelas;
-      document.getElementById('formRphSubjek').value = r.subjek;
-      document.getElementById('formRphMinggu').value = r.minggu;
-      document.getElementById('formRphTajuk').value = r.tajuk;
-      document.getElementById('formRphSk').value = r.sk;
-      document.getElementById('formRphSp').value = r.sp;
-      document.getElementById('formRphBukuTeks').value = r.bukuTeks;
-
-      // Pulihkan maklumat Minggu Pelaksanaan, Tarikh Mula dan Tarikh Hantar
-      if (document.getElementById('formPblMingguPelaksanaan')) {
-        document.getElementById('formPblMingguPelaksanaan').value = r.pblMingguPelaksanaan || `Minggu ${r.minggu} hingga Minggu ${parseInt(r.minggu) + 3} (4 Minggu)`;
-      }
-      if (document.getElementById('formPblTarikhMula') && r.pblTarikhMula) {
-        document.getElementById('formPblTarikhMula').value = r.pblTarikhMula;
-      }
-      if (document.getElementById('formPblTarikhHantar') && r.pblTarikhHantar) {
-        document.getElementById('formPblTarikhHantar').value = r.pblTarikhHantar;
-      }
-
+      currentArkibId = r.id;
+      arkibWithSuspend(function () {
+        if (r.templateKey) { try { loadPblRbtTemplate(r.templateKey); } catch (e) { } }
+        applyArkibToForm(r);
+      });
       switchTab('bina-rph');
-      autoGenerateSmartRph();
-      showToast(`RPH "${r.tajuk}" dibuka berserta tarikh hantar PBL!`);
-    }
-
-    function syncRphWithWeek(weekVal) {
-      const matchRpt = rptList.find(r => r.minggu == weekVal);
-      if (matchRpt) {
-        document.getElementById('formRphTajuk').value = matchRpt.tajuk;
-        document.getElementById('formRphSk').value = matchRpt.sk;
-        document.getElementById('formRphSp').value = matchRpt.sp;
+      const el = document.getElementById('rphPreviewContainer');
+      if (el && r.docHtml) {
+        el.innerHTML = r.docHtml;
+        updateSidebarJanaan();
+        showToast('Dokumen RPH "' + r.tajuk + '" dibuka dari salinan arkib. Sunting terus, kemudian tekan "Kemas Kini Rekod Terpilih".');
+      } else {
+        autoGenerateSmartRph();
+        showToast('RPH "' + r.tajuk + '" dibuka berserta tarikh hantar PBL!');
       }
-      autoGenerateSmartRph();
-    }
-
-    function saveCurrentGeneratedRph() {
-      const rphData = {
-        id: Date.now(),
-        hari: document.getElementById('formRphHari')?.value || "Isnin",
-        masa: document.getElementById('formRphMasa')?.value || "08:00 - 09:30",
-        kelas: document.getElementById('formRphKelas')?.value || "5 Inovatif",
-        subjek: document.getElementById('formRphSubjek')?.value || "RBT",
-        minggu: document.getElementById('formRphMinggu')?.value || currentWeek,
-        tajuk: document.getElementById('formRphTajuk')?.value || "Projek PBL RBT",
-        sk: document.getElementById('formRphSk')?.value || "",
-        sp: document.getElementById('formRphSp')?.value || "",
-        bukuTeks: document.getElementById('formRphBukuTeks')?.value || "",
-        status: "Selesai Dijana"
-      };
-
-      savedRphList.unshift(rphData);
-      localStorage.setItem('erph_saved', JSON.stringify(savedRphList));
       renderSavedRphTable();
-      updateDashboardMetrics();
-      updateArkibBadge();
-      showToast("RPH berjaya disimpan ke dalam Arkib!");
     }
 
-    function renderSavedRphTable() {
-      const tbody = document.getElementById('savedRphTableBody');
-      const recentList = document.getElementById('recentRphList');
-      if (!tbody) return;
-
-      if (savedRphList.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; padding:1.5rem; color:var(--text-muted);">Belum ada RPH disimpan. Sila bina RPH pada modul Bina RPH.</td></tr>`;
-        if (recentList) {
-          recentList.innerHTML = `<p style="color:var(--text-muted); font-size:0.85rem;">Tiada RPH dibina lagi. Mulakan dengan menekan butang <strong>Bina RPH</strong>.</p>`;
-        }
-        return;
-      }
-
-      tbody.innerHTML = savedRphList.map(r => `
-        <tr>
-          <td><strong>${r.hari}</strong></td>
-          <td><span class="badge" style="background:var(--primary-light); color:var(--primary); font-weight:700; padding:2px 8px; border-radius:4px;">M${r.minggu}</span></td>
-          <td>${r.masa}</td>
-          <td>${r.kelas} - ${r.subjek}</td>
-          <td>${r.tajuk}</td>
-          <td><span class="badge" style="background:var(--secondary-light); color:var(--secondary); font-weight:700; padding:2px 8px; border-radius:4px;"><i class="fa-solid fa-circle-check"></i> ${r.status || 'Disimpan'}</span></td>
-          <td style="text-align:center; white-space:nowrap;">
-            <button class="btn btn-sm btn-primary" onclick="viewSavedRph(${r.id})" title="Buka Dokumen">
-              <i class="fa-solid fa-eye"></i> Papar
-            </button>
-            <button class="btn btn-sm btn-outline" style="color:var(--danger);" onclick="deleteSavedRph(${r.id})" title="Padam">
-              <i class="fa-solid fa-trash"></i>
-            </button>
-          </td>
-        </tr>
-      `).join('');
-
-      if (recentList) {
-        recentList.innerHTML = savedRphList.slice(0, 3).map(r => `
-          <div style="padding:0.75rem 0; border-bottom:1px solid var(--surface-border); display:flex; justify-content:space-between; align-items:center;">
-            <div>
-              <div style="font-weight:600; font-size:0.9rem;">${r.tajuk}</div>
-              <div style="font-size:0.78rem; color:var(--text-muted);">${r.hari} • ${r.kelas} (${r.subjek}) • Minggu ${r.minggu}</div>
-            </div>
-            <button class="btn btn-sm btn-outline" onclick="viewSavedRph(${r.id})"><i class="fa-solid fa-arrow-right"></i></button>
-          </div>
-        `).join('');
-      }
-    }
-
-    function viewSavedRph(id) {
-      const r = savedRphList.find(item => item.id === id);
-      if (!r) return;
-
-      document.getElementById('formRphHari').value = r.hari;
-      document.getElementById('formRphMasa').value = r.masa;
-      document.getElementById('formRphKelas').value = r.kelas;
-      document.getElementById('formRphSubjek').value = r.subjek;
-      document.getElementById('formRphMinggu').value = r.minggu;
-      document.getElementById('formRphTajuk').value = r.tajuk;
-      document.getElementById('formRphSk').value = r.sk;
-      document.getElementById('formRphSp').value = r.sp;
-      document.getElementById('formRphBukuTeks').value = r.bukuTeks;
-
+    /* --- Guna semula rekod untuk RPH berikutnya --- */
+    function reuseArkibRph(id) {
+      const src = savedRphList.find(function (x) { return x.id === id; });
+      if (!src) return;
+      closeModalDirectly();
+      const copy = Object.assign({}, src, {
+        id: Date.now(), created: arkibNow(), dikemas: arkibNow(),
+        status: 'Draf Dijana', saved: false, auto: false, docHtml: '',
+        pblTarikhMula: arkibShiftDate(src.pblTarikhMula, 7),
+        pblTarikhHantar: arkibShiftDate(src.pblTarikhHantar, 7)
+      });
+      Object.assign(copy, arkibTempohDariTarikh(copy));
+      savedRphList.unshift(copy);
+      currentArkibId = copy.id;
+      arkibPersist(); renderSavedRphTable(); updateArkibBadge(); updateDashboardMetrics(); updateArkibSelectedInfo();
+      arkibWithSuspend(function () {
+        if (copy.templateKey) { try { loadPblRbtTemplate(copy.templateKey); } catch (e) { } }
+        applyArkibToForm(copy);
+      });
       switchTab('bina-rph');
       autoGenerateSmartRph();
-      showToast(`RPH "${r.tajuk}" dibuka`);
+      showToast('RPH baharu dari rekod "' + src.tajuk + '" (tarikh dicadang +1 minggu). Kemas kini tarikh/minggu lalu tekan "Simpan Janaan Semasa".');
+    }
+    function arkibTempohDariTarikh(r) {
+      const m = String(r.pblTarikhMula || '').match(/^(\d{4})-(\d{2})-(\d{2})$/);
+      const h = String(r.pblTarikhHantar || '').match(/^(\d{4})-(\d{2})-(\d{2})$/);
+      if (!m || !h) return {};
+      const d1 = new Date(Number(m[1]), Number(m[2]) - 1, Number(m[3]));
+      const d2 = new Date(Number(h[1]), Number(h[2]) - 1, Number(h[3]));
+      if (isNaN(d1) || isNaN(d2) || d2 < d1) return {};
+      const nWk = Math.max(1, Math.ceil(Math.round((d2 - d1) / 86400000) / 7));
+      const w1 = (parseInt(r.minggu, 10) || (typeof currentWeek !== 'undefined' ? currentWeek : 12));
+      return { pblMingguPelaksanaan: 'Minggu ' + w1 + ' hingga Minggu ' + (w1 + nWk - 1) + ' (' + nWk + ' Minggu)' };
     }
 
+    /* --- Edit rekod arkib (modal) --- */
+    function openArkibEditModal(id) {
+      const r = savedRphList.find(function (x) { return x.id === id; });
+      if (!r) return;
+      currentArkibId = r.id;
+      const statusOpts = ['Draf Dijana', 'Disimpan', 'Sedang Dilaksana', 'Selesai Dilaksana', 'Disemak Pentadbir'];
+      const html = `
+        <div class="card-header">
+          <h3><i class="fa-solid fa-pen-to-square" style="color:var(--primary); margin-right:6px;"></i> Edit Rekod Arkib RPH</h3>
+          <button class="btn-icon" onclick="closeModalDirectly()"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <p style="font-size:0.8rem; color:var(--text-muted); margin-bottom:0.85rem;">
+          Kemas kini maklumat rekod ini. Perubahan disimpan dalam Arkib dan boleh diguna semula untuk RPH berikutnya.
+        </p>
+        <form onsubmit="submitArkibEdit(event, ${r.id})">
+          <div class="form-group">
+            <label class="form-label">Tajuk / Projek PdPc</label>
+            <input type="text" id="arkibEditTajuk" class="form-control" value="${escAttr(r.tajuk)}">
+          </div>
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.75rem;">
+            <div class="form-group">
+              <label class="form-label">Tarikh / Hari</label>
+              <input type="text" id="arkibEditHari" class="form-control" value="${escAttr(r.hari)}">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Minggu</label>
+              <input type="number" min="1" max="42" id="arkibEditMinggu" class="form-control" value="${escAttr(r.minggu)}">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Masa</label>
+              <input type="text" id="arkibEditMasa" class="form-control" value="${escAttr(r.masa)}">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Kelas</label>
+              <input type="text" id="arkibEditKelas" class="form-control" value="${escAttr(r.kelas)}">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Subjek</label>
+              <input type="text" id="arkibEditSubjek" class="form-control" value="${escAttr(r.subjek)}">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Status</label>
+              <select id="arkibEditStatus" class="form-select">
+                ${statusOpts.map(s => `<option${s === r.status ? ' selected' : ''}>${s}</option>`).join('')}
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Tarikh Mula PBL</label>
+              <input type="date" id="arkibEditTarikhMula" class="form-control" value="${escAttr(r.pblTarikhMula)}">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Tarikh Hantar PBL</label>
+              <input type="date" id="arkibEditTarikhHantar" class="form-control" value="${escAttr(r.pblTarikhHantar)}">
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Tempoh Pelaksanaan (Minggu ...)</label>
+            <input type="text" id="arkibEditTempoh" class="form-control" value="${escAttr(r.pblMingguPelaksanaan)}">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Standard Kandungan (SK)</label>
+            <input type="text" id="arkibEditSk" class="form-control" value="${escAttr(r.sk)}">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Standard Pembelajaran (SP)</label>
+            <textarea id="arkibEditSp" class="form-control" rows="3">${esc(r.sp)}</textarea>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Nota / Catatan Guru</label>
+            <textarea id="arkibEditNota" class="form-control" rows="3" placeholder="cth: tambah aktiviti pemulihan, tarikh hantar ditunda...">${esc(r.nota)}</textarea>
+          </div>
+          <div style="display:flex; justify-content:space-between; gap:0.5rem; flex-wrap:wrap;">
+            <button type="button" class="btn btn-outline" style="color:#7c3aed; border-color:#c4b5fd;" onclick="reuseArkibRph(${r.id})"><i class="fa-solid fa-clone"></i> Guna untuk RPH Baharu</button>
+            <div style="display:flex; gap:0.5rem;">
+              <button type="button" class="btn btn-outline" onclick="closeModalDirectly()">Batal</button>
+              <button type="submit" class="btn btn-primary"><i class="fa-solid fa-floppy-disk"></i> Simpan Perubahan</button>
+            </div>
+          </div>
+        </form>`;
+      openModal(html);
+    }
+
+    function submitArkibEdit(ev, id) {
+      if (ev && ev.preventDefault) ev.preventDefault();
+      const r = savedRphList.find(function (x) { return x.id === id; });
+      if (!r) return;
+      const v = function (i) { const el = document.getElementById(i); return el && el.value != null ? String(el.value).trim() : ''; };
+      r.tajuk = v('arkibEditTajuk') || r.tajuk;
+      r.hari = v('arkibEditHari') || r.hari;
+      r.minggu = v('arkibEditMinggu') || r.minggu;
+      r.masa = v('arkibEditMasa') || r.masa;
+      r.kelas = v('arkibEditKelas');
+      r.subjek = v('arkibEditSubjek') || r.subjek;
+      r.pblTarikhMula = v('arkibEditTarikhMula');
+      r.pblTarikhHantar = v('arkibEditTarikhHantar');
+      r.pblMingguPelaksanaan = v('arkibEditTempoh') || r.pblMingguPelaksanaan;
+      r.sk = v('arkibEditSk');
+      r.sp = v('arkibEditSp');
+      r.nota = v('arkibEditNota');
+      const st = document.getElementById('arkibEditStatus');
+      if (st && st.value) r.status = st.value;
+      r.saved = (r.status !== 'Draf Dijana');
+      Object.assign(r, arkibTempohDariTarikh(r));
+      r.dikemas = arkibNow();
+      arkibPersist(); renderSavedRphTable(); updateArkibBadge(); updateDashboardMetrics(); updateArkibSelectedInfo();
+      closeModalDirectly();
+      showToast('Rekod arkib "' + r.tajuk + '" dikemas kini.');
+    }
+
+    /* --- Kemas kini rekod drpd suntingan dokumen (contenteditable) --- */
+    function updateArkibFromPreview() {
+      if (!currentArkibId) { showToast('Tiada rekod dipilih. Tekan "Papar" pada senarai arkib dahulu.'); return; }
+      const r = savedRphList.find(function (x) { return x.id === currentArkibId; });
+      if (!r) { showToast('Rekod tidak dijumpai dalam arkib.'); return; }
+      const pv = function (id) { const el = document.getElementById(id); return el && el.innerText ? String(el.innerText).trim() : ''; };
+      const mgg = (pv('previewMinggu').match(/\d+/) || [])[0];
+      Object.assign(r, {
+        hari: pv('previewHariTarikh') || r.hari,
+        masa: pv('previewMasa') || r.masa,
+        kelas: pv('previewKelas') || r.kelas,
+        subjek: pv('previewSubjek') || r.subjek,
+        minggu: mgg || r.minggu,
+        tajuk: pv('previewTajuk') || r.tajuk,
+        sk: pv('previewSK') || r.sk,
+        sp: pv('previewSP') || r.sp,
+        bukuTeks: pv('previewBukuTeksRef') || r.bukuTeks,
+        pblMingguPelaksanaan: pv('previewPblMingguTempoh') || r.pblMingguPelaksanaan,
+        pblTarikhMula: arkibDMY(pv('previewPblTarikhMula')) || r.pblTarikhMula,
+        pblTarikhHantar: arkibDMY(pv('previewPblTarikhHantar')) || r.pblTarikhHantar,
+        docHtml: arkibDocHtml(),
+        dikemas: arkibNow(),
+        saved: true
+      });
+      if (!r.status || r.status === 'Draf Dijana') r.status = 'Disimpan';
+      arkibPersist(); renderSavedRphTable(); updateArkibBadge(); updateDashboardMetrics(); updateArkibSelectedInfo();
+      showToast('Rekod "' + r.tajuk + '" dikemas kini bersama suntingan dokumen.');
+    }
+
+    /* --- Padam --- */
     function deleteSavedRph(id) {
-      savedRphList = savedRphList.filter(item => item.id !== id);
-      localStorage.setItem('erph_saved', JSON.stringify(savedRphList));
-      renderSavedRphTable();
-      updateDashboardMetrics();
-      updateArkibBadge();
-      showToast('Rekod RPH dipadam daripada arkib');
+      const r = savedRphList.find(function (x) { return x.id === id; });
+      if (!r) return;
+      const html = `
+        <div class="card-header">
+          <h3><i class="fa-solid fa-triangle-exclamation" style="color:var(--danger); margin-right:6px;"></i> Padam Rekod Arkib</h3>
+          <button class="btn-icon" onclick="closeModalDirectly()"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <div style="background:var(--danger-light); border:1px solid rgba(234,67,53,0.3); border-radius:8px; padding:1rem; margin-bottom:1rem;">
+          <p style="font-size:0.9rem; font-weight:600; color:var(--danger); margin-bottom:0.4rem;">Adakah anda pasti mahu memadam rekod ini?</p>
+          <p style="font-size:0.95rem; font-weight:700; color:var(--text); margin-bottom:0.3rem;">"${esc(r.tajuk)}"</p>
+          <p style="font-size:0.82rem; color:var(--text-muted);">${esc(r.kelas || '-')} &bull; M${esc(r.minggu || '-')} &bull; Hantar: ${esc(arkibISOtoDMY(r.pblTarikhHantar))}</p>
+        </div>
+        <div style="display:flex; justify-content:flex-end; gap:0.5rem;">
+          <button class="btn btn-outline" onclick="closeModalDirectly()">Batal</button>
+          <button class="btn btn-danger" onclick="executeArkibDelete(${r.id})"><i class="fa-solid fa-trash"></i> Ya, Padam</button>
+        </div>`;
+      openModal(html);
+    }
+    function executeArkibDelete(id) {
+      const r = savedRphList.find(function (x) { return x.id === id; });
+      savedRphList = savedRphList.filter(function (item) { return item.id !== id; });
+      if (currentArkibId === id) currentArkibId = null;
+      arkibPersist(); closeModalDirectly(); renderSavedRphTable(); updateArkibBadge(); updateDashboardMetrics(); updateArkibSelectedInfo();
+      showToast('Rekod RPH ' + (r ? '"' + r.tajuk + '" ' : '') + 'dipadam daripada arkib.');
+    }
+
+    /* --- Sandaran: eksport / import JSON --- */
+    function exportArkibJson() {
+      if (!savedRphList.length) { showToast('Arkib kosong - tiada rekod untuk dieksport.'); return; }
+      const data = { app: 'SEPORA RBT TOOLKIT', jenis: 'arkib-rph', versi: 2, tarikh: arkibNow(), rekod: savedRphList };
+      const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = 'arkib_rph_sepora_' + arkibNow().slice(0, 10) + '.json';
+      document.body.appendChild(a); a.click(); document.body.removeChild(a);
+      showToast('Arkib (' + savedRphList.length + ' rekod) dieksport sebagai fail JSON.');
+    }
+    function importArkibJson(ev) {
+      const f = ev && ev.target && ev.target.files ? ev.target.files[0] : null;
+      if (!f) return;
+      const target = ev.target;
+      const rd = new FileReader();
+      rd.onload = function () {
+        try {
+          const data = JSON.parse(rd.result);
+          const rows = Array.isArray(data) ? data : (data.rekod || data.records || []);
+          const norm = arkibNormalize(rows);
+          let added = 0;
+          norm.forEach(function (n) {
+            const dup = savedRphList.some(function (x) {
+              return x.id === n.id || (x.tajuk === n.tajuk && String(x.minggu) === String(n.minggu) && String(x.kelas) === String(n.kelas));
+            });
+            if (!dup) { savedRphList.push(n); added++; }
+          });
+          savedRphList.sort(function (a, b) { return (Number(b.id) || 0) - (Number(a.id) || 0); });
+          arkibPersist(); renderSavedRphTable(); updateArkibBadge(); updateDashboardMetrics(); updateArkibSelectedInfo();
+          showToast('Import selesai - ' + added + ' rekod ditambah (arkib kini ' + savedRphList.length + ' rekod).');
+        } catch (e) {
+          showToast('Fail JSON tidak sah atau rosak.');
+        }
+        if (target) target.value = '';
+      };
+      rd.readAsText(f);
     }
 
     // ===== EKSPORT RPH: PDF & Word (.docx) =====
@@ -5734,23 +6189,29 @@ function autoGenerateSmartRph() {
     /* PENGURUSAN LOG MASUK MENGGUNAKAN EMEL */
     function checkAuthStatus() {
       const lockScreen = document.getElementById('privacyLockScreen');
-      const isLoggedIn = sessionStorage.getItem('erph_logged_in') === 'true' || localStorage.getItem('erph_remember_login') === 'true';
+      const sess = getSession();
+      let isLoggedIn = false;
+      try {
+        isLoggedIn = sessionStorage.getItem('erph_logged_in') === 'true' || localStorage.getItem('erph_remember_login') === 'true';
+      } catch (e) { }
+      if (sess && sess.email) isLoggedIn = true;
 
       if (lockScreen) {
         if (isLoggedIn) {
           lockScreen.classList.add('hidden');
+          if (!sess) setSession({ email: (authCredentials.email || DEFAULT_AUTH.email), name: teacherProfile.name, mode: 'setempat', loginAt: new Date().toISOString() });
         } else {
           lockScreen.classList.remove('hidden');
           const inputEmail = document.getElementById('loginInputEmail');
-          if (inputEmail) {
-            inputEmail.value = authCredentials.email || DEFAULT_AUTH.email;
-            setTimeout(() => {
-              const pwField = document.getElementById('loginInputPassword');
-              if (pwField) pwField.focus();
-            }, 200);
-          }
+          if (inputEmail) inputEmail.value = authCredentials.email || DEFAULT_AUTH.email;
+          setGateStatus(gdriveConfigured()
+            ? 'Belum log masuk. Log masuk dengan ID DELIMa untuk sandaran Drive automatik.'
+            : 'Belum log masuk. Sandaran Drive belum diset (tekan "Setelan sandaran Google Drive" di bawah) - anda boleh guna mod setempat dahulu.');
         }
       }
+      const au = document.getElementById('driveAutoSync');
+      if (au) au.checked = localStorage.getItem(SEPORA_GDRIVE.autoKey) === '1';
+      refreshDriveChip();
     }
 
     function handleLoginSubmit(event) {
@@ -5763,17 +6224,20 @@ function autoGenerateSmartRph() {
       const validPw = authCredentials.password || DEFAULT_AUTH.password;
 
       if (inputEmail === validEmail && inputPw === validPw) {
-        sessionStorage.setItem('erph_logged_in', 'true');
         if (remember) {
           localStorage.setItem('erph_remember_login', 'true');
         } else {
           localStorage.removeItem('erph_remember_login');
         }
-
-        const lockScreen = document.getElementById('privacyLockScreen');
-        if (lockScreen) lockScreen.classList.add('hidden');
-        document.getElementById('loginInputPassword').value = '';
-        showToast(`Selamat datang, ${teacherProfile.name}! Sesi emel disahkan.`);
+        sessionStorage.setItem('erph_logged_in', 'true');
+        finishLogin({
+          email: inputEmail,
+          name: teacherProfile.name,
+          picture: '',
+          mode: isDelimEmail(inputEmail) ? 'setempat' : 'setempat'
+        });
+        const pw = document.getElementById('loginInputPassword');
+        if (pw) pw.value = '';
       } else {
         showToast('Emel atau Kata Laluan/PIN salah. Sila cuba lagi!');
         const pwField = document.getElementById('loginInputPassword');
@@ -5869,6 +6333,432 @@ function autoGenerateSmartRph() {
       }
     }
 
+
+    /* =========================================================================
+       PWA (boleh dipasang) + GERBANG LOG MASUK DELIMa + SANDARAN GOOGLE DRIVE
+       Aliran: log masuk DELIMa (Google) -> arkib kekal dalam localStorage peranti
+       -> setiap perubahan disandarkan ke fail JSON dalam Google Drive pengguna.
+       ========================================================================= */
+    const PWA_INFO = { nama: 'SEPORA RBT TOOLKIT', versi: '1.0' };
+    const SEPORA_GDRIVE = {
+      // Isi Client ID OAuth Google anda di sini (atau melalui "Setelan sandaran Google Drive"):
+      clientId: '',
+      scope: 'openid email profile https://www.googleapis.com/auth/drive.file',
+      fileName: 'SEPORA_RPH_ARKIB.json',
+      delimDomains: ['moe-dl.edu.my', 'moe.edu.my', 'moe-dl.edu.my.gov.my'],
+      autoKey: 'erph_drive_autosync'
+    };
+    let gTok = null, gTokExp = 0, gSyncing = false, gAutoTimer = null, gInstallEvt = null;
+    let gFileId = '';
+
+    function gdriveClientId() { try { return (localStorage.getItem('erph_gdrive_clientid') || SEPORA_GDRIVE.clientId || '').trim(); } catch (e) { return SEPORA_GDRIVE.clientId || ''; } }
+    function gdriveConfigured() { return /\.apps\.googleusercontent\.com$/i.test(gdriveClientId()); }
+    function getSession() { try { return JSON.parse(localStorage.getItem('erph_session') || 'null'); } catch (e) { return null; } }
+    function setSession(v) { try { if (v) localStorage.setItem('erph_session', JSON.stringify(v)); else localStorage.removeItem('erph_session'); } catch (e) { } }
+    function isDelimEmail(e) {
+      const v = String(e || '').toLowerCase();
+      return SEPORA_GDRIVE.delimDomains.some(function (d) { return v.slice(-1 * (d.length + 1)) === '@' + d; });
+    }
+    function loginTime(d) {
+      const x = d ? new Date(d) : new Date();
+      return ('0' + x.getDate()).slice(-2) + '/' + ('0' + (x.getMonth() + 1)).slice(-2) + ' ' + ('0' + x.getHours()).slice(-2) + ':' + ('0' + x.getMinutes()).slice(-2);
+    }
+    function setDriveChip(html, warna) {
+      const el = document.getElementById('driveStatusChip');
+      if (!el) return;
+      el.innerHTML = html;
+      el.style.borderColor = warna || '';
+      el.style.color = warna || '';
+    }
+    function refreshDriveChip() {
+      const s = getSession();
+      const last = localStorage.getItem('erph_drive_lastsync');
+      if (!s) { setDriveChip('<i class="fa-solid fa-cloud"></i> Drive: belum log masuk', ''); return; }
+      if (s.mode !== 'delima') { setDriveChip('<i class="fa-solid fa-cloud-slash"></i> Mod setempat: ' + esc(s.email || ''), '#b45309'); return; }
+      setDriveChip('<i class="fa-solid fa-cloud-circle-check"></i> Drive: ' + esc(s.email) + (last ? ' &bull; ' + loginTime(last) : ''), '#059669');
+    }
+    function toggleLocalLogin() {
+      const f = document.getElementById('delimaLocalForm');
+      if (f) f.classList.toggle('hidden');
+    }
+    function setGateStatus(html) { const el = document.getElementById('delimaStatus'); if (el) el.innerHTML = html; }
+
+    /* ---------------- PWA: daftar service worker & butang pasang ---------------- */
+    function registerPwaWorker() {
+      if (!('serviceWorker' in navigator)) return;
+      if (location.protocol !== 'https:' && location.hostname !== 'localhost' && location.hostname !== '127.0.0.1') return;
+      navigator.serviceWorker.register('/sw.js', { scope: '/' }).then(function (reg) {
+        window.__swReg = reg;
+        if (reg.waiting) showToast('Versi baharu sedia. Tutup & buka semula aplikasi untuk kemas kini.');
+        reg.addEventListener('updatefound', function () {
+          const nw = reg.installing; if (!nw) return;
+          nw.addEventListener('statechange', function () {
+            if (nw.state === 'installed' && navigator.serviceWorker.controller) showToast('Kemas kini aplikasi dimuat di latar belakang.');
+          });
+        });
+      }).catch(function () { });
+    }
+    function isStandalone() {
+      return (window.matchMedia && window.matchMedia('(display-mode: standalone)').matches) || (window.navigator && window.navigator.standalone) === true;
+    }
+    function installApp() {
+      if (gInstallEvt) {
+        gInstallEvt.prompt();
+        gInstallEvt.userChoice.then(function (c) {
+          if (c && c.outcome === 'accepted') showToast('Aplikasi sedang dipasang...');
+          gInstallEvt = null;
+          const b = document.getElementById('installAppBtn'); if (b) b.style.display = 'none';
+        }).catch(function () { });
+        return;
+      }
+      openInstallHelpModal();
+    }
+    function bindInstallPrompt() {
+      window.addEventListener('beforeinstallprompt', function (e) {
+        e.preventDefault(); gInstallEvt = e;
+        const b = document.getElementById('installAppBtn'); if (b) b.style.display = 'inline-flex';
+      });
+      window.addEventListener('appinstalled', function () {
+        gInstallEvt = null;
+        const b = document.getElementById('installAppBtn'); if (b) b.style.display = 'none';
+        showToast('SEPORA RBT TOOLKIT telah dipasang pada peranti ini.');
+      });
+      const ios = /iphone|ipad|ipod/i.test(navigator.userAgent || '');
+      if (ios && !isStandalone()) { const b = document.getElementById('installAppBtn'); if (b) b.style.display = 'inline-flex'; }
+    }
+    function openInstallHelpModal() {
+      const ios = /iphone|ipad|ipod/i.test(navigator.userAgent || '');
+      const html = `
+        <div class="card-header">
+          <h3><i class="fa-solid fa-mobile-screen-button" style="color:#059669; margin-right:6px;"></i> Pasang Aplikasi (PWA)</h3>
+          <button class="btn-icon" onclick="closeModalDirectly()"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <p style="font-size:0.85rem; color:var(--text-muted); margin-bottom:0.75rem;">
+          Bila dipasang, SEPORA RBT TOOLKIT muncul sebagai ikon aplikasi (ada arkib RPH tersendiri),
+          boleh dibuka tanpa internet, dan arkib disandarkan ke Google Drive DELIMa anda.
+        </p>
+        <div style="font-size:0.85rem; line-height:1.6;">
+          <p style="font-weight:700; margin-bottom:4px;">Android (Chrome)</p>
+          <p style="color:var(--text-muted); margin-bottom:0.6rem;">Ketik butang <strong>Pasang</strong> di bar atas, atau menu (⋮) &rarr; <em>Add to Home screen</em> / <em>Install app</em>.</p>
+          <p style="font-weight:700; margin-bottom:4px;">iPhone / iPad (Safari)</p>
+          <p style="color:var(--text-muted); margin-bottom:0.6rem;">Ketik butang <strong>Share</strong> &rarr; <em>Add to Home Screen</em> &rarr; <em>Add</em>.</p>
+          <p style="font-weight:700; margin-bottom:4px;">Laptop / Komputer (Chrome / Edge)</p>
+          <p style="color:var(--text-muted);">Klik ikon <strong>pasang</strong> (⊞/monitor) di hujung kanan bar alamat, atau menu &rarr; <em>Install SEPORA RBT TOOLKIT</em>.</p>
+        </div>
+        ${ios ? '<p style="font-size:0.78rem; color:#b45309; margin-top:0.7rem;">Peranti iOS: ciri pasang hanya melalui Safari (bukan Chrome iOS).</p>' : ''}
+        <div style="display:flex; justify-content:flex-end; margin-top:1rem;">
+          <button class="btn btn-primary" onclick="closeModalDirectly()">Faham</button>
+        </div>`;
+      openModal(html);
+    }
+
+    /* ---------------- Google Identity Services ---------------- */
+    function loadGis() {
+      if (window.google && window.google.accounts && window.google.accounts.oauth2) return Promise.resolve(true);
+      return new Promise(function (resolve) {
+        const sc = document.createElement('script');
+        sc.src = 'https://accounts.google.com/gsi/client'; sc.async = true; sc.defer = true;
+        sc.onload = function () { resolve(!!(window.google && window.google.accounts)); };
+        sc.onerror = function () { resolve(false); };
+        document.head.appendChild(sc);
+      });
+    }
+    function gToken(silent) {
+      return new Promise(function (resolve, reject) {
+        if (gTok && Date.now() < gTokExp - 60000) return resolve(gTok);
+        loadGis().then(function (ok) {
+          if (!ok) return reject(new Error('Gagal muat skrip Google. Perlu sambungan internet sekali untuk log masuk.'));
+          const sess = getSession();
+          try {
+            const tc = google.accounts.oauth2.initTokenClient({
+              client_id: gdriveClientId(),
+              scope: SEPORA_GDRIVE.scope,
+              hint: sess && isDelimEmail(sess.email) ? sess.email : '',
+              prompt: silent ? '' : 'consent',
+              callback: function (resp) {
+                if (resp && resp.access_token) {
+                  gTok = resp.access_token;
+                  gTokExp = Date.now() + (Number(resp.expires_in || 3600) * 1000);
+                  resolve(gTok);
+                } else { reject(new Error('Kebenaran Google tidak diberikan.')); }
+              },
+              error_callback: function (err) { reject(new Error('Ralat pengesahan Google: ' + ((err && err.message) || 'tidak diketahui'))); }
+            });
+            tc.requestAccessToken({ prompt: silent ? '' : 'consent' });
+          } catch (e) { reject(e); }
+        });
+      });
+    }
+    async function gFetch(url, opts, tok) {
+      opts = opts || {};
+      const mk = function (t) {
+        const h = Object.assign({ Authorization: 'Bearer ' + t }, opts.headers || {});
+        return Object.assign({}, opts, { headers: h });
+      };
+      let res = await fetch(url, mk(tok));
+      if (res.status === 401) { const t2 = await gToken(true); res = await fetch(url, mk(t2)); }
+      if (!res.ok) {
+        let msg = res.status + ' ' + res.statusText;
+        try { const j = await res.json(); msg = (j.error && j.error.message) || msg; } catch (e) { }
+        throw new Error(msg);
+      }
+      const ct = (res.headers.get('content-type') || '');
+      return ct.indexOf('application/json') >= 0 ? res.json() : res.text();
+    }
+    function driveApi(path, opts, tok) { return gFetch('https://www.googleapis.com' + path, opts, tok); }
+    function drivePayload() {
+      const sess = getSession() || {};
+      return {
+        app: PWA_INFO.nama, jenis: 'arkib-rph', versi: 2, tarikh: new Date().toISOString(),
+        pemilik: sess.email || '', sekolah: sess.school || '', bilangan: savedRphList.length, rekod: savedRphList
+      };
+    }
+
+    /* ---------------- Log masuk DELIMa ---------------- */
+    async function delimaLoginWithGoogle() {
+      const btn = document.getElementById('delimaGoogleBtn');
+      if (!gdriveConfigured()) { openGdriveSetupModal(); return; }
+      if (btn) { btn.disabled = true; btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Membuka pengesahan Google...'; }
+      setGateStatus('Membuka tetingkap pengesahan Google (pilih akaun DELIMa anda)...');
+      try {
+        const tok = await gToken(false);
+        const info = await fetch('https://openidconnect.googleapis.com/v1/userinfo', { headers: { Authorization: 'Bearer ' + tok } }).then(function (r) { return r.json(); });
+        const email = String(info.email || '').toLowerCase();
+        if (!isDelimEmail(email)) {
+          setGateStatus('<span style="color:#b45309;">Akaun <strong>' + esc(email) + '</strong> bukan ID DELIMa (@moe-dl.edu.my). Sila pilih akaun DELIMa sekolah anda.</span>');
+          showToast('Sila gunakan ID DELIMa untuk sandaran Drive.');
+          return;
+        }
+        finishLogin({ email: email, name: info.name || email, picture: info.picture || '', mode: 'delima' });
+        await restoreAfterLogin();
+      } catch (e) {
+        setGateStatus('<span style="color:#dc2626;">' + esc(e.message || 'Gagal log masuk.') + ' Cuba lagi atau guna mod setempat.</span>');
+      } finally {
+        if (btn) { btn.disabled = false; btn.innerHTML = '<i class="fa-brands fa-google"></i> Log Masuk dengan ID DELIMa'; }
+      }
+    }
+    function finishLogin(sess) {
+      sess.loginAt = new Date().toISOString();
+      setSession(sess);
+      try {
+        sessionStorage.setItem('erph_logged_in', 'true');
+        localStorage.setItem('erph_remember_login', 'true');
+      } catch (e) { }
+      if (sess.name) { teacherProfile.name = sess.name; try { localStorage.setItem('erph_teacher', JSON.stringify(teacherProfile)); } catch (e) { } }
+      const lock = document.getElementById('privacyLockScreen');
+      if (lock) lock.classList.add('hidden');
+      if (typeof syncTeacherUI === 'function') syncTeacherUI();
+      refreshDriveChip();
+      const au = document.getElementById('driveAutoSync');
+      if (au) au.checked = localStorage.getItem(SEPORA_GDRIVE.autoKey) === '1';
+      showToast('Selamat datang ' + (sess.name || sess.email) + (sess.mode === 'delima' ? ' (ID DELIMa)' : ' (mod setempat)') + '!');
+    }
+    async function restoreAfterLogin() {
+      if (typeof driveRestore !== 'function') return;
+      if (savedRphList.length === 0) {
+        const ok = await driveRestore(true);
+        if (!ok) showToast('Belum ada sandaran dalam Drive. RPH yang dijana akan disandarkan secara automatik.');
+      } else if (!localStorage.getItem('erph_drive_lastsync')) {
+        if (confirm('Arkib dalam peranti ini ada ' + savedRphList.length + ' rekod. Mahu muat turun & gabungkan arkib dari Google Drive?')) await driveRestore(true);
+      }
+    }
+
+    /* ---------------- Sandaran Drive ---------------- */
+    async function driveSave(silent) {
+      const sess = getSession();
+      if (!sess || sess.mode !== 'delima') {
+        if (!silent) { showToast('Log masuk dengan ID DELIMa dahulu untuk sandaran Drive.'); openDrivePanel(); }
+        return false;
+      }
+      if (gSyncing) return false;
+      gSyncing = true;
+      setDriveChip('<i class="fa-solid fa-arrows-rotate fa-spin"></i> Drive: menyimpan...', '#2563eb');
+      try {
+        const tok = await gToken(true);
+        const body = JSON.stringify(drivePayload());
+        if (!gFileId) {
+          const q = encodeURIComponent("name='" + SEPORA_GDRIVE.fileName + "' and trashed=false");
+          const list = await driveApi('/drive/v3/files?q=' + q + '&spaces=drive&fields=files(id,name,modifiedTime)', {}, tok);
+          if (list.files && list.files.length) gFileId = list.files[0].id;
+        }
+        if (gFileId) {
+          await driveApi('/upload/drive/v3/files/' + gFileId + '?uploadType=media', {
+            method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: body
+          }, tok);
+        } else {
+          const meta = { name: SEPORA_GDRIVE.fileName, mimeType: 'application/json', description: 'Arkib RPH SEPORA RBT TOOLKIT (' + sess.email + ')' };
+          const form = new FormData();
+          form.append('metadata', new Blob([JSON.stringify(meta)], { type: 'application/json' }));
+          form.append('file', new Blob([body], { type: 'application/json' }));
+          const up = await driveApi('/upload/drive/v3/files?uploadType=multipart&fields=id,name,modifiedTime', { method: 'POST', body: form }, tok);
+          gFileId = up.id;
+        }
+        try {
+          localStorage.setItem('erph_drive_fileid', gFileId || '');
+          localStorage.setItem('erph_drive_lastsync', new Date().toISOString());
+        } catch (e) { }
+        refreshDriveChip();
+        if (!silent) showToast('Arkib (' + savedRphList.length + ' rekod) disandarkan ke Google Drive ' + sess.email + '.');
+        return true;
+      } catch (e) {
+        setDriveChip('<i class="fa-solid fa-triangle-exclamation"></i> Drive: gagal - ' + esc(String(e.message || 'ralat').slice(0, 60)), '#dc2626');
+        if (!silent) showToast('Sandaran Drive gagal: ' + (e.message || 'ralat rangkaian'));
+        return false;
+      } finally { gSyncing = false; }
+    }
+    async function driveRestore(silent) {
+      const sess = getSession();
+      if (!sess || sess.mode !== 'delima') {
+        if (!silent) { showToast('Log masuk dengan ID DELIMa dahulu untuk memulihkan arkib dari Drive.'); openDrivePanel(); }
+        return false;
+      }
+      setDriveChip('<i class="fa-solid fa-arrows-rotate fa-spin"></i> Drive: memuat turun...', '#2563eb');
+      try {
+        const tok = await gToken(true);
+        const q = encodeURIComponent("name='" + SEPORA_GDRIVE.fileName + "' and trashed=false");
+        const list = await driveApi('/drive/v3/files?q=' + q + '&spaces=drive&fields=files(id,name,modifiedTime)', {}, tok);
+        if (!list.files || !list.files.length) {
+          setDriveChip('<i class="fa-solid fa-cloud-question"></i> Drive: tiada fail sandaran', '#b45309');
+          if (!silent) showToast('Tiada fail sandaran dalam Drive anda lagi.');
+          return false;
+        }
+        const f = list.files[0];
+        gFileId = f.id;
+        try { localStorage.setItem('erph_drive_fileid', gFileId); } catch (e) { }
+        const raw = await driveApi('/drive/v3/files/' + f.id + '?alt=media', {}, tok);
+        const data = typeof raw === 'string' ? JSON.parse(raw) : raw;
+        const rows = arkibNormalize(Array.isArray(data) ? data : (data.rekod || []));
+        let added = 0, updated = 0;
+        rows.forEach(function (n) {
+          const ex = savedRphList.find(function (x) { return x.id === n.id; });
+          if (ex) { if (String(n.dikemas || '') > String(ex.dikemas || '')) { Object.assign(ex, n); updated++; } }
+          else { savedRphList.push(n); added++; }
+        });
+        savedRphList.sort(function (a, b) { return (Number(b.id) || 0) - (Number(a.id) || 0); });
+        arkibPersist(); renderSavedRphTable(); updateArkibBadge(); updateDashboardMetrics(); updateArkibSelectedInfo();
+        try { localStorage.setItem('erph_drive_lastsync', new Date().toISOString()); } catch (e) { }
+        refreshDriveChip();
+        if (!silent || added || updated) showToast('Pulih dari Drive: ' + added + ' rekod baharu, ' + updated + ' dikemas kini (fail: ' + f.name + ').');
+        return true;
+      } catch (e) {
+        setDriveChip('<i class="fa-solid fa-triangle-exclamation"></i> Drive: gagal - ' + esc(String(e.message || 'ralat').slice(0, 60)), '#dc2626');
+        if (!silent) showToast('Pulih dari Drive gagal: ' + (e.message || 'ralat rangkaian'));
+        return false;
+      }
+    }
+    function toggleDriveAutoSync(on) {
+      try { localStorage.setItem(SEPORA_GDRIVE.autoKey, on ? '1' : '0'); } catch (e) { }
+      if (on && !getSession()) { showToast('Auto-sandaran aktif, tetapi anda belum log masuk DELIMa.'); return; }
+      showToast(on ? 'Auto-sandaran Drive diaktifkan (setiap perubahan arkib).' : 'Auto-sandaran Drive dimatikan.');
+      if (on) driveSave(true);
+    }
+    function driveMaybeAuto() {
+      try {
+        if (localStorage.getItem(SEPORA_GDRIVE.autoKey) !== '1') return;
+        const sess = getSession();
+        if (!sess || sess.mode !== 'delima') return;
+        clearTimeout(gAutoTimer);
+        gAutoTimer = setTimeout(function () {
+          if (gTok && Date.now() < gTokExp - 60000) driveSave(true);
+          else setDriveChip('<i class="fa-solid fa-cloud-arrow-up"></i> Drive: tekan untuk sandaran (sesi tamat)', '#f59e0b');
+        }, 6000);
+      } catch (e) { }
+    }
+
+    /* ---------------- Panel Drive & setelan ---------------- */
+    function openDrivePanel() {
+      const sess = getSession();
+      const last = localStorage.getItem('erph_drive_lastsync');
+      const auto = localStorage.getItem(SEPORA_GDRIVE.autoKey) === '1';
+      const rows = [
+        ['Akaun DELIMa', sess ? esc(sess.email) + (sess.mode === 'delima' ? ' <span style="color:#059669;">(disahkan)</span>' : ' <span style="color:#b45309;">(mod setempat)</span>') : '<em>Belum log masuk</em>'],
+        ['Sandaran terakhir', last ? loginTime(last) : '<em>Belum ada</em>'],
+        ['Fail Drive', gFileId || localStorage.getItem('erph_drive_fileid') || '<em>Belum dicipta</em>'],
+        ['Rekod dalam arkib', String(savedRphList.length)],
+        ['Auto-sandaran', auto ? 'Aktif' : 'Mati'],
+        ['Status internet', navigator.onLine ? 'Dalam talian' : 'Luar talian'],
+        ['Dipasang pada peranti', isStandalone() ? 'Ya (PWA)' : 'Tidak (dibuka dalam pelayar)']
+      ].map(function (r) { return '<tr><td style="padding:6px 8px; font-weight:600;">' + r[0] + '</td><td style="padding:6px 8px; color:var(--text-muted);">' + r[1] + '</td></tr>'; }).join('');
+      const html = `
+        <div class="card-header">
+          <h3><i class="fa-solid fa-cloud" style="color:#1a73e8; margin-right:6px;"></i> Sandaran Google Drive (DELIMa)</h3>
+          <button class="btn-icon" onclick="closeModalDirectly()"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <table style="width:100%; font-size:0.82rem; border-collapse:collapse; margin-bottom:1rem;">${rows}</table>
+        <div style="display:flex; gap:0.5rem; flex-wrap:wrap;">
+          ${sess ? '' : '<button class="btn btn-primary" onclick="closeModalDirectly(); delimaLoginWithGoogle()"><i class="fa-brands fa-google"></i> Log masuk DELIMa</button>'}
+          <button class="btn btn-outline" onclick="driveSave(false)"><i class="fa-solid fa-cloud-arrow-up"></i> Sandaran sekarang</button>
+          <button class="btn btn-outline" onclick="driveRestore(false)"><i class="fa-solid fa-cloud-arrow-down"></i> Pulih dari Drive</button>
+          <button class="btn btn-outline" onclick="openGdriveSetupModal()"><i class="fa-solid fa-gear"></i> Setelan Client ID</button>
+          ${sess ? '<button class="btn btn-outline" style="color:var(--danger); border-color:#fca5a5;" onclick="logoutSession()"><i class="fa-solid fa-right-from-bracket"></i> Log keluar</button>' : ''}
+        </div>
+        <p style="font-size:0.75rem; color:var(--text-muted); margin-top:0.85rem;">
+          Fail sandaran: <strong>${SEPORA_GDRIVE.fileName}</strong> dalam Google Drive akaun DELIMa anda.
+          Data juga kekal dalam peranti ini (localStorage) untuk kegunaan offline.
+        </p>`;
+      openModal(html);
+    }
+    function logoutSession() {
+      setSession(null);
+      gTok = null; gTokExp = 0;
+      try {
+        sessionStorage.removeItem('erph_logged_in');
+        localStorage.removeItem('erph_remember_login');
+      } catch (e) { }
+      closeModalDirectly();
+      const lock = document.getElementById('privacyLockScreen');
+      if (lock) lock.classList.remove('hidden');
+      setGateStatus('Anda telah log keluar. Data arkib kekal dalam peranti ini.');
+      refreshDriveChip();
+      showToast('Log keluar. Data RPH kekal dalam peranti.');
+    }
+    function openGdriveSetupModal() {
+      const cur = gdriveClientId();
+      const origin = (location.protocol === 'https:' || location.hostname === 'localhost') ? location.origin : 'https://sepora-rbt-toolkit.vercel.app';
+      const html = `
+        <div class="card-header">
+          <h3><i class="fa-solid fa-gear" style="color:#1a73e8; margin-right:6px;"></i> Setelan Sandaran Google Drive</h3>
+          <button class="btn-icon" onclick="closeModalDirectly()"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <p style="font-size:0.85rem; color:var(--text-muted); margin-bottom:0.75rem;">
+          Untuk menyimpan arkib terus ke Google Drive guru, sistem perlu <strong>OAuth Client ID</strong> daripada Google Cloud
+          (percuma, sekali sahaja, ~5 minit). Rujuk fail <strong>PANDUAN_GDRIVE.md</strong> dalam folder projek untuk langkah bergambar.
+        </p>
+        <ol style="font-size:0.82rem; line-height:1.6; padding-left:1.2rem; color:var(--text);">
+          <li>Buka <a href="https://console.cloud.google.com/apis/credentials" target="_blank" rel="noopener">console.cloud.google.com/apis/credentials</a> &rarr; Create Credentials &rarr; <em>OAuth client ID</em> &rarr; Web application.</li>
+          <li>Authorised JavaScript origins: <code style="background:var(--primary-light); padding:1px 5px; border-radius:4px;">${origin}</code></li>
+          <li>Aktifkan <strong>Google Drive API</strong> (APIs &amp; Services &rarr; Library).</li>
+          <li>Salin Client ID (<code>...apps.googleusercontent.com</code>) dan tampal di bawah.</li>
+        </ol>
+        <div class="form-group" style="margin-top:0.8rem;">
+          <label class="form-label">OAuth Client ID</label>
+          <input type="text" id="gdriveClientIdInput" class="form-control" placeholder="1234567890-xxxxxxxx.apps.googleusercontent.com" value="${escAttr(cur)}">
+        </div>
+        <div style="display:flex; justify-content:flex-end; gap:0.5rem;">
+          <button class="btn btn-outline" onclick="closeModalDirectly()">Tutup</button>
+          <button class="btn btn-primary" onclick="saveGdriveClientId()"><i class="fa-solid fa-floppy-disk"></i> Simpan &amp; cuba log masuk</button>
+        </div>`;
+      openModal(html);
+    }
+    function saveGdriveClientId() {
+      const el = document.getElementById('gdriveClientIdInput');
+      const v = (el ? el.value : '').trim();
+      if (v && !/\.apps\.googleusercontent\.com$/i.test(v)) { showToast('Client ID tidak sah - mesti berakhir dengan .apps.googleusercontent.com'); return; }
+      try { v ? localStorage.setItem('erph_gdrive_clientid', v) : localStorage.removeItem('erph_gdrive_clientid'); } catch (e) { }
+      closeModalDirectly();
+      showToast(v ? 'Client ID disimpan. Tekan "Log Masuk dengan ID DELIMa".' : 'Client ID dikosongkan.');
+      const btn = document.getElementById('delimaGoogleBtn');
+      if (btn && v) btn.click();
+    }
+    function applyDeepLinkTab() {
+      try {
+        const t = new URLSearchParams(location.search).get('tab');
+        if (t && document.getElementById('view-' + t)) switchTab(t);
+      } catch (e) { }
+    }
+    window.addEventListener('online', function () { refreshDriveChip(); driveMaybeAuto(); });
+    window.addEventListener('offline', function () { setDriveChip('<i class="fa-solid fa-wifi"></i> Luar talian - data kekal dalam peranti', '#b45309'); });
+
     window.addEventListener('DOMContentLoaded', () => {
       const savedTheme = localStorage.getItem('erph_theme');
       if (savedTheme === 'dark') {
@@ -5910,10 +6800,19 @@ function autoGenerateSmartRph() {
       renderRptTable();
       renderTextbookTable();
       renderBbmGrid();
+      savedRphList = arkibNormalize(savedRphList);
+      arkibPersist();
       renderSavedRphTable();
+      updateArkibBadge();
+      updateArkibSelectedInfo();
       updateDashboardMetrics();
 
-      loadPblRbtTemplate(5);
+      // Muat templat lalai TANPA mencipta rekod arkib (hanya janaan sebenar guru yang disimpan)
+      arkibWithSuspend(function () { loadPblRbtTemplate(5); });
+      bindInstallPrompt();
+      registerPwaWorker();
+      applyDeepLinkTab();
+      gFileId = localStorage.getItem('erph_drive_fileid') || '';
       checkAuthStatus();
     });
   </script>

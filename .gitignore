@@ -14,3 +14,6 @@ Thumbs.db
 
 # Buku teks PDF (besar 891MB, hak cipta KPM - rujukan tempatan sahaja)
 buku teks rbt/
+
+# Ujian runtime (jana semula dgn arkib_test_build.py)
+.arkib_test/

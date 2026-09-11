@@ -1,0 +1,58 @@
+{
+  "name": "SEPORA RBT TOOLKIT - e-RPH & PBL RBT",
+  "short_name": "SEPORA RBT",
+  "description": "Sistem Pembina RPH & Inovasi PBL RBT SK Poring - arkib RPH, cetak PDF/Word, sandaran Google Drive DELIMa.",
+  "lang": "ms",
+  "dir": "ltr",
+  "start_url": "/?sumber=pwa",
+  "scope": "/",
+  "display": "standalone",
+  "display_override": [
+    "standalone",
+    "minimal-ui",
+    "browser"
+  ],
+  "orientation": "any",
+  "background_color": "#f6f8fb",
+  "theme_color": "#1a73e8",
+  "categories": [
+    "education",
+    "productivity"
+  ],
+  "icons": [
+    {
+      "src": "/icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/icon-maskable-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "/icons/icon-maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Bina RPH",
+      "url": "/?tab=bina-rph"
+    },
+    {
+      "name": "Arkib RPH",
+      "url": "/?tab=simpan-cetak"
+    }
+  ]
+}
