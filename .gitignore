@@ -17,3 +17,6 @@ buku teks rbt/
 
 # Ujian runtime (jana semula dgn arkib_test_build.py)
 .arkib_test/
+
+# Bukti ujian Chrome headless (profil besar - jangan commit)
+.verify/
