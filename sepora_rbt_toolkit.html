@@ -829,14 +829,17 @@
     #driveStatusChip:hover { border-color: var(--primary); color: var(--primary); }
     #installAppBtn { display: none; }
     .delima-gate {
-      position: fixed; inset: 0; z-index: 5000; display: flex; align-items: center; justify-content: center;
-      padding: 1rem; background: linear-gradient(135deg, #0b57d0 0%, #1a73e8 45%, #34a853 100%);
-      overflow-y: auto;
+      position: fixed; top: 0; left: 0; right: 0; bottom: 0; z-index: 5000;
+      display: flex; align-items: center; justify-content: center;
+      padding: 1rem; box-sizing: border-box; overflow-y: auto; overflow-x: hidden;
+      background: linear-gradient(135deg, #0b57d0 0%, #1a73e8 45%, #34a853 100%);
     }
     .delima-card {
-      width: 100%; max-width: 430px; background: var(--surface); border-radius: 18px; padding: 1.6rem 1.4rem;
+      width: auto; box-sizing: border-box; flex: 0 0 auto;
+      min-width: 0; max-width: 430px; background: var(--surface); border-radius: 18px; padding: 1.6rem 1.4rem;
       box-shadow: 0 24px 60px rgba(0,0,0,0.35); text-align: center; margin: auto;
     }
+    @media (max-width: 480px) { .delima-card { width: 100%; } }
     .delima-card h1 { font-size: 1.25rem; font-weight: 800; margin: 0.75rem 0 0.15rem; letter-spacing: 0.4px; }
     .delima-card .delima-sub { font-size: 0.8rem; color: var(--text-muted); margin-bottom: 1.1rem; }
     .delima-google {
