@@ -90,7 +90,13 @@ Cara ini berkesan untuk guru yang mahu kawalan penuh tanpa setelan OAuth.
 
 ---
 
-## E. Had & nota jujur
+## E. Nota penting: guna alamat https, bukan fail tempatan
+
+Log masuk Google & sandaran Drive hanya berfungsi melalui **https**:
+- ✅ `https://sepora-rbt-toolkit.vercel.app` (juga selepas dipasang sebagai aplikasi)
+- ⚠️ Membuka fail `index.html` terus dari cakera (file://) — hanya **mod setempat** berfungsi, Drive tidak.
+
+## F. Had & nota jujur
 
 - **Google Drive memerlukan Client ID sendiri** — tidak boleh dikongsi oleh aplikasi pihak ketiga. Tanpa ia, butang DELIMa membuka panduan setelan (bukan gagal senyap).
 - Ada sekolah yang menyekat aplikasi luar pada akaun Workspace. Jika Google menyatakan *"Access blocked"*, pentadbir ICT sekolah perlu meluluskan aplikasi (OAuth consent) — gunakan mod setempat sementara.

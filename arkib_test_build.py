@@ -61,7 +61,11 @@ global.document = {
   createElement: (t) => { const e = new El(''); e.tagName = String(t).toUpperCase(); return e; },
   querySelectorAll: () => [], querySelector: () => null, addEventListener() { }
 };
-global.window = { addEventListener() { }, print() { }, __rphTemplKey: '', navigator: global.navigator, matchMedia: null, open() { } };
+global.__listeners = {};
+global.window = {
+  addEventListener(ev, fn) { global.__listeners[ev] = fn; },
+  print() { }, __rphTemplKey: '', navigator: global.navigator, matchMedia: null, open() { }
+};
 global.localStorage = {
   _d: {}, getItem(k) { return Object.prototype.hasOwnProperty.call(this._d, k) ? this._d[k] : null; },
   setItem(k, v) { this._d[k] = String(v); }, removeItem(k) { delete this._d[k]; }
@@ -298,6 +302,16 @@ mockFetch((u) => J({ email: 'someone@gmail.com', name: 'Bukan Delim' }));
   chk('PWA: panel Drive boleh dibuka', (openDrivePanel(), el('modalBoxContent').innerHTML.indexOf('Sandaran Google Drive') > 0));
   chk('PWA: setelan client id boleh dibuka', (openGdriveSetupModal(), el('modalBoxContent').innerHTML.indexOf('OAuth Client ID') > 0));
   chk('PWA: deep link tab berfungsi', (function () { location = { search: '' }; return true; })());
+
+  // ---- init penuh: jalankan listener DOMContentLoaded app dgn DOM stub ----
+  chk('DOMContentLoaded didaftarkan', typeof global.__listeners.DOMContentLoaded === 'function');
+  let initErr = null;
+  try { global.__listeners.DOMContentLoaded(); } catch (e) { initErr = e; }
+  chk('init DOMContentLoaded TANPA ralat', initErr === null, initErr ? (initErr.message + ' | ' + String(initErr.stack || '').split('\n')[1]) : 'ok');
+  chk('init: chip Drive dikemas kini', el('driveStatusChip').innerHTML.length > 0, el('driveStatusChip').innerHTML.slice(0, 60));
+  chk('init: auto-sync checkbox disegerakkan', el('driveAutoSync').checked === (localStorage.getItem(SEPORA_GDRIVE.autoKey) === '1'), String(el('driveAutoSync').checked));
+  chk('init: borang minggu diisi (42 pilihan)', el('formRphMinggu').children.length >= 42 || el('formRphMinggu').options.length >= 42, 'children=' + el('formRphMinggu').children.length);
+  chk('init: templat lalai dimuat tanpa ralat', el('previewTajuk').innerText.length > 0, el('previewTajuk').innerText.slice(0, 40));
 
   console.log(R.join('\n'));
   console.log('\nRINGKASAN: ' + R.filter(x => x.startsWith('PASS')).length + ' pass / ' + R.filter(x => x.startsWith('FAIL')).length + ' fail');
