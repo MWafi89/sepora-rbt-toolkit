@@ -4,7 +4,7 @@
    data kekal dalam storan peranti (localStorage) + arkib Google Drive DELIMa.
    Naikkan CACHE_VERSION setiap kali deploy supaya guru dapat versi terbaru.
    ========================================================================= */
-const CACHE_VERSION = 'sepora-rbt-v3-2026-09-12c';
+const CACHE_VERSION = 'sepora-rbt-v3-2026-09-12d';
 const SHELL = [
   '/',
   '/index.html',

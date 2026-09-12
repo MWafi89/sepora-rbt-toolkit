@@ -908,6 +908,12 @@
         <a class="nav-item" href="https://linktr.ee/RBTSEPORA?utm_source=linktree_profile_share&ltsid=80099ec5-2cc3-4e39-bedf-01918b0c2435" target="_blank" rel="noopener noreferrer" onclick="openLinktree(event)" style="background: linear-gradient(135deg, rgba(16, 185, 129, 0.12), rgba(5, 150, 105, 0.05)); color: #059669; border: 1px solid rgba(16, 185, 129, 0.3); font-weight: 600;">
           <i class="fa-solid fa-arrow-up-right-from-square" style="color:#059669;"></i> Portal RBT SEPORA
         </a>
+        <a class="nav-item" style="color:var(--danger);" onclick="lockAppScreen()">
+          <i class="fa-solid fa-lock"></i> Kunci Skrin
+        </a>
+        <a class="nav-item" style="color:var(--danger); font-weight:700;" onclick="logoutSession()">
+          <i class="fa-solid fa-right-from-bracket"></i> Log Keluar
+        </a>
       </nav>
 
       <div id="sidebarRecentBox" style="margin:0.6rem 0.75rem 0 0.75rem; background:linear-gradient(135deg, rgba(37,99,235,0.08), rgba(5,150,105,0.06)); border:1px solid rgba(37,99,235,0.18); border-radius:10px; padding:0.55rem 0.6rem;">
@@ -6355,9 +6361,14 @@ function autoGenerateSmartRph() {
           </div>
 
           <div style="display:flex; justify-content:space-between; align-items:center; gap:0.5rem; margin-top:1.25rem;">
-            <button type="button" class="btn btn-outline" style="color:var(--danger); border-color:var(--danger);" onclick="lockAppScreen()">
-              <i class="fa-solid fa-lock"></i> Kunci Skrin Sekarang
-            </button>
+            <div style="display:flex; gap:0.5rem; flex-wrap:wrap;">
+              <button type="button" class="btn btn-outline" style="color:var(--danger); border-color:var(--danger);" onclick="lockAppScreen()">
+                <i class="fa-solid fa-lock"></i> Kunci Skrin
+              </button>
+              <button type="button" class="btn btn-danger" onclick="logoutSession()">
+                <i class="fa-solid fa-right-from-bracket"></i> Log Keluar
+              </button>
+            </div>
             <div style="display:flex; gap:0.5rem;">
               <button type="button" class="btn btn-outline" onclick="closeModalDirectly()">Tutup</button>
               <button type="submit" class="btn btn-primary">Simpan Profil & Privasi</button>
@@ -6398,9 +6409,12 @@ function autoGenerateSmartRph() {
       const sess = getSession();
       let isLoggedIn = false;
       try {
-        isLoggedIn = sessionStorage.getItem('erph_logged_in') === 'true' || localStorage.getItem('erph_remember_login') === 'true';
+        // [F11b] bendera kunci skrin MENGATASI kedua-dua "ingat saya" & sesi dalam tab
+        const ingat = localStorage.getItem('erph_remember_login') === 'true';
+        const sesiTab = sessionStorage.getItem('erph_logged_in') === 'true';
+        isLoggedIn = !isLocked() && (sesiTab || ingat);
       } catch (e) { }
-      if (sess && sess.email) isLoggedIn = true;
+      if (sess && sess.email && !isLocked()) isLoggedIn = true;   // [F11] kunci skrin dihormati
 
       if (lockScreen) {
         if (isLoggedIn) {
@@ -6483,20 +6497,36 @@ function autoGenerateSmartRph() {
       showToast(`Emel Berdaftar: ${currentEmail} | PIN: ${currentPw}`);
     }
 
+    /* [F11] Kunci skrin sebenar: bendera 'erph_locked' mesti dibuka dengan emel+PIN.
+       (Sebelum ini muat semula halaman terus memintas kunci kerana sesi masih ada.) */
+    const SEPORA_LOCK_KEY = 'erph_locked';
+    function setLocked(on) {
+      try { on ? localStorage.setItem(SEPORA_LOCK_KEY, '1') : localStorage.removeItem(SEPORA_LOCK_KEY); } catch (e) { }
+    }
+    function isLocked() {
+      try { return localStorage.getItem(SEPORA_LOCK_KEY) === '1'; } catch (e) { return false; }
+    }
+
     function lockAppScreen() {
-      sessionStorage.removeItem('erph_logged_in');
-      localStorage.removeItem('erph_remember_login');
+      setLocked(true);                       // [F11] mesti buka kunci dgn emel + PIN
       closeModalDirectly();
+      // Sembunyikan arkib & dokumen semasa (privasi) - data KEKAL dalam peranti
+      try {
+        savedRphList = arkibNormalize(JSON.parse(localStorage.getItem(arkibKey()) || '[]'));
+      } catch (e) { }
+      const el = document.getElementById('rphPreviewContainer');
+      if (el) el.innerHTML = '';
+      try { syncRphMirror(); } catch (e) { }
 
       const lockScreen = document.getElementById('privacyLockScreen');
       if (lockScreen) {
         lockScreen.classList.remove('hidden');
+        const emField = document.getElementById('loginInputEmail');
+        if (emField && !emField.value) emField.value = authCredentials.email || DEFAULT_AUTH.email;
         const pwField = document.getElementById('loginInputPassword');
-        if (pwField) {
-          pwField.value = '';
-          pwField.focus();
-        }
+        if (pwField) { pwField.value = ''; pwField.focus(); }
       }
+      setGateStatus('Sistem dikunci. Masukkan emel & PIN anda untuk membuka semula.');
       showToast('Sistem dikunci untuk privasi.');
     }
 
@@ -6748,6 +6778,7 @@ function autoGenerateSmartRph() {
     function finishLogin(sess) {
       sess.loginAt = new Date().toISOString();
       setSession(sess);
+      setLocked(false);   // [F11] kunci dibuka selepas pengesahan
       // [F6] muatkan arkib milik akaun ini (arkib guru lain dalam telefon sama tidak bercampur)
       try { arkibLoadForSession(); renderSavedRphTable(); updateArkibBadge(); updateArkibSelectedInfo(); updateDashboardMetrics(); } catch (e) { }
       try {
@@ -6909,16 +6940,32 @@ function autoGenerateSmartRph() {
       openModal(html);
     }
     function logoutSession() {
+      if (!confirm('Log keluar dari akaun ini?\n\nArkib tetap tersimpan dalam peranti & Google Drive, dan hanya boleh dilihat selepas log masuk semula.')) return;
       setSession(null);
+      setLocked(false);
       gTok = null; gTokExp = 0;
       try {
         sessionStorage.removeItem('erph_logged_in');
         localStorage.removeItem('erph_remember_login');
       } catch (e) { }
+      // [F11] kosongkan arkib & dokumen dalam memori supaya guru seterusnya tidak nampak
+      // RPH guru sebelumnya pada telefon/peranti yang sama (data kekal dalam storan).
+      try {
+        savedRphList = []; currentArkibId = null;
+        renderSavedRphTable(); updateArkibBadge(); updateArkibSelectedInfo(); updateDashboardMetrics();
+      } catch (e) { }
+      const pv = document.getElementById('rphPreviewContainer');
+      if (pv) pv.innerHTML = '';
+      try { syncRphMirror(); } catch (e) { }
       closeModalDirectly();
+      try { switchTab('dashboard'); } catch (e) { }
       const lock = document.getElementById('privacyLockScreen');
       if (lock) lock.classList.remove('hidden');
-      setGateStatus('Anda telah log keluar. Data arkib kekal dalam peranti ini.');
+      const emField = document.getElementById('loginInputEmail');
+      if (emField) emField.value = authCredentials.email || DEFAULT_AUTH.email;
+      const pwField = document.getElementById('loginInputPassword');
+      if (pwField) { pwField.value = ''; pwField.focus(); }
+      setGateStatus('Anda telah log keluar. Masukkan emel & PIN untuk log masuk semula (data kekal dalam peranti).');
       refreshDriveChip();
       showToast('Log keluar. Data RPH kekal dalam peranti.');
     }
