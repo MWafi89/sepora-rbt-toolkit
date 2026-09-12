@@ -50,14 +50,14 @@ fi
 echo
 echo "=== (B) SEMAKAN TINGKAH LAKU (chromium headless + CDP) ==="
 PROF=/tmp/ujian_chr_prof
+LOG=/tmp/ujian_chr.log
 rm -rf "$PROF"
 chromium --headless=new --no-sandbox --disable-gpu --disable-dev-shm-usage \
          --remote-debugging-port=9334 --user-data-dir="$PROF" about:blank >/tmp/ujian_chr.log 2>&1 &
 CHR=$!
-trap 'kill "$CHR" 2>/dev/null' EXIT
+trap 'pkill -f "user-data-dir=$PROF" 2>/dev/null; sleep 1; rm -rf "$PROF" 2>/dev/null; rm -f "$LOG" 2>/dev/null; rm -f /tmp/ujian_inline.js /tmp/ujian_orig.html' EXIT
 sleep 6
 TEST_URL="${TEST_URL:-https://sepora-rbt-toolkit.vercel.app/index.html}" CDP_PORT=9334 \
   node "$HERE/ujian_verify_cdp.js"
 RC=$?
-rm -f /tmp/ujian_inline.js /tmp/ujian_orig.html
 exit $RC
