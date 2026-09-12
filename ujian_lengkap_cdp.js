@@ -308,8 +308,29 @@ async function connect() {
     return { ok:ok, move:window.__g.move, folderCreate:window.__g.folderCreate }; })()`);
   ok('L44 Drive: fail lama di akar dipindah ke folder', gd4.ok === true && gd4.move >= 1 && gd4.folderCreate === 1, JSON.stringify(gd4));
 
+  /* ---------- L46-L48: onboarding guru (F13) ---------- */
+  const onb = await ev(`(function(){ gTok = null; gTokExp = 0;
+    try { localStorage.removeItem(SEPORA_GDRIVE.autoKey); localStorage.removeItem('erph_profil_disemak'); } catch (e) { }
+    finishLogin({ email:'guru.delima@moe-dl.edu.my', name:'Guru DELIMa', mode:'delima' });
+    const chk = document.getElementById('driveAutoSync');
+    return { auto: localStorage.getItem(SEPORA_GDRIVE.autoKey), checkbox: chk ? !!chk.checked : null, folder: SEPORA_GDRIVE.folderName }; })()`);
+  ok('L46 log masuk DELIMa -> sandaran Drive automatik AKTIF', onb.auto === '1' && (onb.checkbox === null || onb.checkbox === true), `auto=${onb.auto} folder=${onb.folder}`);
+
+  await ev(`(function(){ closeModalDirectly(); localStorage.removeItem('erph_profil_disemak');
+    finishLogin({ email: DEFAULT_AUTH.email, name: DEFAULT_TEACHER.name, mode:'setempat' }); return 'ok'; })()`);
+  await new Promise(r => setTimeout(r, 1300));
+  const onb1 = await ev(`(function(){ const m = document.getElementById('modalBoxContent'), ov = document.getElementById('appModalOverlay');
+    return { flag: localStorage.getItem('erph_profil_disemak'), teks: m ? (m.innerText||'') : '',
+             panjang: m ? (m.innerText||'').trim().length : -1, papar: ov ? ov.style.display : null }; })()`);
+  ok('L47 mod setempat dgn emel lalai -> minta guru tetapkan emel & PIN sendiri', onb1.flag === '1' && onb1.panjang > 50 && /Emel/i.test(onb1.teks) && onb1.papar === 'flex', `panjang=${onb1.panjang} papar=${onb1.papar}`);
+
+  await ev(`(function(){ closeModalDirectly(); finishLogin({ email: DEFAULT_AUTH.email, name: DEFAULT_TEACHER.name, mode:'setempat' }); return 'ok'; })()`);
+  await new Promise(r => setTimeout(r, 1200));
+  const onb2 = await ev(`(function(){ const ov = document.getElementById('appModalOverlay'); return { papar: ov ? ov.style.display : null }; })()`);
+  ok('L48 kali kedua tidak mengganggu lagi (sekali sahaja)', onb2.papar !== 'flex', `papar=${onb2.papar}`);
+
   /* ---------- L25: ralat JS sepanjang ujian ---------- */
-  ok('L45 tiada ralat JS sepanjang ujian', errors.length === 0, errors.slice(0, 3).join(' | ') || '0 ralat');
+  ok('L49 tiada ralat JS sepanjang ujian', errors.length === 0, errors.slice(0, 3).join(' | ') || '0 ralat');
 
   console.log('\n===== UJIAN LENGKAP SEPORA RBT TOOLKIT (chromium headless + CDP) =====');
   console.log('URL: ' + TEST_URL);

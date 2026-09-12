@@ -6781,6 +6781,13 @@ function autoGenerateSmartRph() {
       sess.loginAt = new Date().toISOString();
       setSession(sess);
       setLocked(false);   // [F11] kunci dibuka selepas pengesahan
+      // [F13a] log masuk ID DELIMa (Google) -> aktifkan sandaran Drive automatik
+      try {
+        if (sess.mode === 'delima' && !localStorage.getItem(SEPORA_GDRIVE.autoKey)) {
+          localStorage.setItem(SEPORA_GDRIVE.autoKey, '1');
+          showToast('Sandaran automatik ke folder "' + SEPORA_GDRIVE.folderName + '" dalam Drive anda: AKTIF.');
+        }
+      } catch (e) { }
       // [F6] muatkan arkib milik akaun ini (arkib guru lain dalam telefon sama tidak bercampur)
       try { arkibLoadForSession(); renderSavedRphTable(); updateArkibBadge(); updateArkibSelectedInfo(); updateDashboardMetrics(); } catch (e) { }
       try {
@@ -6795,6 +6802,20 @@ function autoGenerateSmartRph() {
       const au = document.getElementById('driveAutoSync');
       if (au) au.checked = localStorage.getItem(SEPORA_GDRIVE.autoKey) === '1';
       showToast('Selamat datang ' + (sess.name || sess.email) + (sess.mode === 'delima' ? ' (ID DELIMa)' : ' (mod setempat)') + '!');
+      // [F13b] mod setempat dengan emel lalai -> minta guru tetapkan emel & PIN sendiri (sekali sahaja)
+      try {
+        const gunakanEmelLalai = sess.mode === 'setempat' &&
+          String(sess.email || '').toLowerCase() === String(DEFAULT_AUTH.email || '').toLowerCase();
+        if (gunakanEmelLalai && !localStorage.getItem('erph_profil_disemak')) {
+          localStorage.setItem('erph_profil_disemak', '1');
+          setTimeout(function () {
+            try {
+              openProfileModal();
+              showToast('Sila tukar emel & PIN kepada milik anda supaya arkib anda berasingan.');
+            } catch (e) { }
+          }, 700);
+        }
+      } catch (e) { }
     }
     async function restoreAfterLogin() {
       if (typeof driveRestore !== 'function') return;
