@@ -227,8 +227,49 @@ async function connect() {
     return { ralat:ralat, cetak:window.__printed, adaCdn:!!window.html2pdf }; })()`);
   ok('L30 eksport PDF / cetak tanpa ralat', pdf.ralat === '' && (pdf.cetak >= 1 || pdf.adaCdn), `print=${pdf.cetak} html2pdf=${pdf.adaCdn}`);
 
+
+  /* ---------- L32-L38: sistem log keluar & kunci skrin (F11) ---------- */
+  const AKAUN_UJIAN = { email: 'ujian@moe-dl.edu.my', name: 'Guru Ujian', mode: 'setempat' };
+  const f11 = await ev(`(function(){
+    finishLogin(${JSON.stringify(AKAUN_UJIAN)});                       // pastikan akaun ujian aktif
+    loadSlotToRph('Khamis','10:30 - 11:30','2 Rajin','RBT Tahun 5'); autoGenerateSmartRph(); saveCurrentGeneratedRph();
+    const sebelum = savedRphList.length;
+    lockAppScreen();
+    return { sebelum: sebelum, gerbang: !document.getElementById('privacyLockScreen').classList.contains('hidden'),
+             kunci: localStorage.getItem('erph_locked'),
+             butangNav: /LOG KELUAR/i.test(document.getElementById('sidebar').innerText) && /KUNCI SKRIN/i.test(document.getElementById('sidebar').innerText) }; })()`);
+  ok('L32 Kunci Skrin -> gerbang + bendera erph_locked', f11.gerbang === true && f11.kunci === '1', `kunci=${f11.kunci} rekod=${f11.sebelum}`);
+  ok('L33 butang Log Keluar + Kunci Skrin dalam bar sisi', f11.butangNav === true);
+
+  await send('Page.reload'); const rdy4 = await waitReady(); await stub();
+  const kunciLepas = await ev(`(function(){ return { gerbang: !document.getElementById('privacyLockScreen').classList.contains('hidden'), kunci: localStorage.getItem('erph_locked') }; })()`);
+  ok('L34 kunci KEKAL selepas muat semula (tak boleh dipintas)', rdy4 && kunciLepas.gerbang === true && kunciLepas.kunci === '1', `gerbang=${kunciLepas.gerbang}`);
+
+  const bukaKunci = await ev(`(function(){ document.getElementById('loginInputEmail').value = DEFAULT_AUTH.email;
+    document.getElementById('loginInputPassword').value = DEFAULT_AUTH.password;
+    handleLoginSubmit({preventDefault:function(){}});
+    return { gerbang: !document.getElementById('privacyLockScreen').classList.contains('hidden'), kunci: localStorage.getItem('erph_locked'), akaun: (getSession()||{}).email }; })()`);
+  ok('L35 emel + PIN membuka kunci', bukaKunci.gerbang === false && bukaKunci.kunci === null, `akaun=${bukaKunci.akaun}`);
+
+  const sesiKeluar = await ev(`(function(){ finishLogin(${JSON.stringify(AKAUN_UJIAN)});
+    const sebelum = savedRphList.length; logoutSession();
+    return { sebelum: sebelum, sesi: getSession(), kunci: localStorage.getItem('erph_locked'), arkib: savedRphList.length,
+             preview: (document.getElementById('rphPreviewContainer').innerText||'').trim().length,
+             gerbang: !document.getElementById('privacyLockScreen').classList.contains('hidden') }; })()`);
+  ok('L36 Log Keluar: sesi + arkib memori + dokumen dibersihkan, gerbang dipapar',
+     sesiKeluar.sesi === null && sesiKeluar.arkib === 0 && sesiKeluar.preview === 0 && sesiKeluar.gerbang === true && sesiKeluar.sebelum > 0,
+     `rekod sebelum=${sesiKeluar.sebelum} sesi=${sesiKeluar.sesi} arkib=${sesiKeluar.arkib} preview=${sesiKeluar.preview}`);
+
+  await send('Page.reload'); const rdy5 = await waitReady(); await stub();
+  const lepasKeluar = await ev(`(function(){ return { gerbang: !document.getElementById('privacyLockScreen').classList.contains('hidden'), arkib: savedRphList.length }; })()`);
+  ok('L37 selepas log keluar, muat semula tidak auto-masuk', rdy5 && lepasKeluar.gerbang === true && lepasKeluar.arkib === 0);
+
+  const masukKembali = await ev(`(function(){ finishLogin(${JSON.stringify(AKAUN_UJIAN)});
+    return { gerbang: !document.getElementById('privacyLockScreen').classList.contains('hidden'), arkib: savedRphList.length, kunci: arkibKey() }; })()`);
+  ok('L38 log masuk semula memulihkan arkib akaun itu', masukKembali.gerbang === false && masukKembali.arkib >= 1, `arkib=${masukKembali.arkib} kunci=${masukKembali.kunci}`);
+
   /* ---------- L25: ralat JS sepanjang ujian ---------- */
-  ok('L31 tiada ralat JS sepanjang ujian', errors.length === 0, errors.slice(0, 3).join(' | ') || '0 ralat');
+  ok('L39 tiada ralat JS sepanjang ujian', errors.length === 0, errors.slice(0, 3).join(' | ') || '0 ralat');
 
   console.log('\n===== UJIAN LENGKAP SEPORA RBT TOOLKIT (chromium headless + CDP) =====');
   console.log('URL: ' + TEST_URL);
