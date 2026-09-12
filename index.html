@@ -6583,11 +6583,13 @@ function autoGenerateSmartRph() {
       clientId: '',
       scope: 'openid email profile https://www.googleapis.com/auth/drive.file',
       fileName: 'SEPORA_RPH_ARKIB.json',
+      folderName: 'SEPORATOOLKIT',            // [F12] folder sandaran auto-cipta dalam Drive guru
       delimDomains: ['moe-dl.edu.my', 'moe.edu.my', 'moe-dl.edu.my.gov.my'],
       autoKey: 'erph_drive_autosync'
     };
     let gTok = null, gTokExp = 0, gSyncing = false, gAutoTimer = null, gInstallEvt = null;
     let gFileId = '';
+    let gFolderId = '';   // [F12] id folder sandaran google drive
 
     function gdriveClientId() { try { return (localStorage.getItem('erph_gdrive_clientid') || SEPORA_GDRIVE.clientId || '').trim(); } catch (e) { return SEPORA_GDRIVE.clientId || ''; } }
     function gdriveConfigured() { return /\.apps\.googleusercontent\.com$/i.test(gdriveClientId()); }
@@ -6805,6 +6807,40 @@ function autoGenerateSmartRph() {
     }
 
     /* ---------------- Sandaran Drive ---------------- */
+    /* ---------------- [F12] Folder sandaran dalam Google Drive guru ---------------- */
+    function driveFolderState() { try { return localStorage.getItem('erph_drive_folderid') || ''; } catch (e) { return ''; } }
+    async function driveFindArchiveFile(tok, folderId, dalamFolder) {
+      let q = "name='" + SEPORA_GDRIVE.fileName + "' and trashed=false";
+      if (dalamFolder && folderId) q = "name='" + SEPORA_GDRIVE.fileName + "' and '" + folderId + "' in parents and trashed=false";
+      const l = await driveApi('/drive/v3/files?q=' + encodeURIComponent(q) + '&spaces=drive&fields=files(id,name,modifiedTime,parents)', {}, tok);
+      return (l && l.files && l.files.length) ? l.files[0] : null;
+    }
+    async function driveMoveToFolder(fileId, folderId, tok) {
+      await driveApi('/drive/v3/files/' + fileId + '?addParents=' + folderId + '&removeParents=root&fields=id,parents',
+        { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: '{}' }, tok);
+    }
+    async function ensureDriveFolder(tok) {
+      if (!gFolderId) gFolderId = driveFolderState();
+      if (gFolderId) return gFolderId;
+      const q = "name='" + SEPORA_GDRIVE.folderName + "' and mimeType='application/vnd.google-apps.folder' and trashed=false";
+      const l = await driveApi('/drive/v3/files?q=' + encodeURIComponent(q) + '&spaces=drive&fields=files(id,name)', {}, tok);
+      if (l && l.files && l.files.length) {
+        gFolderId = l.files[0].id;
+      } else {
+        const created = await driveApi('/drive/v3/files?fields=id,name', {
+          method: 'POST', headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            name: SEPORA_GDRIVE.folderName,
+            mimeType: 'application/vnd.google-apps.folder',
+            description: 'Arkib RPH SEPORA RBT TOOLKIT'
+          })
+        }, tok);
+        gFolderId = created.id;
+      }
+      try { localStorage.setItem('erph_drive_folderid', gFolderId); } catch (e) { }
+      return gFolderId;
+    }
+
     async function driveSave(silent) {
       const sess = getSession();
       if (!sess || sess.mode !== 'delima') {
@@ -6817,17 +6853,23 @@ function autoGenerateSmartRph() {
       try {
         const tok = await gToken(true);
         const body = JSON.stringify(drivePayload());
+        // [F12] pastikan folder sandaran wujud, kemudian simpan fail DI DALAM folder itu
+        const folderId = await ensureDriveFolder(tok);
         if (!gFileId) {
-          const q = encodeURIComponent("name='" + SEPORA_GDRIVE.fileName + "' and trashed=false");
-          const list = await driveApi('/drive/v3/files?q=' + q + '&spaces=drive&fields=files(id,name,modifiedTime)', {}, tok);
-          if (list.files && list.files.length) gFileId = list.files[0].id;
+          const dalamFolder = await driveFindArchiveFile(tok, folderId, true);
+          if (dalamFolder) {
+            gFileId = dalamFolder.id;
+          } else {
+            const lama = await driveFindArchiveFile(tok, '', false);   // fail versi lama di akar Drive
+            if (lama) { await driveMoveToFolder(lama.id, folderId, tok); gFileId = lama.id; }
+          }
         }
         if (gFileId) {
           await driveApi('/upload/drive/v3/files/' + gFileId + '?uploadType=media', {
             method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: body
           }, tok);
         } else {
-          const meta = { name: SEPORA_GDRIVE.fileName, mimeType: 'application/json', description: 'Arkib RPH SEPORA RBT TOOLKIT (' + sess.email + ')' };
+          const meta = { name: SEPORA_GDRIVE.fileName, mimeType: 'application/json', parents: [folderId], description: 'Arkib RPH SEPORA RBT TOOLKIT (' + sess.email + ')' };
           const form = new FormData();
           form.append('metadata', new Blob([JSON.stringify(meta)], { type: 'application/json' }));
           form.append('file', new Blob([body], { type: 'application/json' }));
@@ -6839,7 +6881,7 @@ function autoGenerateSmartRph() {
           localStorage.setItem('erph_drive_lastsync', new Date().toISOString());
         } catch (e) { }
         refreshDriveChip();
-        if (!silent) showToast('Arkib (' + savedRphList.length + ' rekod) disandarkan ke Google Drive ' + sess.email + '.');
+        if (!silent) showToast('Arkib (' + savedRphList.length + ' rekod) disandarkan ke folder "' + SEPORA_GDRIVE.folderName + '" dalam Google Drive ' + sess.email + '.');
         return true;
       } catch (e) {
         setDriveChip('<i class="fa-solid fa-triangle-exclamation"></i> Drive: gagal - ' + esc(String(e.message || 'ralat').slice(0, 60)), '#dc2626');
@@ -6856,14 +6898,15 @@ function autoGenerateSmartRph() {
       setDriveChip('<i class="fa-solid fa-arrows-rotate fa-spin"></i> Drive: memuat turun...', '#2563eb');
       try {
         const tok = await gToken(true);
-        const q = encodeURIComponent("name='" + SEPORA_GDRIVE.fileName + "' and trashed=false");
-        const list = await driveApi('/drive/v3/files?q=' + q + '&spaces=drive&fields=files(id,name,modifiedTime)', {}, tok);
-        if (!list.files || !list.files.length) {
+        // [F12] cari dalam folder sandaran dahulu; jika tiada, cari global (sandaran versi lama)
+        const fid = driveFolderState();
+        let f = fid ? await driveFindArchiveFile(tok, fid, true) : null;
+        if (!f) f = await driveFindArchiveFile(tok, '', false);
+        if (!f) {
           setDriveChip('<i class="fa-solid fa-cloud-question"></i> Drive: tiada fail sandaran', '#b45309');
           if (!silent) showToast('Tiada fail sandaran dalam Drive anda lagi.');
           return false;
         }
-        const f = list.files[0];
         gFileId = f.id;
         try { localStorage.setItem('erph_drive_fileid', gFileId); } catch (e) { }
         const raw = await driveApi('/drive/v3/files/' + f.id + '?alt=media', {}, tok);
@@ -6934,7 +6977,7 @@ function autoGenerateSmartRph() {
           ${sess ? '<button class="btn btn-outline" style="color:var(--danger); border-color:#fca5a5;" onclick="logoutSession()"><i class="fa-solid fa-right-from-bracket"></i> Log keluar</button>' : ''}
         </div>
         <p style="font-size:0.75rem; color:var(--text-muted); margin-top:0.85rem;">
-          Fail sandaran: <strong>${SEPORA_GDRIVE.fileName}</strong> dalam Google Drive akaun DELIMa anda.
+          Fail sandaran: <strong>${SEPORA_GDRIVE.fileName}</strong> dalam folder <strong>${SEPORA_GDRIVE.folderName}</strong> (Google Drive akaun DELIMa anda).
           Data juga kekal dalam peranti ini (localStorage) untuk kegunaan offline.
         </p>`;
       openModal(html);
