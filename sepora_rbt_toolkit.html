@@ -1743,6 +1743,23 @@
             </div>
           </div>
 
+          <!-- [F1] Pratonton RPH dlm bahagian Simpan/Cetak supaya RPH boleh dilihat & dicetak terus dari sini -->
+          <div class="card rph-paper-card" style="margin-top:1rem;">
+            <div class="card-header no-print" style="display:flex; flex-wrap:wrap; gap:0.5rem; align-items:center; justify-content:space-between;">
+              <h3 style="font-size:1.05rem; margin:0;"><i class="fa-solid fa-eye" style="color:#0369a1; margin-right:6px;"></i> Pratonton RPH Semasa</h3>
+              <div style="display:flex; gap:0.4rem; flex-wrap:wrap;">
+                <button class="btn btn-sm btn-secondary" onclick="printRphDocument()"><i class="fa-solid fa-print"></i> Cetak / Simpan PDF</button>
+                <button class="btn btn-sm btn-outline" onclick="switchTab('bina-rph')"><i class="fa-solid fa-pen-to-square"></i> Edit RPH</button>
+                <button class="btn btn-sm btn-outline" onclick="saveCurrentGeneratedRph()"><i class="fa-solid fa-floppy-disk"></i> Simpan ke Arkib</button>
+              </div>
+            </div>
+            <div id="rphMirrorWrap" style="overflow-x:auto;">
+              <p id="rphMirrorEmpty" style="font-size:0.85rem; color:var(--text-muted); margin:0.5rem 0;">
+                Belum ada RPH dijana. Buka <strong>Bina RPH Auto</strong>, pilih projek PBL dan tekan <strong>Jana RPH</strong>.
+              </p>
+            </div>
+          </div>
+
           <div class="card" style="border-left:4px solid #059669;">
             <div class="card-header">
               <h3 style="font-size:1.05rem;"><i class="fa-solid fa-box-archive" style="color:#059669; margin-right:6px;"></i> Simpan, Edit &amp; Guna Semula RPH</h3>
@@ -1759,6 +1776,7 @@
               <button class="btn btn-outline" style="border-color:#c4b5fd; color:#6d28d9;" onclick="exportArkibJson()"><i class="fa-solid fa-file-export"></i> Eksport Arkib (JSON)</button>
               <button class="btn btn-outline" style="border-color:#c4b5fd; color:#6d28d9;" onclick="document.getElementById('arkibImportInput').click()"><i class="fa-solid fa-file-import"></i> Import Arkib (JSON)</button>
               <input type="file" id="arkibImportInput" accept="application/json,.json" style="display:none" onchange="importArkibJson(event)">
+              <button class="btn btn-outline" style="border-color:#fca5a5; color:#b91c1c;" onclick="deleteAllDrafts()"><i class="fa-solid fa-broom"></i> Padam Semua Draf</button>
               <span style="width:1px; height:22px; background:var(--surface-border);"></span>
               <button class="btn btn-outline" style="border-color:#93c5fd; color:#1d4ed8;" onclick="driveSave(false)"><i class="fa-solid fa-cloud-arrow-up"></i> Sandaran ke Drive</button>
               <button class="btn btn-outline" style="border-color:#93c5fd; color:#1d4ed8;" onclick="driveRestore(false)"><i class="fa-solid fa-cloud-arrow-down"></i> Pulih dari Drive</button>
@@ -2214,6 +2232,7 @@
         if (targetPanel) {
           targetPanel.classList.add('active');
         }
+        if (tabId === 'simpan-cetak') { try { syncRphMirror(); } catch (e) { } }
 
         const navLinks = document.querySelectorAll('.sidebar .nav-item');
         navLinks.forEach(link => {
@@ -2485,6 +2504,8 @@
       } else {
         switchTab('bina-rph');
       }
+      // [F3] "Jana RPH" eksplisit -> kekal auto-simpan ke Arkib (melayari templat sahaja tidak)
+      try { arkibAutoSimpan(); } catch (e) { }
     }
 
     async function handleTimetableFileUpload(event) {
@@ -3238,8 +3259,8 @@ Abaikan maklumat tandatangan pentadbir, cuti umum, atau kepala surat yang tidak 
         ],
         "rujukanRpt": "RPT RBT Tahun 4 (SK) 2026 (Rozayus Academy) - Minggu 12 hingga 16",
         "pembezaan": "Pemulihan: Bimbingan kumpulan kecil: guru membimbing langkah demi langkah; contoh siap model kereta idaman dipamerkan sebagai panduan.<br>Pengayaan: Murid cemerlang meneruskan cabaran lanjutan: menambah gear atau sistem brek ringkas, serta mendokumentasikan proses secara digital dan membentangkan kepada kelas.",
-        "pak21": "Pembelajaran Koperatif (kumpulan 4-5 orang), Sumbang Saran, Perbincangan Berkumpulan, Pameran/Pembentangan Hasil",
-        "pentaksiran": "Pemerhatian amali (senarai semak), Soal jawab lisan, Semakan rakan sebaya, Jurnal/Refleksi projek",
+        "pak21": "Pembelajaran Koperatif (kumpulan 4-5 orang), Sumbang Saran Reka Bentuk, Amali Binaan Bengkel, Pameran & Ujian Larian Kereta",
+        "pentaksiran": "Pemerhatian amali (senarai semak), Soal jawab lisan, Ujian larian kereta (kestabilan & ketahanan), Semakan lakaran rakan sebaya, Jurnal/Refleksi projek",
         "tmk": "Video YouTube sebagai rangsangan, video YouTube cara membina kereta kitar semula, Slaid digital untuk pembentangan",
         "emk": "Sains & Teknologi, Keusahawanan, Nilai Murni (Kerjasama, Kekemasan)",
         "keselamatan": "Patuhi langkah keselamatan bengkel/amali: gunakan gunting/gam panas dengan berhati-hati; lapor kepada guru jika berlaku kecederaan."
@@ -3302,8 +3323,8 @@ Abaikan maklumat tandatangan pentadbir, cuti umum, atau kepala surat yang tidak 
         ],
         "rujukanRpt": "RPT RBT Tahun 4 (SK) 2026 (Rozayus Academy) - Minggu 17 hingga 26",
         "pembezaan": "Pemulihan: Bimbingan kumpulan kecil: guru membimbing lakaran dan cetakan ringkas; stensil huruf disediakan untuk murid yang memerlukan.<br>Pengayaan: Murid cemerlang meneruskan cabaran lanjutan: menghasilkan keychain dua warna atau bentuk aksesori lain, serta mendokumentasikan proses secara digital dan membentangkan kepada kelas.",
-        "pak21": "Pembelajaran Koperatif (kumpulan 4-5 orang), Sumbang Saran, Perbincangan Berkumpulan, Pameran/Pembentangan Hasil",
-        "pentaksiran": "Pemerhatian amali (senarai semak), Soal jawab lisan, Semakan rakan sebaya, Jurnal/Refleksi projek",
+        "pak21": "Pembelajaran Koperatif (kumpulan 4-5 orang), Demonstrasi Pen 3D, Latihan Stensil & Lakaran, Galeri Keychain Murid",
+        "pentaksiran": "Pemerhatian amali (senarai semak), Soal jawab lisan, Penilaian produk keychain (kekemasan & ketahanan), Semakan rakan sebaya, Jurnal/Refleksi projek",
         "tmk": "Video YouTube sebagai rangsangan, video tutorial pen 3D di YouTube, Slaid digital untuk pembentangan",
         "emk": "Sains & Teknologi, Kreativiti & Inovasi, Keusahawanan",
         "keselamatan": "Patuhi langkah keselamatan bengkel/amali: hujung pen 3D panas - jangan sentuh, elak terkena kulit; lapor kepada guru jika berlaku kecederaan."
@@ -3366,8 +3387,8 @@ Abaikan maklumat tandatangan pentadbir, cuti umum, atau kepala surat yang tidak 
         ],
         "rujukanRpt": "RPT RBT Tahun 4 (SK) 2026 (Rozayus Academy) - Minggu 17 hingga 26",
         "pembezaan": "Pemulihan: Bimbingan kumpulan kecil: guru menunjukkan semula teknik menjahit; rakan pembimbing membantu murid yang ketinggalan.<br>Pengayaan: Murid cemerlang meneruskan cabaran lanjutan: menambah hiasan sulaman atau renda pada artikel, serta mendokumentasikan proses secara digital dan membentangkan kepada kelas.",
-        "pak21": "Pembelajaran Koperatif (kumpulan 4-5 orang), Sumbang Saran, Perbincangan Berkumpulan, Pameran/Pembentangan Hasil",
-        "pentaksiran": "Pemerhatian amali (senarai semak), Soal jawab lisan, Semakan rakan sebaya, Jurnal/Refleksi projek",
+        "pak21": "Pembelajaran Koperatif (kumpulan 4-5 orang), Demonstrasi Jahitan Asas, Amali Menjahit, Persembahan Artikel Jahitan",
+        "pentaksiran": "Pemerhatian amali (senarai semak), Soal jawab lisan, Penilaian kekemasan mata jahitan, Semakan rakan sebaya, Jurnal/Refleksi projek",
         "tmk": "Video YouTube sebagai rangsangan, video jenis mata jahitan tangan, Slaid digital untuk pembentangan",
         "emk": "Sains & Teknologi, Keusahawanan, Nilai Murni (Kesabaran, Kekemasan)",
         "keselamatan": "Patuhi langkah keselamatan bengkel/amali: hati-hati menggunakan jarum dan gunting fabrik; lapor kepada guru jika berlaku kecederaan."
@@ -3430,8 +3451,8 @@ Abaikan maklumat tandatangan pentadbir, cuti umum, atau kepala surat yang tidak 
         ],
         "rujukanRpt": "RPT RBT Tahun 4 (SK) 2026 (Rozayus Academy) - Minggu 27 hingga 32",
         "pembezaan": "Pemulihan: Bimbingan kumpulan kecil: guru membimbing langkah demi langkah; contoh siap model pembungkusan dipamerkan sebagai panduan.<br>Pengayaan: Murid cemerlang meneruskan cabaran lanjutan: menghasilkan pembungkusan guna bentuk yang lebih kompleks, serta mendokumentasikan proses secara digital dan membentangkan kepada kelas.",
-        "pak21": "Pembelajaran Koperatif (kumpulan 4-5 orang), Sumbang Saran, Perbincangan Berkumpulan, Pameran/Pembentangan Hasil",
-        "pentaksiran": "Pemerhatian amali (senarai semak), Soal jawab lisan, Semakan rakan sebaya, Jurnal/Refleksi projek",
+        "pak21": "Pembelajaran Koperatif (kumpulan 4-5 orang), Analisis Bentangan 3D, Amali Bina Prototaip, Pameran Produk Berbungkus",
+        "pentaksiran": "Pemerhatian amali (senarai semak), Soal jawab lisan, Penilaian prototaip pembungkusan (kekuatan & estetika), Semakan rakan sebaya, Jurnal/Refleksi projek",
         "tmk": "Video YouTube sebagai rangsangan, video reka bentuk pembungkusan kreatif, Slaid digital untuk pembentangan",
         "emk": "Sains & Teknologi, Keusahawanan, Kelestarian Alam Sekitar",
         "keselamatan": "Patuhi langkah keselamatan bengkel/amali: gunakan gunting dan pembaris dengan betul; lapor kepada guru jika berlaku kecederaan."
@@ -3494,8 +3515,8 @@ Abaikan maklumat tandatangan pentadbir, cuti umum, atau kepala surat yang tidak 
         ],
         "rujukanRpt": "RPT RBT Tahun 4 (SK) 2026 (Rozayus Academy) - Minggu 33 hingga 35",
         "pembezaan": "Pemulihan: Bimbingan kumpulan kecil: guru menunjukkan cara menyusun bento; penyediaan dipermudah dengan bahan yang telah dipotong.<br>Pengayaan: Murid cemerlang meneruskan cabaran lanjutan: menyediakan bento bertema mengikut watak kegemaran, serta mendokumentasikan proses secara digital dan membentangkan kepada kelas.",
-        "pak21": "Pembelajaran Koperatif (kumpulan 4-5 orang), Sumbang Saran, Perbincangan Berkumpulan, Pameran/Pembentangan Hasil",
-        "pentaksiran": "Pemerhatian amali (senarai semak), Soal jawab lisan, Semakan rakan sebaya, Jurnal/Refleksi projek",
+        "pak21": "Pembelajaran Koperatif (kumpulan 4-5 orang), Demonstrasi Penyediaan Bento, Amali Dapur Selamat, Pameran Bento Sihat",
+        "pentaksiran": "Pemerhatian amali (senarai semak), Soal jawab lisan, Penilaian bento (kebersihan, keseimbangan nutrisi & kreativiti), Semakan rakan sebaya, Jurnal/Refleksi projek",
         "tmk": "Video YouTube sebagai rangsangan, video seni bento Jepun, Slaid digital untuk pembentangan",
         "emk": "Sains & Teknologi, Keusahawanan, Nilai Murni (Kebersihan)",
         "keselamatan": "Patuhi langkah keselamatan bengkel/amali: basuh tangan, elak alatan tajam, jaga kebersihan makanan; lapor kepada guru jika berlaku kecederaan."
@@ -3557,8 +3578,8 @@ Abaikan maklumat tandatangan pentadbir, cuti umum, atau kepala surat yang tidak 
         ],
         "rujukanRpt": "RPT RBT Tahun 4 (SK) 2026 (Rozayus Academy) - Minggu 38 hingga 42",
         "pembezaan": "Pemulihan: Bimbingan kumpulan kecil: guru membimbing langkah demi langkah membina blok arahan; templat atur cara siap disediakan.<br>Pengayaan: Murid cemerlang meneruskan cabaran lanjutan: menambah skor, bunyi atau sprite baharu dalam atur cara, serta mendokumentasikan proses secara digital dan membentangkan kepada kelas.",
-        "pak21": "Pembelajaran Koperatif (kumpulan 4-5 orang), Sumbang Saran, Perbincangan Berkumpulan, Pameran/Pembentangan Hasil",
-        "pentaksiran": "Pemerhatian amali (senarai semak), Soal jawab lisan, Semakan rakan sebaya, Jurnal/Refleksi projek",
+        "pak21": "Pembelajaran Koperatif (kumpulan 4-5 orang), Unplugged Coding, Pair Programming, Demo Projek Scratch",
+        "pentaksiran": "Pemerhatian amali (senarai semak), Soal jawab lisan, Semakan atur cara projek Scratch, Ujian fungsi sprite, Jurnal/Refleksi projek",
         "tmk": "Video YouTube sebagai rangsangan, perisian Scratch (scratch.mit.edu), Slaid digital untuk pembentangan",
         "emk": "Sains & Teknologi, TMK, Kreativiti & Inovasi",
         "keselamatan": "Patuhi langkah keselamatan bengkel/amali: amalkan postur duduk betul dan rehatkan mata; lapor kepada guru jika berlaku kecederaan."
@@ -3621,8 +3642,8 @@ Abaikan maklumat tandatangan pentadbir, cuti umum, atau kepala surat yang tidak 
         ],
         "rujukanRpt": "RPT RBT Tahun 5 (SK) 2026 (Rozayus Academy) - Minggu 2 hingga 9",
         "pembezaan": "Pemulihan: Bimbingan kumpulan kecil: guru menunjukkan semula teknik menjahit; rakan pembimbing membantu murid yang ketinggalan.<br>Pengayaan: Murid cemerlang meneruskan cabaran lanjutan: menghasilkan artikel jahitan pelbagai guna, serta mendokumentasikan proses secara digital dan membentangkan kepada kelas.",
-        "pak21": "Pembelajaran Koperatif (kumpulan 4-5 orang), Sumbang Saran, Perbincangan Berkumpulan, Pameran/Pembentangan Hasil",
-        "pentaksiran": "Pemerhatian amali (senarai semak), Soal jawab lisan, Semakan rakan sebaya, Jurnal/Refleksi projek",
+        "pak21": "Pembelajaran Koperatif (kumpulan 4-5 orang), Demonstrasi Jahitan Mesin, Amali Kerja Tangan, Pameran Artikel Rumah Tangga",
+        "pentaksiran": "Pemerhatian amali (senarai semak), Soal jawab lisan, Penilaian artikel jahitan (kekemasan & fungsi), Semakan rakan sebaya, Jurnal/Refleksi projek",
         "tmk": "Video YouTube sebagai rangsangan, video tutorial jahitan tangan, Slaid digital untuk pembentangan",
         "emk": "Sains & Teknologi, Keusahawanan, Kesenian, Nilai Murni",
         "keselamatan": "Patuhi langkah keselamatan bengkel/amali: hati-hati menggunakan jarum dan gunting fabrik; lapor kepada guru jika berlaku kecederaan."
@@ -3685,8 +3706,8 @@ Abaikan maklumat tandatangan pentadbir, cuti umum, atau kepala surat yang tidak 
         ],
         "rujukanRpt": "RPT RBT Tahun 5 (SK) 2026 (Rozayus Academy) - Minggu 12 hingga 18",
         "pembezaan": "Pemulihan: Bimbingan kumpulan kecil: guru menunjukkan sambungan litar langkah demi langkah; rajah litar siap disediakan sebagai panduan.<br>Pengayaan: Murid cemerlang meneruskan cabaran lanjutan: menguji kipas menggunakan cahaya lampu jika hujan, serta mendokumentasikan proses secara digital dan membentangkan kepada kelas.",
-        "pak21": "Pembelajaran Koperatif (kumpulan 4-5 orang), Sumbang Saran, Perbincangan Berkumpulan, Pameran/Pembentangan Hasil",
-        "pentaksiran": "Pemerhatian amali (senarai semak), Soal jawab lisan, Semakan rakan sebaya, Jurnal/Refleksi projek",
+        "pak21": "Pembelajaran Koperatif (kumpulan 4-5 orang), Inkuiri Tenaga Solar, Amali Siri Litar, Ujian Prestasi Kipas",
+        "pentaksiran": "Pemerhatian amali (senarai semak), Soal jawab lisan, Ujian prestasi kipas solar (putaran & kestabilan), Semakan sambungan litar, Jurnal/Refleksi projek",
         "tmk": "Video YouTube sebagai rangsangan, video tenaga boleh baharu di YouTube, Slaid digital untuk pembentangan",
         "emk": "Sains & Teknologi, Kelestarian Alam Sekitar, Keusahawanan",
         "keselamatan": "Patuhi langkah keselamatan bengkel/amali: pastikan sambungan litar kemas dan elak litar pintas; lapor kepada guru jika berlaku kecederaan."
@@ -3749,8 +3770,8 @@ Abaikan maklumat tandatangan pentadbir, cuti umum, atau kepala surat yang tidak 
         ],
         "rujukanRpt": "RPT RBT Tahun 5 (SK) 2026 (Rozayus Academy) - Minggu 27 hingga 37",
         "pembezaan": "Pemulihan: Bimbingan kumpulan kecil: guru menunjukkan sambungan litar langkah demi langkah; rajah litar siap disediakan sebagai panduan.<br>Pengayaan: Murid cemerlang meneruskan cabaran lanjutan: menambah LED kedua atau pembaz pada litar, serta mendokumentasikan proses secara digital dan membentangkan kepada kelas.",
-        "pak21": "Pembelajaran Koperatif (kumpulan 4-5 orang), Sumbang Saran, Perbincangan Berkumpulan, Pameran/Pembentangan Hasil",
-        "pentaksiran": "Pemerhatian amali (senarai semak), Soal jawab lisan, Semakan rakan sebaya, Jurnal/Refleksi projek",
+        "pak21": "Pembelajaran Koperatif (kumpulan 4-5 orang), Demontrasi Litar Mikropengawal, Amali Kod Arduino, Demo Projek LED",
+        "pentaksiran": "Pemerhatian amali (senarai semak), Soal jawab lisan, Ujian muat naik kod & fungsi litar, Semakan skematik, Jurnal/Refleksi projek",
         "tmk": "Video YouTube sebagai rangsangan, perisian mBlock dan video LED Arduino, Slaid digital untuk pembentangan",
         "emk": "Sains & Teknologi, TMK",
         "keselamatan": "Patuhi langkah keselamatan bengkel/amali: padam bekalan kuasa sebelum mengubah sambungan litar; lapor kepada guru jika berlaku kecederaan."
@@ -3814,8 +3835,8 @@ Abaikan maklumat tandatangan pentadbir, cuti umum, atau kepala surat yang tidak 
         ],
         "rujukanRpt": "RPT RBT Tahun 5 (SK) 2026 (Rozayus Academy) - Minggu 38 hingga 42",
         "pembezaan": "Pemulihan: Bimbingan kumpulan kecil: guru menunjukkan cara menyediakan takungan; contoh siap dipamerkan sebagai rujukan.<br>Pengayaan: Murid cemerlang meneruskan cabaran lanjutan: mencuba medium berbeza dan merekod perbandingan tumbesaran, serta mendokumentasikan proses secara digital dan membentangkan kepada kelas.",
-        "pak21": "Pembelajaran Koperatif (kumpulan 4-5 orang), Sumbang Saran, Perbincangan Berkumpulan, Pameran/Pembentangan Hasil",
-        "pentaksiran": "Pemerhatian amali (senarai semak), Soal jawab lisan, Semakan rakan sebaya, Jurnal/Refleksi projek",
+        "pak21": "Pembelajaran Koperatif (kumpulan 4-5 orang), Inkuiri Pertanian Bandar, Amali Takungan & Pemindahan Anak Benih, Galeri Hijau Kelas",
+        "pentaksiran": "Pemerhatian amali (senarai semak), Soal jawab lisan, Pemerhatian pertumbuhan tanaman mingguan, Penilaian sistem takungan, Jurnal/Refleksi projek",
         "tmk": "Video YouTube sebagai rangsangan, video pertanian bandar hidroponik, Slaid digital untuk pembentangan",
         "emk": "Sains & Teknologi, Kelestarian Alam Sekitar, Keusahawanan",
         "keselamatan": "Patuhi langkah keselamatan bengkel/amali: basuh tangan selepas berkebun dan jaga kebersihan kawasan; lapor kepada guru jika berlaku kecederaan."
@@ -3879,8 +3900,8 @@ Abaikan maklumat tandatangan pentadbir, cuti umum, atau kepala surat yang tidak 
         ],
         "rujukanRpt": "RPT RBT Tahun 6 (SK) 2026 (Rozayus Academy) - Minggu 2 hingga 14",
         "pembezaan": "Pemulihan: Bimbingan kumpulan kecil: guru menunjukkan sambungan litar langkah demi langkah; rajah litar siap disediakan sebagai panduan.<br>Pengayaan: Murid cemerlang meneruskan cabaran lanjutan: menambah lampu LED pada kereta, serta mendokumentasikan proses secara digital dan membentangkan kepada kelas.",
-        "pak21": "Pembelajaran Koperatif (kumpulan 4-5 orang), Sumbang Saran, Perbincangan Berkumpulan, Pameran/Pembentangan Hasil",
-        "pentaksiran": "Pemerhatian amali (senarai semak), Soal jawab lisan, Semakan rakan sebaya, Jurnal/Refleksi projek",
+        "pak21": "Pembelajaran Koperatif (kumpulan 4-5 orang), Demonstrasi Elektromekanikal, Amali Pemasangan Motor & Bateri, Ujian Kawalan Jauh",
+        "pentaksiran": "Pemerhatian amali (senarai semak), Soal jawab lisan, Ujian kawalan jauh (gerakan, laju & stereng), Semakan sambungan litar, Jurnal/Refleksi projek",
         "tmk": "Video YouTube sebagai rangsangan, video kereta kawalan elektromekanikal, Slaid digital untuk pembentangan",
         "emk": "Sains & Teknologi, Keusahawanan",
         "keselamatan": "Patuhi langkah keselamatan bengkel/amali: gunakan gam panas dengan berhati-hati, elak litar pintas; lapor kepada guru jika berlaku kecederaan."
@@ -3944,8 +3965,8 @@ Abaikan maklumat tandatangan pentadbir, cuti umum, atau kepala surat yang tidak 
         ],
         "rujukanRpt": "RPT RBT Tahun 6 (SK) 2026 (Rozayus Academy) - Minggu 15 hingga 29",
         "pembezaan": "Pemulihan: Bimbingan kumpulan kecil: guru menunjukkan sambungan litar langkah demi langkah; rajah litar siap disediakan sebagai panduan.<br>Pengayaan: Murid cemerlang meneruskan cabaran lanjutan: menambah penderia kedua atau paparan paras air, serta mendokumentasikan proses secara digital dan membentangkan kepada kelas.",
-        "pak21": "Pembelajaran Koperatif (kumpulan 4-5 orang), Sumbang Saran, Perbincangan Berkumpulan, Pameran/Pembentangan Hasil",
-        "pentaksiran": "Pemerhatian amali (senarai semak), Soal jawab lisan, Semakan rakan sebaya, Jurnal/Refleksi projek",
+        "pak21": "Pembelajaran Koperatif (kumpulan 4-5 orang), Inkuiri Sensor Kelembapan, Amali Litar & Kod Pam, Ujian Sistem Automatik",
+        "pentaksiran": "Pemerhatian amali (senarai semak), Soal jawab lisan, Ujian sistem automatik (sensor vs tindak balas pam), Semakan kod, Jurnal/Refleksi projek",
         "tmk": "Video YouTube sebagai rangsangan, perisian MakeCode dan video micro:bit, Slaid digital untuk pembentangan",
         "emk": "Sains & Teknologi, Kelestarian Alam Sekitar",
         "keselamatan": "Patuhi langkah keselamatan bengkel/amali: jangan biarkan litar terkena air; keringkan tangan sebelum mengendalikan litar; lapor kepada guru jika berlaku kecederaan."
@@ -4010,8 +4031,8 @@ Abaikan maklumat tandatangan pentadbir, cuti umum, atau kepala surat yang tidak 
         ],
         "rujukanRpt": "RPT RBT Tahun 6 (SK) 2026 (Rozayus Academy) - Minggu 30 hingga 42",
         "pembezaan": "Pemulihan: Bimbingan kumpulan kecil: guru membimbing langkah demi langkah; contoh siap produk gabungan teknologi dipamerkan sebagai panduan.<br>Pengayaan: Murid cemerlang meneruskan cabaran lanjutan: menambah ciri keselamatan atau fungsi automatik pada produk, serta mendokumentasikan proses secara digital dan membentangkan kepada kelas.",
-        "pak21": "Pembelajaran Koperatif (kumpulan 4-5 orang), Sumbang Saran, Perbincangan Berkumpulan, Pameran/Pembentangan Hasil",
-        "pentaksiran": "Pemerhatian amali (senarai semak), Soal jawab lisan, Semakan rakan sebaya, Jurnal/Refleksi projek",
+        "pak21": "Pembelajaran Koperatif (kumpulan 4-5 orang), Pemikiran Reka Bentuk (Design Thinking), Amali Prototaip, Pitching Produk",
+        "pentaksiran": "Pemerhatian amali (senarai semak), Soal jawab lisan, Penilaian prototaip produk gabungan bahan, Pembentangan reka bentuk, Jurnal/Refleksi projek",
         "tmk": "Video YouTube sebagai rangsangan, video inovasi produk KPM di YouTube, Slaid digital untuk pembentangan",
         "emk": "Sains & Teknologi, Keusahawanan, Kreativiti & Inovasi",
         "keselamatan": "Patuhi langkah keselamatan bengkel/amali: gunakan alatan dengan selamat dan pastikan produk selamat digunakan; lapor kepada guru jika berlaku kecederaan."
@@ -4076,8 +4097,8 @@ Abaikan maklumat tandatangan pentadbir, cuti umum, atau kepala surat yang tidak 
         ],
         "rujukanRpt": "RPT RBT Tahun 6 (SK) 2026 (Rozayus Academy) - Minggu 2 hingga 14",
         "pembezaan": "Pemulihan: Bimbingan kumpulan kecil: guru menunjukkan sambungan litar langkah demi langkah; rajah litar siap disediakan sebagai panduan.<br>Pengayaan: Murid cemerlang meneruskan cabaran lanjutan: mengubah nisbah gear untuk kelajuan berbeza, serta mendokumentasikan proses secara digital dan membentangkan kepada kelas.",
-        "pak21": "Pembelajaran Koperatif (kumpulan 4-5 orang), Sumbang Saran, Perbincangan Berkumpulan, Pameran/Pembentangan Hasil",
-        "pentaksiran": "Pemerhatian amali (senarai semak), Soal jawab lisan, Semakan rakan sebaya, Jurnal/Refleksi projek",
+        "pak21": "Pembelajaran Koperatif (kumpulan 4-5 orang), Inkuiri Sistem Elektromekanikal, Amali Litar Motor Pagar, Ujian Keselamatan",
+        "pentaksiran": "Pemerhatian amali (senarai semak), Soal jawab lisan, Ujian fungsi pintu pagar (sensor & had gerakan), Semakan aspek keselamatan, Jurnal/Refleksi projek",
         "tmk": "Video YouTube sebagai rangsangan, video gear dan motor DC, Slaid digital untuk pembentangan",
         "emk": "Sains & Teknologi, Nilai Murni (Keselamatan)",
         "keselamatan": "Patuhi langkah keselamatan bengkel/amali: gunakan gam panas dengan berhati-hati, elak litar pintas; lapor kepada guru jika berlaku kecederaan."
@@ -4142,8 +4163,8 @@ Abaikan maklumat tandatangan pentadbir, cuti umum, atau kepala surat yang tidak 
         ],
         "rujukanRpt": "RPT RBT Tahun 6 (SK) 2026 (Rozayus Academy) - Minggu 15 hingga 29",
         "pembezaan": "Pemulihan: Bimbingan kumpulan kecil: guru menunjukkan sambungan litar langkah demi langkah; rajah litar siap disediakan sebagai panduan.<br>Pengayaan: Murid cemerlang meneruskan cabaran lanjutan: menambah pembaz sebagai amaran bila mengesan halangan, serta mendokumentasikan proses secara digital dan membentangkan kepada kelas.",
-        "pak21": "Pembelajaran Koperatif (kumpulan 4-5 orang), Sumbang Saran, Perbincangan Berkumpulan, Pameran/Pembentangan Hasil",
-        "pentaksiran": "Pemerhatian amali (senarai semak), Soal jawab lisan, Semakan rakan sebaya, Jurnal/Refleksi projek",
+        "pak21": "Pembelajaran Koperatif (kumpulan 4-5 orang), Inkuiri Sistem Robotik, Amali Kod & Sensor Ultrasonik, Cabaran Robot Elak Halangan",
+        "pentaksiran": "Pemerhatian amali (senarai semak), Soal jawab lisan, Ujian robot mengelak halangan, Semakan kod robot, Jurnal/Refleksi projek",
         "tmk": "Video YouTube sebagai rangsangan, perisian MakeCode dan video robotik, Slaid digital untuk pembentangan",
         "emk": "Sains & Teknologi, TMK",
         "keselamatan": "Patuhi langkah keselamatan bengkel/amali: padam kuasa sebelum ubah sambungan; kemas susunan wayar; lapor kepada guru jika berlaku kecederaan."
@@ -4209,8 +4230,8 @@ Abaikan maklumat tandatangan pentadbir, cuti umum, atau kepala surat yang tidak 
         ],
         "rujukanRpt": "RPT RBT Tahun 5 (SK) 2026 (Rozayus Academy) - Minggu 27 hingga 37",
         "pembezaan": "Pemulihan: Bimbingan kumpulan kecil: guru menunjukkan sambungan litar langkah demi langkah; rajah litar siap disediakan sebagai panduan.<br>Pengayaan: Murid cemerlang meneruskan cabaran lanjutan: menambah penderia atau mengubah tempoh masa kawalan, serta mendokumentasikan proses secara digital dan membentangkan kepada kelas.",
-        "pak21": "Pembelajaran Koperatif (kumpulan 4-5 orang), Sumbang Saran, Perbincangan Berkumpulan, Pameran/Pembentangan Hasil",
-        "pentaksiran": "Pemerhatian amali (senarai semak), Soal jawab lisan, Semakan rakan sebaya, Jurnal/Refleksi projek",
+        "pak21": "Pembelajaran Koperatif (kumpulan 4-5 orang), Inkuiri Sensor Ultrasonik, Amali Litar & Kod, Ujian Palang Automatik",
+        "pentaksiran": "Pemerhatian amali (senarai semak), Soal jawab lisan, Ujian fungsi palang automatik (jarak sensor), Semakan atur cara, Jurnal/Refleksi projek",
         "tmk": "Video YouTube sebagai rangsangan, perisian mBlock/MakeCode, Slaid digital untuk pembentangan",
         "emk": "Sains & Teknologi, TMK, Nilai Murni (Bertanggungjawab)",
         "keselamatan": "Patuhi langkah keselamatan bengkel/amali: pastikan sambungan litar kemas dan elak litar pintas; lapor kepada guru jika berlaku kecederaan."
@@ -4275,8 +4296,8 @@ Abaikan maklumat tandatangan pentadbir, cuti umum, atau kepala surat yang tidak 
         ],
         "rujukanRpt": "RPT RBT Tahun 5 (SK) 2026 (Rozayus Academy) - Minggu 2 hingga 9",
         "pembezaan": "Pemulihan: Bimbingan kumpulan kecil: guru menunjukkan semula teknik menjahit; rakan pembimbing membantu murid yang ketinggalan.<br>Pengayaan: Murid cemerlang meneruskan cabaran lanjutan: menghasilkan alas bersaiz dewasa atau dengan corak sulaman, serta mendokumentasikan proses secara digital dan membentangkan kepada kelas.",
-        "pak21": "Pembelajaran Koperatif (kumpulan 4-5 orang), Sumbang Saran, Perbincangan Berkumpulan, Pameran/Pembentangan Hasil",
-        "pentaksiran": "Pemerhatian amali (senarai semak), Soal jawab lisan, Semakan rakan sebaya, Jurnal/Refleksi projek",
+        "pak21": "Pembelajaran Koperatif (kumpulan 4-5 orang), Demonstrasi Ukuran & Pola, Amali Menjahit Alas, Ujian Keselesaan",
+        "pentaksiran": "Pemerhatian amali (senarai semak), Soal jawab lisan, Ujian keselesaan & ketepatan ukuran alas keledar, Semakan rakan sebaya, Jurnal/Refleksi projek",
         "tmk": "Video YouTube sebagai rangsangan, video tutorial jahitan tangan, Slaid digital untuk pembentangan",
         "emk": "Sains & Teknologi, Nilai Murni (Keselamatan Diri), Keusahawanan",
         "keselamatan": "Patuhi langkah keselamatan bengkel/amali: hati-hati menggunakan jarum dan gunting fabrik; lapor kepada guru jika berlaku kecederaan."
@@ -4341,8 +4362,8 @@ Abaikan maklumat tandatangan pentadbir, cuti umum, atau kepala surat yang tidak 
         ],
         "rujukanRpt": "RPT RBT Tahun 6 (SK) 2026 (Rozayus Academy) - Minggu 15 hingga 29",
         "pembezaan": "Pemulihan: Bimbingan kumpulan kecil: guru menunjukkan sambungan litar langkah demi langkah; rajah litar siap disediakan sebagai panduan.<br>Pengayaan: Murid cemerlang meneruskan cabaran lanjutan: menambah LED hijau apabila air mencukupi, serta mendokumentasikan proses secara digital dan membentangkan kepada kelas.",
-        "pak21": "Pembelajaran Koperatif (kumpulan 4-5 orang), Sumbang Saran, Perbincangan Berkumpulan, Pameran/Pembentangan Hasil",
-        "pentaksiran": "Pemerhatian amali (senarai semak), Soal jawab lisan, Semakan rakan sebaya, Jurnal/Refleksi projek",
+        "pak21": "Pembelajaran Koperatif (kumpulan 4-5 orang), Inkuiri Sistem Robotik, Amali Pam & Sensor Kelembapan, Demo Robot Penjaga Air",
+        "pentaksiran": "Pemerhatian amali (senarai semak), Soal jawab lisan, Ujian robot memberi air mengikut kelembapan tanah, Semakan kod, Jurnal/Refleksi projek",
         "tmk": "Video YouTube sebagai rangsangan, perisian MakeCode dan video sensor air, Slaid digital untuk pembentangan",
         "emk": "Sains & Teknologi, Kelestarian Alam Sekitar",
         "keselamatan": "Patuhi langkah keselamatan bengkel/amali: jangan biarkan litar terkena air; keringkan tangan sebelum mengendalikan litar; lapor kepada guru jika berlaku kecederaan."
@@ -4407,8 +4428,8 @@ Abaikan maklumat tandatangan pentadbir, cuti umum, atau kepala surat yang tidak 
         ],
         "rujukanRpt": "RPT RBT Tahun 6 (SK) 2026 (Rozayus Academy) - Minggu 2 hingga 14",
         "pembezaan": "Pemulihan: Bimbingan kumpulan kecil: guru menunjukkan sambungan litar langkah demi langkah; rajah litar siap disediakan sebagai panduan.<br>Pengayaan: Murid cemerlang meneruskan cabaran lanjutan: menguji bot dengan pemberat berbeza dan merekod jarak, serta mendokumentasikan proses secara digital dan membentangkan kepada kelas.",
-        "pak21": "Pembelajaran Koperatif (kumpulan 4-5 orang), Sumbang Saran, Perbincangan Berkumpulan, Pameran/Pembentangan Hasil",
-        "pentaksiran": "Pemerhatian amali (senarai semak), Soal jawab lisan, Semakan rakan sebaya, Jurnal/Refleksi projek",
+        "pak21": "Pembelajaran Koperatif (kumpulan 4-5 orang), Inkuiri Daya Apungan, Amali Bina Bot & Motor, Ujian Bot di Air",
+        "pentaksiran": "Pemerhatian amali (senarai semak), Soal jawab lisan, Ujian bot bergerak di atas air (kestabilan & arah), Semakan binaan, Jurnal/Refleksi projek",
         "tmk": "Video YouTube sebagai rangsangan, video bot motor kitar semula, Slaid digital untuk pembentangan",
         "emk": "Sains & Teknologi, Kelestarian Alam Sekitar",
         "keselamatan": "Patuhi langkah keselamatan bengkel/amali: pastikan motor kalis air; elak litar terkena air; lapor kepada guru jika berlaku kecederaan."
@@ -4474,8 +4495,8 @@ Abaikan maklumat tandatangan pentadbir, cuti umum, atau kepala surat yang tidak 
         ],
         "rujukanRpt": "RPT RBT Tahun 4 (SK) 2026 (Rozayus Academy) - Minggu 17 hingga 26",
         "pembezaan": "Pemulihan: Bimbingan kumpulan kecil: guru membimbing lakaran dan cetakan ringkas; stensil huruf disediakan untuk murid yang memerlukan.<br>Pengayaan: Murid cemerlang meneruskan cabaran lanjutan: menghasilkan set aksesori lengkap (kerongsang, magnet peti sejuk), serta mendokumentasikan proses secara digital dan membentangkan kepada kelas.",
-        "pak21": "Pembelajaran Koperatif (kumpulan 4-5 orang), Sumbang Saran, Perbincangan Berkumpulan, Pameran/Pembentangan Hasil",
-        "pentaksiran": "Pemerhatian amali (senarai semak), Soal jawab lisan, Semakan rakan sebaya, Jurnal/Refleksi projek",
+        "pak21": "Pembelajaran Koperatif (kumpulan 4-5 orang), Demonstrasi Pen 3D, Latihan Bentuk & Hiasan, Galeri Kerongsang",
+        "pentaksiran": "Pemerhatian amali (senarai semak), Soal jawab lisan, Penilaian kerongsang (kekemasan & kreativiti), Semakan rakan sebaya, Jurnal/Refleksi projek",
         "tmk": "Video YouTube sebagai rangsangan, video tutorial pen 3D di YouTube, Slaid digital untuk pembentangan",
         "emk": "Sains & Teknologi, Kreativiti & Inovasi, Keusahawanan",
         "keselamatan": "Patuhi langkah keselamatan bengkel/amali: hujung pen 3D panas - jangan sentuh, elak terkena kulit; lapor kepada guru jika berlaku kecederaan."
@@ -4557,7 +4578,8 @@ Abaikan maklumat tandatangan pentadbir, cuti umum, atau kepala surat yang tidak 
         if (d5) d5.selectedIndex = 0;
       }
 
-      autoGenerateSmartRph();
+      // [F3] muat templat sahaja (bukan "Jana RPH") -> jangan cemar arkib dgn Draf Dijana
+      if (typeof arkibWithSuspend === 'function') { arkibWithSuspend(autoGenerateSmartRph); } else { autoGenerateSmartRph(); }
       const labelTajuk = tmpl.tajuk.length > 32 ? tmpl.tajuk.substring(0, 32) + "..." : tmpl.tajuk;
       showToast(`Templat ${labelTajuk} dimuatkan!`);
     }
@@ -4600,6 +4622,14 @@ Abaikan maklumat tandatangan pentadbir, cuti umum, atau kepala surat yang tidak 
         });
       }
       try { pblBindDateEdit(); } catch (e) { /* preview mungkin belum sedia */ }
+      // [F2b] tanda suntingan guru pada medan PBL supaya janaan templat tak menimpa suntingan
+      try {
+        window.__pblEdited = window.__pblEdited || { tempoh: false, mula: false, hantar: false };
+        [['previewPblMingguTempoh', 'tempoh'], ['previewPblTarikhMula', 'mula'], ['previewPblTarikhHantar', 'hantar']].forEach(function (pair) {
+          const el = document.getElementById(pair[0]);
+          if (el) el.addEventListener('input', function () { window.__pblEdited[pair[1]] = true; });
+        });
+      } catch (e) { }
 
 
     function esc(v) { return String(v).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
@@ -4658,9 +4688,31 @@ function autoGenerateSmartRph() {
 
       const tplTempohMinggu = tmpl.tempoh || "4 Minggu";
       const _wkNow = (typeof currentWeek !== 'undefined' && currentWeek) ? parseInt(currentWeek) : 12;
-      const pblTempoh = document.getElementById('formPblMingguPelaksanaan')?.value || `Minggu ${_wkNow} hingga Minggu ${_wkNow + (tplTempohMinggu.indexOf('3') === 0 ? 2 : 3)} (${tplTempohMinggu})`;
-      const pblMula = document.getElementById('formPblTarikhMula')?.value || "2026-09-08";
-      const pblHantar = document.getElementById('formPblTarikhHantar')?.value || "2026-09-29";
+      // [F2a] tempoh pelaksanaan PBL IKUT templat projek (bukan tetap 4 minggu)
+      const _nWk = (function () { const m = String(tplTempohMinggu).match(/(\d+)/); return m ? Math.max(1, parseInt(m[1], 10)) : 4; })();
+      const _pblEdited = window.__pblEdited || (window.__pblEdited = { tempoh: false, mula: false, hantar: false });
+      const _pblFormVal = function (id) { const el = document.getElementById(id); return el && el.value ? String(el.value).trim() : ''; };
+      const _pvT = document.getElementById('previewPblMingguTempoh');
+      const _pvM = document.getElementById('previewPblTarikhMula');
+      const _pvH = document.getElementById('previewPblTarikhHantar');
+      const _pblDMY = function (d) { const x = new Date(d); return String(x.getDate()).padStart(2, '0') + '/' + String(x.getMonth() + 1).padStart(2, '0') + '/' + x.getFullYear(); };
+      const _pblToDate = function (t) {
+        const s = String(t || '').trim();
+        let m = s.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
+        if (m) return new Date(Number(m[3]), Number(m[2]) - 1, Number(m[1]));
+        m = s.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+        if (m) return new Date(Number(m[1]), Number(m[2]) - 1, Number(m[3]));
+        return null;
+      };
+      const pblTempoh = _pblFormVal('formPblMingguPelaksanaan') || (_pblEdited.tempoh && _pvT && _pvT.innerText.trim() ? _pvT.innerText.trim() : `Minggu ${_wkNow} hingga Minggu ${_wkNow + _nWk - 1} (${tplTempohMinggu})`);
+      const pblMula = _pblFormVal('formPblTarikhMula') || (_pblEdited.mula && _pvM && _pvM.innerText.trim() ? _pvM.innerText.trim() : "2026-09-08");
+      const _pblHantarAuto = (function () {
+        if (_pblEdited.hantar && _pvH && _pvH.innerText.trim()) return _pvH.innerText.trim();
+        const d = _pblToDate(pblMula);
+        if (!d) return "2026-09-29";
+        return _pblDMY(new Date(d.getTime() + (_nWk * 7 - 1) * 86400000));
+      })();
+      const pblHantar = _pblFormVal('formPblTarikhHantar') || _pblHantarAuto;
 
       const pPblTempoh = document.getElementById('previewPblMingguTempoh');
       const pPblMula = document.getElementById('previewPblTarikhMula');
@@ -4805,9 +4857,47 @@ function autoGenerateSmartRph() {
 
       // Papar janaan terkini di sidebar & kira badge Arkib
       updateSidebarJanaan();
+      try { syncRphMirror(); } catch (e) { }
       updateArkibBadge();
       // AUTO-SIMPAN: setiap janaan masuk Arkib (rekod sedia ada dikemas kini, bukan bertindih)
       arkibAutoSimpan();
+    }
+
+    /* ===== [F1/F3] Pratonton cermin + cetak rekod + bersih draf (2026-09-12) ===== */
+    function syncRphMirror() {
+      const wrap = document.getElementById('rphMirrorWrap');
+      const src = document.getElementById('rphPreviewContainer');
+      if (!wrap || !src) return;
+      const empty = document.getElementById('rphMirrorEmpty');
+      const adaKandungan = (src.innerText || '').replace(/\s+/g, ' ').trim().length > 40;
+      if (!adaKandungan) { if (empty) empty.style.display = ''; return; }
+      if (empty) empty.style.display = 'none';
+      Array.from(wrap.children).forEach(function (c) { if (c.id !== 'rphMirrorEmpty') wrap.removeChild(c); });
+      const clone = src.cloneNode(true);
+      clone.removeAttribute('id');
+      clone.querySelectorAll('[id]').forEach(function (n) { n.removeAttribute('id'); });
+      clone.querySelectorAll('[contenteditable]').forEach(function (n) { n.setAttribute('contenteditable', 'false'); });
+      clone.style.boxShadow = 'none';
+      wrap.appendChild(clone);
+    }
+
+    function printArkibRph(id) {
+      const r = savedRphList.find(function (x) { return x.id === id; });
+      if (!r) return;
+      viewSavedRph(id);
+      setTimeout(function () { try { printRphDocument(); } catch (e) { } }, 350);
+    }
+
+    function deleteAllDrafts() {
+      const draf = savedRphList.filter(function (r) { return !r.saved; });
+      if (!draf.length) { showToast('Tiada draf untuk dipadam.'); return; }
+      if (!confirm('Padam ' + draf.length + ' rekod Draf Dijana? Rekod yang telah Disimpan kekal.')) return;
+      savedRphList = savedRphList.filter(function (r) { return !!r.saved; });
+      currentArkibId = null;
+      arkibPersist(); renderSavedRphTable(); updateArkibBadge();
+      try { updateArkibSelectedInfo(); } catch (e) { }
+      try { updateDashboardMetrics(); } catch (e) { }
+      showToast(draf.length + ' draf dipadam. Rekod Disimpan tidak disentuh.');
     }
 
     function openSeporaRphBankModal() {
@@ -5188,6 +5278,7 @@ function autoGenerateSmartRph() {
             <button class="btn btn-sm btn-primary" onclick="viewSavedRph(${r.id})" title="Buka dokumen RPH"><i class="fa-solid fa-eye"></i> Papar</button>
             <button class="btn btn-sm btn-outline" onclick="openArkibEditModal(${r.id})" title="Edit maklumat rekod"><i class="fa-solid fa-pen-to-square"></i></button>
             <button class="btn btn-sm btn-outline" style="color:#7c3aed; border-color:#c4b5fd;" onclick="reuseArkibRph(${r.id})" title="Guna rekod ini untuk RPH baharu (tarikh +1 minggu)"><i class="fa-solid fa-clone"></i></button>
+            <button class="btn btn-sm btn-outline" style="color:#059669; border-color:#6ee7b7;" onclick="printArkibRph(${r.id})" title="Cetak rekod ini"><i class="fa-solid fa-print"></i></button>
             <button class="btn btn-sm btn-outline" style="color:var(--danger);" onclick="deleteSavedRph(${r.id})" title="Padam rekod"><i class="fa-solid fa-trash"></i></button>
           </td>
         </tr>
