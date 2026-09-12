@@ -365,6 +365,36 @@ async function connect() {
   const daftarLepas2 = await ev(`(function(){ return { papar: document.getElementById('appModalOverlay').style.display, wajib: window.__modalWajib === true }; })()`);
   ok('L51 selepas daftar -> skrin daftar tidak muncul lagi', daftarLepas2.papar !== 'flex' && daftarLepas2.wajib === false, `papar=${daftarLepas2.papar}`);
 
+  /* ---------- L58-L60: daftar dgn ID DELIMa guru sendiri (F16) ---------- */
+  const EMAIL_LALAI = await ev('DEFAULT_AUTH.email');   // dinilai di halaman, bukan node
+  const idDelima = await ev(`(function(){ window.__modalWajib = false; closeModalDirectly();
+    try { localStorage.removeItem('erph_daftar_selesai'); } catch (e) { }
+    finishLogin({ email: DEFAULT_AUTH.email, name: DEFAULT_TEACHER.name, mode:'setempat' });
+    return 'ok'; })()`);
+  await new Promise(r => setTimeout(r, 1200));
+  const tolakLalai = await ev(`(function(){ document.getElementById('daftarNama').value = 'Cikgu Cubaan';
+    document.getElementById('daftarEmel').value = DEFAULT_AUTH.email;
+    document.getElementById('daftarPin').value = '9999';
+    submitDaftarLocal({ preventDefault: function(){} });
+    return { daftar: localStorage.getItem('erph_daftar_selesai'), emel: (authCredentials||{}).email, papar: document.getElementById('appModalOverlay').style.display }; })()`);
+  ok('L58 emel lalai app ditolak semasa daftar (akaun tak bertukar)', tolakLalai.daftar === null && tolakLalai.emel !== EMAIL_LALAI && tolakLalai.papar === 'flex', JSON.stringify(tolakLalai));
+
+  const idGuru = await ev(`(function(){ document.getElementById('daftarNama').value = 'Cikgu Siti';
+    document.getElementById('daftarEmel').value = 'g-57258425';          // ID DELIMa tanpa domain
+    document.getElementById('daftarPin').value = '2468';
+    submitDaftarLocal({ preventDefault: function(){} });
+    const s = getSession() || {};
+    return { daftar: localStorage.getItem('erph_daftar_selesai'), emel: s.email, idDelima: s.delimaId,
+             kred: (authCredentials||{}).email, nama: teacherProfile.name, papar: document.getElementById('appModalOverlay').style.display }; })()`);
+  ok('L59 ID DELIMa tanpa domain -> g-57258425@moe-dl.edu.my (identiti guru sendiri)',
+     idGuru.emel === 'g-57258425@moe-dl.edu.my' && idGuru.idDelima === 'g-57258425' && idGuru.kred === 'g-57258425@moe-dl.edu.my' && idGuru.daftar === '1',
+     `emel=${idGuru.emel} id=${idGuru.idDelima}`);
+
+  const panelId = await ev(`(function(){ openDrivePanel();
+    const t = (document.getElementById('modalBoxContent')||{innerText:''}).innerText || '';
+    return { adaId: t.indexOf('ID DELIMa:') > -1 && t.indexOf('g-57258425') > -1 }; })()`);
+  ok('L60 panel Drive memaparkan ID DELIMa guru', panelId.adaId === true, JSON.stringify(panelId));
+
   /* ---------- L53-L56: diagnostik Drive + auto-refresh token (F14) ---------- */
   const diag1 = await ev(`(function(){ window.__pasangMockDrive(); finishLogin({ email: DEFAULT_AUTH.email, name: DEFAULT_TEACHER.name, mode:'setempat' });
     openDrivePanel();
@@ -401,7 +431,7 @@ async function connect() {
   ok('L56 chip Drive tidak lagi kata "sesi tamat"', !/sesi Google tamat|sesi tamat/i.test(diag4.chip), `chip="${String(diag4.chip).slice(0, 70)}"`);
 
   /* ---------- L25: ralat JS sepanjang ujian ---------- */
-  ok('L57 tiada ralat JS sepanjang ujian', errors.length === 0, errors.slice(0, 3).join(' | ') || '0 ralat');
+  ok('L61 tiada ralat JS sepanjang ujian', errors.length === 0, errors.slice(0, 3).join(' | ') || '0 ralat');
 
   console.log('\n===== UJIAN LENGKAP SEPORA RBT TOOLKIT (chromium headless + CDP) =====');
   console.log('URL: ' + TEST_URL);

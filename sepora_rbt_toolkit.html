@@ -6863,8 +6863,8 @@ function autoGenerateSmartRph() {
               <input type="text" id="daftarNama" class="form-control" placeholder="cth: Wafi bin Ahmad" required>
             </div>
             <div class="form-group">
-              <label class="form-label">Emel anda</label>
-              <input type="email" id="daftarEmel" class="form-control" placeholder="cth: nama@moe-dl.edu.my" required>
+              <label class="form-label">ID DELIMa atau emel anda sendiri</label>
+              <input type="text" id="daftarEmel" class="form-control" placeholder="cth: g-57258425 atau nama@moe-dl.edu.my" required>
             </div>
             <div class="form-group">
               <label class="form-label">PIN / Kata Laluan anda (min 4 aksara)</label>
@@ -6886,7 +6886,10 @@ function autoGenerateSmartRph() {
     function submitDaftarLocal(ev) {
       if (ev && ev.preventDefault) ev.preventDefault();
       const nama = String((document.getElementById('daftarNama') || {}).value || '').trim();
-      const emel = String((document.getElementById('daftarEmel') || {}).value || '').trim().toLowerCase();
+      let emel = String((document.getElementById('daftarEmel') || {}).value || '').trim().toLowerCase();
+      // [F16] terima ID DELIMa tanpa domain (cth: g-57258425) -> jadikan emel MOE
+      let idDelima = '';
+      if (emel && emel.indexOf('@') === -1) { idDelima = emel; emel = emel + '@moe-dl.edu.my'; }
       const pin = String((document.getElementById('daftarPin') || {}).value || '').trim();
       if (nama.length < 3) { showToast('Sila isi nama penuh anda.'); return; }
       if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(emel)) { showToast('Emel tidak sah. Contoh: nama@moe-dl.edu.my'); return; }
@@ -6898,7 +6901,7 @@ function autoGenerateSmartRph() {
       try { localStorage.setItem('erph_teacher', JSON.stringify(teacherProfile)); } catch (e) { }
       try { localStorage.setItem('erph_daftar_selesai', '1'); } catch (e) { }
       window.__modalWajib = false;
-      finishLogin({ email: emel, name: nama, mode: 'setempat' });
+      finishLogin({ email: emel, name: nama, mode: 'setempat', delimaId: idDelima || '' });
       closeModalDirectly();
       showToast('Pendaftaran selesai. Arkib anda kini dikunci pada akaun ' + emel + '.');
     }
@@ -7069,7 +7072,7 @@ function autoGenerateSmartRph() {
       const last = localStorage.getItem('erph_drive_lastsync');
       const auto = localStorage.getItem(SEPORA_GDRIVE.autoKey) === '1';
       const rows = [
-        ['Akaun DELIMa', sess ? esc(sess.email) + (sess.mode === 'delima' ? ' <span style="color:#059669;">(disahkan)</span>' : ' <span style="color:#b45309;">(mod setempat)</span>') : '<em>Belum log masuk</em>'],
+        ['Akaun DELIMa', sess ? (sess.delimaId ? 'ID DELIMa: <strong>' + esc(sess.delimaId) + '</strong> &bull; ' : '') + esc(sess.email) + (sess.mode === 'delima' ? ' <span style="color:#059669;">(disahkan Google)</span>' : ' <span style="color:#b45309;">(mod setempat)</span>') : '<em>Belum log masuk</em>'],
         ['Sandaran terakhir', last ? loginTime(last) : '<em>Belum ada</em>'],
         ['Client ID OAuth', gdriveConfigured()
           ? '<span style="color:#059669;">Sedia (' + esc(gdriveClientId().slice(0, 12)) + '...)</span>'
