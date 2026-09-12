@@ -68,8 +68,10 @@ Dalam aplikasi: tekan **"Setelan sandaran Google Drive (Client ID)"** di bawah g
    (Client ID disimpan dalam pelayar guru sahaja; ia bukan rahsia — ia memang awam untuk aplikasi web.)
 
 ### Di mana data disimpan?
-- Fail: **`SEPORA_RPH_ARKIB.json`** dalam **My Drive** akaun DELIMa guru (boleh dilihat & dimuat turun guru sendiri).
-- Skop `drive.file`: aplikasi hanya boleh menyentuh fail yang dicipta olehnya sendiri — **tidak** boleh membaca fail lain guru.
+- Folder: **`SEPORATOOLKIT`** dalam **My Drive** akaun DELIMa guru — app **mencipta folder ini sendiri** (auto-create) pada sandaran pertama.
+- Fail: **`SEPORA_RPH_ARKIB.json`** di dalam folder itu (boleh dilihat & dimuat turun guru sendiri).
+- Skop `drive.file`: aplikasi hanya boleh menyentuh fail/folder yang dicipta olehnya sendiri — **tidak** boleh membaca fail lain guru. (Kalau guru sudah ada folder bernama sama yang dibuat secara manual, app akan cipta folder sendiri kerana ia tidak boleh melihat folder itu.)
+- Fail sandaran versi lama yang berada di akar My Drive akan **dipindahkan ke dalam folder** secara automatik pada sandaran seterusnya.
 - Fail mengandungi: maklumat RPH (tajuk, kelas, minggu, SK/SP, tarikh mula/hantar, nota) + salinan penuh dokumen yang disimpan.
 - Auto-sandaran: selepas setiap perubahan arkib (jika diaktifkan dalam halaman **Arkib & Cetakan**).
 
