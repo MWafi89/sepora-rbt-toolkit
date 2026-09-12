@@ -1409,6 +1409,32 @@
             <!-- Kunci templat PBL yang sedang aktif (dibaca oleh autoGenerateSmartRph & Arkib RPH) -->
             <input type="hidden" id="formRphTahap" value="4_kereta_idamanku">
 
+            <!-- [F5] Medan slot PdPc: diisi oleh modul Jadual (loadSlotToRph) dan dipakai oleh
+                 Arkib RPH untuk memisahkan setiap RPH (Hari + Masa + Kelas + Minggu) supaya
+                 janaan berbeza TIDAK bertindih dalam satu rekod. Biar kosong = nilai lalai templat. -->
+            <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap:1rem; margin-bottom:0.5rem;">
+              <div class="form-group">
+                <label class="form-label">Hari / Tarikh</label>
+                <input type="text" id="formRphHari" class="form-control" placeholder="cth: Isnin (8 September 2026)">
+              </div>
+              <div class="form-group">
+                <label class="form-label">Masa</label>
+                <input type="text" id="formRphMasa" class="form-control" placeholder="cth: 08:00 - 09:30 (90 Minit)">
+              </div>
+              <div class="form-group">
+                <label class="form-label">Kelas</label>
+                <input type="text" id="formRphKelas" class="form-control" placeholder="cth: 4 Cekal">
+              </div>
+              <div class="form-group">
+                <label class="form-label">Mata Pelajaran</label>
+                <input type="text" id="formRphSubjek" class="form-control" placeholder="cth: RBT Tahun 5">
+              </div>
+              <div class="form-group">
+                <label class="form-label">Minggu</label>
+                <input type="number" min="1" max="42" id="formRphMinggu" class="form-control" placeholder="cth: 12">
+              </div>
+            </div>
+
             <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap:1rem;">
               <div class="form-group">
                 <label class="form-label">Jenis Pendekatan / Tajuk Projek</label>
@@ -2221,7 +2247,43 @@
     let rptList = JSON.parse(localStorage.getItem('erph_rpt_v2')) || INITIAL_RPT;
     let textbookList = JSON.parse(localStorage.getItem('erph_textbooks_v2')) || INITIAL_TEXTBOOKS;
     let bbmList = JSON.parse(localStorage.getItem('erph_bbm')) || INITIAL_BBM;
-    let savedRphList = JSON.parse(localStorage.getItem('erph_saved')) || [];
+    // [F8] Muat arkib mengikut AKAUN yang sedang log masuk SEJAK AWAL (sebelum sebarang
+    //      arkibPersist() dijalankan oleh boot DOMContentLoaded). Tanpa ini, boot akan
+    //      menyimpan senarai kosong ke kunci akaun dan memadam arkib guru.
+    let savedRphList = (function () {
+      try {
+        const k = arkibKey();
+        const raw = localStorage.getItem(k) || localStorage.getItem('erph_saved') || '[]';
+        const list = JSON.parse(raw);
+        return arkibNormalize(Array.isArray(list) ? list : []);
+      } catch (e) { return []; }
+    })();
+
+    /* [F6] Arkib dipisahkan ikut akaun guru (satu telefon/pelayar boleh dikongsi beberapa guru).
+       Kunci: 'erph_saved::<emel>'. Data lama 'erph_saved' dimigrasi (disalin) sekali sahaja. */
+    function arkibKeyFor(email) {
+      const u = String(email || '').trim().toLowerCase();
+      return 'erph_saved' + (u ? '::' + u : '');
+    }
+    function arkibKey() {
+      let s = null;
+      try { s = (typeof getSession === 'function') ? getSession() : null; } catch (e) { }
+      return arkibKeyFor(s && s.email);
+    }
+    function arkibLoadForSession() {
+      const k = arkibKey();
+      let raw = null;
+      try { raw = localStorage.getItem(k); } catch (e) { }
+      if (!raw) {
+        // migrasi sekali: arkib lama (sebelum F6) dipindahkan ke akaun pertama yang log masuk
+        try { raw = localStorage.getItem('erph_saved'); } catch (e) { }
+      }
+      let list = [];
+      try { list = JSON.parse(raw || '[]') || []; } catch (e) { list = []; }
+      savedRphList = arkibNormalize(list);
+      try { localStorage.setItem(k, JSON.stringify(savedRphList)); } catch (e) { }
+      return savedRphList.length;
+    }
 
     function switchTab(tabId) {
       try {
@@ -4552,8 +4614,10 @@ Abaikan maklumat tandatangan pentadbir, cuti umum, atau kepala surat yang tidak 
       const formIntegrasi = document.getElementById('formRphIntegrasi');
 
       if (formTahap) formTahap.value = key;
-      if (formKelas) formKelas.value = tmpl.kelas;
-      if (formSubjek) formSubjek.value = tmpl.subjek;
+      // [F7] Jangan tiba kelas/subjek yang sudah diisi dari modul Jadual (slot PdPc guru).
+      //      Templat PBL hanya mengisi bila medan kosong - kelas sebenar milik slot jadual.
+      if (formKelas && !String(formKelas.value || '').trim()) formKelas.value = tmpl.kelas;
+      if (formSubjek && !String(formSubjek.value || '').trim()) formSubjek.value = tmpl.subjek;
       if (formTajuk) formTajuk.value = tmpl.tajuk;
       if (formBukuTeks) formBukuTeks.value = tmpl.bukuTeks;
       if (formSk) formSk.value = tmpl.sk;
@@ -4622,6 +4686,17 @@ Abaikan maklumat tandatangan pentadbir, cuti umum, atau kepala surat yang tidak 
         });
       }
       try { pblBindDateEdit(); } catch (e) { /* preview mungkin belum sedia */ }
+      // [F5] Segarkan pratonton bila guru ubah medan slot (Hari/Masa/Kelas/Subjek/Minggu).
+      //       Tidak mencipta rekod arkib - rekod dicipta hanya bila "Jana RPH" / "Simpan ke Arkib".
+      try {
+        ['formRphHari', 'formRphMasa', 'formRphKelas', 'formRphSubjek', 'formRphMinggu'].forEach(function (id) {
+          const el = document.getElementById(id);
+          if (el && !el.dataset.f5bound) {
+            el.dataset.f5bound = '1';
+            el.addEventListener('change', function () { try { arkibWithSuspend(autoGenerateSmartRph); } catch (e) { } });
+          }
+        });
+      } catch (e) { }
       // [F2b] tanda suntingan guru pada medan PBL supaya janaan templat tak menimpa suntingan
       try {
         window.__pblEdited = window.__pblEdited || { tempoh: false, mula: false, hantar: false };
@@ -5092,7 +5167,7 @@ function autoGenerateSmartRph() {
     }
     function arkibPersist() {
       try {
-        localStorage.setItem('erph_saved', JSON.stringify(savedRphList));
+        localStorage.setItem(arkibKey(), JSON.stringify(savedRphList));
         driveMaybeAuto();
         return true;
       } catch (e) {
@@ -5102,7 +5177,7 @@ function autoGenerateSmartRph() {
           if (savedRphList[i].docHtml) { savedRphList[i].docHtml = ''; drop++; }
         }
         try {
-          localStorage.setItem('erph_saved', JSON.stringify(savedRphList));
+          localStorage.setItem(arkibKey(), JSON.stringify(savedRphList));
           if (drop) showToast('Storan hampir penuh - salinan dokumen ' + drop + ' rekod lama diringkaskan (tarikh & maklumat kekal).');
           return true;
         } catch (e2) {
@@ -5193,17 +5268,26 @@ function autoGenerateSmartRph() {
       window.__arkibSuspend = true;
       try { return fn(); } finally { window.__arkibSuspend = prev; }
     }
+    /* [F6] Cari rekod DRAF sahaja (rekod yang sudah dikunci/disimpan tidak ditimpa). */
+    function arkibFindDraft(snap) {
+      return savedRphList.find(function (r) { return !r.saved && arkibSameTarget(r, snap); });
+    }
     function arkibAutoSimpan() {
       if (window.__arkibSuspend) return;
       try {
         const snap = arkibSnapshot();
         if (!snap.tajuk) return;
-        let rec = arkibFindRecord(snap);
+        let rec = arkibFindDraft(snap);
         if (rec) {
           Object.assign(rec, snap, { dikemas: arkibNow() });
           if (!rec.saved) rec.status = 'Draf Dijana';
         } else {
-          rec = Object.assign({ id: Date.now(), created: arkibNow(), auto: true, saved: false, status: 'Draf Dijana', nota: '', docHtml: '' }, snap);
+          // Slot sama tetapi rekod lama sudah DIKUNCI -> cipta rekod versi baharu, rekod lama kekal
+          const sama = savedRphList.filter(function (r) { return arkibSameTarget(r, snap); });
+          const versiBaru = sama.length
+            ? Math.max.apply(null, sama.map(function (x) { return Number(x.versi) || 1; })) + 1
+            : 1;
+          rec = Object.assign({ id: Date.now(), created: arkibNow(), auto: true, saved: false, status: 'Draf Dijana', nota: '', docHtml: '', versi: versiBaru }, snap);
           savedRphList.unshift(rec);
         }
         currentArkibId = rec.id;
@@ -5226,9 +5310,14 @@ function autoGenerateSmartRph() {
         rec.saved = true;
         if (!rec.status || rec.status === 'Draf Dijana') rec.status = 'Disimpan';
       } else {
-        rec = Object.assign({ id: Date.now(), created: now, auto: false, saved: true, status: 'Disimpan', nota: '', docHtml: '' }, snap);
+        const sama = savedRphList.filter(function (r) { return arkibSameTarget(r, snap); });
+        const versiBaru = sama.length
+          ? Math.max.apply(null, sama.map(function (x) { return Number(x.versi) || 1; })) + 1
+          : 1;
+        rec = Object.assign({ id: Date.now(), created: now, auto: false, saved: true, status: 'Disimpan', nota: '', docHtml: '', versi: versiBaru }, snap);
         savedRphList.unshift(rec);
       }
+      if (!rec.versi) rec.versi = 1;
       rec.docHtml = arkibDocHtml();
       currentArkibId = rec.id;
       arkibPersist();
@@ -5236,7 +5325,7 @@ function autoGenerateSmartRph() {
       updateArkibBadge();
       updateDashboardMetrics();
       updateArkibSelectedInfo();
-      showToast('RPH "' + rec.tajuk + '" ' + (forceNew ? 'disimpan sebagai rekod baharu' : 'disimpan ke Arkib') + ' (' + (rec.pblMingguPelaksanaan || 'M' + rec.minggu) + ').');
+      showToast('RPH "' + rec.tajuk + '" ' + (forceNew ? 'disimpan sebagai rekod baharu' : 'disimpan ke Arkib') + ' (versi ' + (rec.versi || 1) + ', ' + (rec.pblMingguPelaksanaan || 'M' + rec.minggu) + ').');
     }
 
     /* --- Jadual arkib --- */
@@ -5313,10 +5402,32 @@ function autoGenerateSmartRph() {
         updateSidebarJanaan();
         showToast('Dokumen RPH "' + r.tajuk + '" dibuka dari salinan arkib. Sunting terus, kemudian tekan "Kemas Kini Rekod Terpilih".');
       } else {
-        autoGenerateSmartRph();
+        arkibApplyPblToPreview(r);   // [F9] tarikh PBL rekod dibawa ke dokumen (sekali jana sahaja)
         showToast('RPH "' + r.tajuk + '" dibuka berserta tarikh hantar PBL!');
       }
       renderSavedRphTable();
+    }
+
+    /* [F9] Bawa tarikh & tempoh PBL rekod arkib ke pratonton SEBELUM janaan, supaya
+       autoGenerateSmartRph tidak menimpanya dengan nilai lalai templat.
+       (Tanpa ini, "Guna Semula" menghasilkan RPH dgn tarikh lama, bukan +1 minggu.) */
+    function arkibApplyPblToPreview(r) {
+      try {
+        window.__pblEdited = window.__pblEdited || { tempoh: false, mula: false, hantar: false };
+        const pT = document.getElementById('previewPblMingguTempoh');
+        const pM = document.getElementById('previewPblTarikhMula');
+        const pH = document.getElementById('previewPblTarikhHantar');
+        if (pM && r.pblTarikhMula) pM.innerText = arkibISOtoDMY(r.pblTarikhMula);
+        if (pH && r.pblTarikhHantar) pH.innerText = arkibISOtoDMY(r.pblTarikhHantar);
+        if (pT && r.pblMingguPelaksanaan) pT.innerText = r.pblMingguPelaksanaan;
+        const simpan = { tempoh: window.__pblEdited.tempoh, mula: window.__pblEdited.mula, hantar: window.__pblEdited.hantar };
+        window.__pblEdited.mula = !!r.pblTarikhMula;
+        window.__pblEdited.hantar = !!r.pblTarikhHantar;
+        window.__pblEdited.tempoh = !!r.pblMingguPelaksanaan;
+        try { autoGenerateSmartRph(); } finally {
+          window.__pblEdited = simpan;
+        }
+      } catch (e) { }
     }
 
     /* --- Guna semula rekod untuk RPH berikutnya --- */
@@ -5339,7 +5450,7 @@ function autoGenerateSmartRph() {
         applyArkibToForm(copy);
       });
       switchTab('bina-rph');
-      autoGenerateSmartRph();
+      arkibApplyPblToPreview(copy);   // [F9] tarikh +1 minggu dibawa ke dokumen baharu (sekali jana sahaja)
       showToast('RPH baharu dari rekod "' + src.tajuk + '" (tarikh dicadang +1 minggu). Kemas kini tarikh/minggu lalu tekan "Simpan Janaan Semasa".');
     }
     function arkibTempohDariTarikh(r) {
@@ -5447,8 +5558,9 @@ function autoGenerateSmartRph() {
       r.masa = v('arkibEditMasa') || r.masa;
       r.kelas = v('arkibEditKelas');
       r.subjek = v('arkibEditSubjek') || r.subjek;
-      r.pblTarikhMula = v('arkibEditTarikhMula');
-      r.pblTarikhHantar = v('arkibEditTarikhHantar');
+      // [F9c] jangan padam tarikh rekod jika medan tarikh kosong/tidak sah
+      r.pblTarikhMula = v('arkibEditTarikhMula') || r.pblTarikhMula;
+      r.pblTarikhHantar = v('arkibEditTarikhHantar') || r.pblTarikhHantar;
       r.pblMingguPelaksanaan = v('arkibEditTempoh') || r.pblMingguPelaksanaan;
       r.sk = v('arkibEditSk');
       r.sp = v('arkibEditSp');
@@ -5894,7 +6006,7 @@ function autoGenerateSmartRph() {
           countUpdated++;
         }
       });
-      localStorage.setItem('erph_saved', JSON.stringify(savedRphList));
+      localStorage.setItem(arkibKey(), JSON.stringify(savedRphList));
 
       // Update current RPH form if it matches
       const formKelas = document.getElementById('formRphKelas');
@@ -6294,6 +6406,8 @@ function autoGenerateSmartRph() {
         if (isLoggedIn) {
           lockScreen.classList.add('hidden');
           if (!sess) setSession({ email: (authCredentials.email || DEFAULT_AUTH.email), name: teacherProfile.name, mode: 'setempat', loginAt: new Date().toISOString() });
+        // [F6] muatkan arkib milik akaun yang sedang log masuk
+        try { arkibLoadForSession(); renderSavedRphTable(); updateArkibBadge(); } catch (e) { }
         } else {
           lockScreen.classList.remove('hidden');
           const inputEmail = document.getElementById('loginInputEmail');
@@ -6634,6 +6748,8 @@ function autoGenerateSmartRph() {
     function finishLogin(sess) {
       sess.loginAt = new Date().toISOString();
       setSession(sess);
+      // [F6] muatkan arkib milik akaun ini (arkib guru lain dalam telefon sama tidak bercampur)
+      try { arkibLoadForSession(); renderSavedRphTable(); updateArkibBadge(); updateArkibSelectedInfo(); updateDashboardMetrics(); } catch (e) { }
       try {
         sessionStorage.setItem('erph_logged_in', 'true');
         localStorage.setItem('erph_remember_login', 'true');
