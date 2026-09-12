@@ -268,8 +268,48 @@ async function connect() {
     return { gerbang: !document.getElementById('privacyLockScreen').classList.contains('hidden'), arkib: savedRphList.length, kunci: arkibKey() }; })()`);
   ok('L38 log masuk semula memulihkan arkib akaun itu', masukKembali.gerbang === false && masukKembali.arkib >= 1, `arkib=${masukKembali.arkib} kunci=${masukKembali.kunci}`);
 
+  /* ---------- L40-L44: sandaran Google Drive -> folder 'SEPORATOOLKIT' (F12, API dipalsy) ---------- */
+  await ev(`gTok = 'MOCK_TOKEN'; gTokExp = Date.now() + 3600000;
+    finishLogin({ email:'guru.drive@moe-dl.edu.my', name:'Guru Drive', mode:'delima' });
+    loadSlotToRph('Selasa','11:00 - 12:00','2 Drive','RBT Tahun 5'); autoGenerateSmartRph(); saveCurrentGeneratedRph();
+    window.__g = { folderCreate:0, fileCreate:0, patched:0, move:0, folderAda:false, fileAda:false, legacy:false, meta:null, queries:[], folderBody:null };
+    const J = o => new Response(JSON.stringify(o), { status:200, headers:{ 'Content-Type':'application/json' } });
+    window.fetch = async function(url, opts){
+      opts = opts || {}; const u = String(url), m = (opts.method||'GET').toUpperCase(), g = window.__g;
+      if (u.indexOf('googleapis.com/drive/v3/files?') >= 0 && m === 'GET') {
+        const q = decodeURIComponent(u); g.queries.push(q);
+        if (q.indexOf("mimeType='application/vnd.google-apps.folder'") >= 0) return J({ files: g.folderAda ? [{ id:'FOLDER123', name:'SEPORATOOLKIT' }] : [] });
+        if (q.indexOf('FOLDER123') >= 0) return J({ files: g.fileAda ? [{ id:'FILE1', name:'SEPORA_RPH_ARKIB.json', parents:['FOLDER123'] }] : [] });
+        return J({ files: g.legacy ? [{ id:'OLD9', name:'SEPORA_RPH_ARKIB.json', parents:['root'] }] : [] });
+      }
+      if (u.indexOf('googleapis.com/drive/v3/files?') >= 0 && m === 'POST') { g.folderCreate++; g.folderBody = JSON.parse(opts.body||'{}'); g.folderAda = true; return J({ id:'FOLDER123', name:'SEPORATOOLKIT' }); }
+      if (u.indexOf('/drive/v3/files/OLD9?addParents=') >= 0) { g.move++; g.fileAda = true; return J({ id:'OLD9', parents:['FOLDER123'] }); }
+      if (u.indexOf('/upload/drive/v3/files?uploadType=multipart') >= 0) { g.fileCreate++; const md = opts.body.get('metadata'); g.meta = JSON.parse(await md.text()); g.fileAda = true; return J({ id:'FILE1', name:'SEPORA_RPH_ARKIB.json' }); }
+      if (u.indexOf('/upload/drive/v3/files/') >= 0) { g.patched++; return J({ id:'FILE1' }); }
+      if (u.indexOf('/drive/v3/files/FILE1?alt=media') >= 0) return J({ rekod:[{ id: 9911, tajuk:'RPH DRIVE UJIAN', minggu:'9', kelas:'2 Drive', saved:true, status:'Disimpan' }] });
+      if (u.indexOf('/drive/v3/files/OLD9?alt=media') >= 0) return J({ rekod: [] });
+      return J({});
+    }; 'mock sedia'`);
+  const gd1 = await ev(`(async function(){ const ok = await driveSave(true); const g = window.__g;
+    return { ok:ok, folderCreate:g.folderCreate, fileCreate:g.fileCreate, meta:g.meta, folderBody:g.folderBody, fid:localStorage.getItem('erph_drive_folderid') }; })()`);
+  ok('L40 Drive: folder SEPORATOOLKIT auto-cipta', gd1.ok === true && gd1.folderCreate === 1 && (gd1.folderBody || {}).name === 'SEPORATOOLKIT' && (gd1.folderBody || {}).mimeType === 'application/vnd.google-apps.folder', String((gd1.folderBody || {}).name));
+  ok('L41 Drive: arkib disimpan DI DALAM folder (parents)', gd1.fileCreate === 1 && (gd1.meta || {}).parents && (gd1.meta || {}).parents[0] === 'FOLDER123' && gd1.fid === 'FOLDER123', JSON.stringify((gd1.meta || {}).parents));
+
+  const gd2 = await ev(`(async function(){ const ok = await driveSave(true); return { ok:ok, folderCreate:window.__g.folderCreate, patched:window.__g.patched }; })()`);
+  ok('L42 Drive: simpan kedua tiada folder pendua (PATCH sahaja)', gd2.ok === true && gd2.folderCreate === 1 && gd2.patched >= 1, JSON.stringify(gd2));
+
+  const gd3 = await ev(`(async function(){ savedRphList.length = 0; const ok = await driveRestore(true);
+    return { ok:ok, ada:savedRphList.some(function(r){ return r.tajuk === 'RPH DRIVE UJIAN'; }),
+             dalamFolder: window.__g.queries.some(function(q){ return q.indexOf('in parents') > -1 && q.indexOf('FOLDER123') > -1; }) }; })()`);
+  ok('L43 Drive: pulih cari dalam folder dahulu + rekod masuk', gd3.ok === true && gd3.ada === true && gd3.dalamFolder === true, JSON.stringify(gd3));
+
+  const gd4 = await ev(`(async function(){ gFileId = ''; localStorage.removeItem('erph_drive_fileid');
+    window.__g.fileAda = false; window.__g.legacy = true; const ok = await driveSave(true);
+    return { ok:ok, move:window.__g.move, folderCreate:window.__g.folderCreate }; })()`);
+  ok('L44 Drive: fail lama di akar dipindah ke folder', gd4.ok === true && gd4.move >= 1 && gd4.folderCreate === 1, JSON.stringify(gd4));
+
   /* ---------- L25: ralat JS sepanjang ujian ---------- */
-  ok('L39 tiada ralat JS sepanjang ujian', errors.length === 0, errors.slice(0, 3).join(' | ') || '0 ralat');
+  ok('L45 tiada ralat JS sepanjang ujian', errors.length === 0, errors.slice(0, 3).join(' | ') || '0 ralat');
 
   console.log('\n===== UJIAN LENGKAP SEPORA RBT TOOLKIT (chromium headless + CDP) =====');
   console.log('URL: ' + TEST_URL);
