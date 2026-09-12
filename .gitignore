@@ -20,3 +20,5 @@ buku teks rbt/
 
 # Bukti ujian Chrome headless (profil besar - jangan commit)
 .verify/
+__pycache__/
+*.pyc
