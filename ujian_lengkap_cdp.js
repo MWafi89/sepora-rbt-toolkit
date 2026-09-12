@@ -329,8 +329,43 @@ async function connect() {
   const onb2 = await ev(`(function(){ const ov = document.getElementById('appModalOverlay'); return { papar: ov ? ov.style.display : null }; })()`);
   ok('L48 kali kedua tidak mengganggu lagi (sekali sahaja)', onb2.papar !== 'flex', `papar=${onb2.papar}`);
 
+  /* ---------- L50-L53: diagnostik Drive + auto-refresh token (F14) ---------- */
+  const diag1 = await ev(`(function(){ finishLogin({ email: DEFAULT_AUTH.email, name: DEFAULT_TEACHER.name, mode:'setempat' });
+    openDrivePanel();
+    const m = document.getElementById('modalBoxContent'); const t = m ? (m.innerText||'') : '';
+    const ada = function(k){ return t.indexOf(k) > -1; };
+    const hasil = { adaAmaran: ada('Drive belum aktif'), cara: ada('Mod setempat') && ada('TIDAK aktif'),
+                    adaClientId: ada('Client ID OAuth'), adaFolder: ada('SEPORATOOLKIT') };
+    return hasil; })()`);
+  ok('L50 mod setempat -> panel beri amaran jelas + baris diagnostik', diag1.adaAmaran === true && diag1.cara === true && diag1.adaClientId === true && diag1.adaFolder === true, JSON.stringify(diag1));
+
+  const diag2 = await ev(`(function(){ localStorage.setItem('erph_gdrive_clientid','1234567890-abcdefg.apps.googleusercontent.com');
+    finishLogin({ email:'guru.delima@moe-dl.edu.my', name:'Guru DELIMa', mode:'delima' });
+    closeModalDirectly(); openDrivePanel();
+    const t = (document.getElementById('modalBoxContent')||{innerText:''}).innerText || '';
+    return { sedia: t.indexOf('Sedia') > -1 && t.indexOf('1234567890') > -1, aktif: t.indexOf('Drive aktif') > -1,
+             amaranTiada: t.indexOf('Drive belum aktif') === -1, clientIdDibaca: gdriveClientId(),
+             configured: gdriveConfigured(), mod: (getSession()||{}).mode }; })()`);
+  ok('L51 log masuk DELIMa + Client ID set -> panel tunjuk Drive aktif', diag2.sedia === true && diag2.aktif === true && diag2.amaranTiada === true, `sedia=${diag2.sedia} aktif=${diag2.aktif} tiadaAmaran=${diag2.amaranTiada} clientId=${diag2.clientIdDibaca}`);
+
+  const diag3 = await ev(`(async function(){ closeModalDirectly();
+    try { localStorage.removeItem(SEPORA_GDRIVE.autoKey); } catch(e){}
+    finishLogin({ email:'guru.delima@moe-dl.edu.my', name:'Guru DELIMa', mode:'delima' });   // auto-sandaran jadi AKTIF
+    gTok = null; gTokExp = 0; window.__refreshCount = 0;
+    window.__origGToken = gToken;
+    gToken = async function(){ window.__refreshCount++; gTok = 'FRESH'; gTokExp = Date.now() + 3600000; return 'FRESH'; };
+    gFileId = 'FILE1'; window.__g.fileAda = true; window.__g.folderAda = true; window.__g.legacy = false; window.__g.patched = 0;
+    loadSlotToRph('Khamis','08:00 - 09:30','2 Auto','RBT Tahun 5'); autoGenerateSmartRph(); saveCurrentGeneratedRph();
+    return { auto: localStorage.getItem(SEPORA_GDRIVE.autoKey), patchedSebelum: window.__g.patched }; })()`);
+  await new Promise(r => setTimeout(r, 8000));   // driveMaybeAuto: timer 6s + sandaran
+  const diag4 = await ev(`(function(){ gToken = window.__origGToken;
+    const chip = document.getElementById('driveStatusChip');
+    return { refresh: window.__refreshCount, patched: window.__g.patched, chip: chip ? (chip.innerText||'') : '' }; })()`);
+  ok('L52 token tamat -> auto-sandaran perbaharui token & menyandar (tidak diam)', diag4.refresh >= 1 && diag4.patched >= 1, `refresh=${diag4.refresh} patched=${diag4.patched}`);
+  ok('L53 chip Drive tidak lagi kata "sesi tamat"', !/sesi Google tamat|sesi tamat/i.test(diag4.chip), `chip="${String(diag4.chip).slice(0, 70)}"`);
+
   /* ---------- L25: ralat JS sepanjang ujian ---------- */
-  ok('L49 tiada ralat JS sepanjang ujian', errors.length === 0, errors.slice(0, 3).join(' | ') || '0 ralat');
+  ok('L54 tiada ralat JS sepanjang ujian', errors.length === 0, errors.slice(0, 3).join(' | ') || '0 ralat');
 
   console.log('\n===== UJIAN LENGKAP SEPORA RBT TOOLKIT (chromium headless + CDP) =====');
   console.log('URL: ' + TEST_URL);

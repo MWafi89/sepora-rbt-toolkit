@@ -6614,7 +6614,7 @@ function autoGenerateSmartRph() {
       const s = getSession();
       const last = localStorage.getItem('erph_drive_lastsync');
       if (!s) { setDriveChip('<i class="fa-solid fa-cloud"></i> Drive: belum log masuk', ''); return; }
-      if (s.mode !== 'delima') { setDriveChip('<i class="fa-solid fa-cloud-slash"></i> Mod setempat: ' + esc(s.email || ''), '#b45309'); return; }
+      if (s.mode !== 'delima') { setDriveChip('<i class="fa-solid fa-cloud-slash"></i> Drive: tidak aktif (mod setempat) - log masuk guna ID DELIMa', '#b45309'); return; }
       setDriveChip('<i class="fa-solid fa-cloud-circle-check"></i> Drive: ' + esc(s.email) + (last ? ' &bull; ' + loginTime(last) : ''), '#059669');
     }
     function toggleLocalLogin() {
@@ -6963,9 +6963,20 @@ function autoGenerateSmartRph() {
         const sess = getSession();
         if (!sess || sess.mode !== 'delima') return;
         clearTimeout(gAutoTimer);
-        gAutoTimer = setTimeout(function () {
-          if (gTok && Date.now() < gTokExp - 60000) driveSave(true);
-          else setDriveChip('<i class="fa-solid fa-cloud-arrow-up"></i> Drive: tekan untuk sandaran (sesi tamat)', '#f59e0b');
+        gAutoTimer = setTimeout(async function () {
+          // [F14a] jangan diam-diam: cuba perbaharui token Google, kemudian sandar
+          try {
+            if (!(gTok && Date.now() < gTokExp - 60000)) {
+              if (!gdriveConfigured()) {
+                setDriveChip('<i class="fa-solid fa-cloud-slash"></i> Drive: Client ID belum diset', '#b45309');
+                return;
+              }
+              await gToken(true);          // perbaharui token secara senyap
+            }
+            await driveSave(true);
+          } catch (e) {
+            setDriveChip('<i class="fa-solid fa-cloud-arrow-up"></i> Drive: tekan untuk sandaran (sesi Google tamat)', '#f59e0b');
+          }
         }, 6000);
       } catch (e) { }
     }
@@ -6978,6 +6989,14 @@ function autoGenerateSmartRph() {
       const rows = [
         ['Akaun DELIMa', sess ? esc(sess.email) + (sess.mode === 'delima' ? ' <span style="color:#059669;">(disahkan)</span>' : ' <span style="color:#b45309;">(mod setempat)</span>') : '<em>Belum log masuk</em>'],
         ['Sandaran terakhir', last ? loginTime(last) : '<em>Belum ada</em>'],
+        ['Client ID OAuth', gdriveConfigured()
+          ? '<span style="color:#059669;">Sedia (' + esc(gdriveClientId().slice(0, 12)) + '...)</span>'
+          : '<span style="color:#b45309;">Belum diset - tekan "Setelan Client ID"</span>'],
+        ['Cara log masuk', sess && sess.mode === 'delima'
+          ? '<span style="color:#059669;">ID DELIMa (Google) - Drive aktif</span>'
+          : '<span style="color:#b45309;">Mod setempat (emel + PIN) - Drive TIDAK aktif</span>'],
+        ['Token Google', (gTok && Date.now() < gTokExp - 60000) ? 'Sah' : '<em>Tiada / tamat (diperbaharui automatik bila perlu)</em>'],
+        ['Folder Drive', esc(SEPORA_GDRIVE.folderName) + (driveFolderState() ? ' <span style="color:#059669;">(id: ' + esc(String(driveFolderState()).slice(0, 10)) + ')</span>' : ' <em>(akan dicipta pada sandaran pertama)</em>')],
         ['Fail Drive', gFileId || localStorage.getItem('erph_drive_fileid') || '<em>Belum dicipta</em>'],
         ['Rekod dalam arkib', String(savedRphList.length)],
         ['Auto-sandaran', auto ? 'Aktif' : 'Mati'],
@@ -6989,6 +7008,7 @@ function autoGenerateSmartRph() {
           <h3><i class="fa-solid fa-cloud" style="color:#1a73e8; margin-right:6px;"></i> Sandaran Google Drive (DELIMa)</h3>
           <button class="btn-icon" onclick="closeModalDirectly()"><i class="fa-solid fa-xmark"></i></button>
         </div>
+        ${(sess && sess.mode === 'setempat') ? '<div style="background:#fef3c7; border:1px solid #fcd34d; border-radius:8px; padding:0.7rem 0.9rem; margin-bottom:0.85rem; font-size:0.8rem; color:#92400e;"><strong>Drive belum aktif.</strong> Log masuk sekarang guna <strong>mod setempat</strong> (emel + PIN), jadi sandaran Drive tidak berjalan. Tekan <strong>Log masuk DELIMa</strong> (butang Google) untuk sandaran automatik ke folder ' + esc(SEPORA_GDRIVE.folderName) + '.</div>' : ''}
         <table style="width:100%; font-size:0.82rem; border-collapse:collapse; margin-bottom:1rem;">${rows}</table>
         <div style="display:flex; gap:0.5rem; flex-wrap:wrap;">
           ${sess ? '' : '<button class="btn btn-primary" onclick="closeModalDirectly(); delimaLoginWithGoogle()"><i class="fa-brands fa-google"></i> Log masuk DELIMa</button>'}
