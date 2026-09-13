@@ -33,7 +33,7 @@ async function connect() {
   const { send, errors } = await connect();
   await send('Runtime.enable'); await send('Page.enable');
   // [ujian] mock API Google Drive dipasang semula pada SETIAP muat halaman (survive reload)
-  await send('Page.addScriptToEvaluateOnNewDocument', { source: `    window.__pasangMockDrive = function(){ window.__g = { folderCreate:0, fileCreate:0, patched:0, move:0, folderAda:false, fileAda:false, legacy:false, meta:null, queries:[], folderBody:null };
+  await send('Page.addScriptToEvaluateOnNewDocument', { source: `window.__cspv = []; document.addEventListener('securitypolicyviolation', function(e){ (window.__cspv=window.__cspv||[]).push((e.violatedDirective||'?') + ':' + (e.blockedURI||'?')); });\n    window.__pasangMockDrive = function(){ window.__g = { folderCreate:0, fileCreate:0, patched:0, move:0, folderAda:false, fileAda:false, legacy:false, meta:null, queries:[], folderBody:null };
     const J = o => new Response(JSON.stringify(o), { status:200, headers:{ 'Content-Type':'application/json' } });
     window.fetch = async function(url, opts){
       opts = opts || {}; const u = String(url), m = (opts.method||'GET').toUpperCase(), g = window.__g;
@@ -264,9 +264,9 @@ async function connect() {
   const kunciLepas = await ev(`(function(){ return { gerbang: !document.getElementById('privacyLockScreen').classList.contains('hidden'), kunci: localStorage.getItem('erph_locked') }; })()`);
   ok('L34 kunci KEKAL selepas muat semula (tak boleh dipintas)', rdy4 && kunciLepas.gerbang === true && kunciLepas.kunci === '1', `gerbang=${kunciLepas.gerbang}`);
 
-  const bukaKunci = await ev(`(function(){ document.getElementById('loginInputEmail').value = DEFAULT_AUTH.email;
+  const bukaKunci = await ev(`(async function(){ document.getElementById('loginInputEmail').value = DEFAULT_AUTH.email;
     document.getElementById('loginInputPassword').value = DEFAULT_AUTH.password;
-    handleLoginSubmit({preventDefault:function(){}});
+    await handleLoginSubmit({preventDefault:function(){}});
     return { gerbang: !document.getElementById('privacyLockScreen').classList.contains('hidden'), kunci: localStorage.getItem('erph_locked'), akaun: (getSession()||{}).email }; })()`);
   ok('L35 emel + PIN membuka kunci', bukaKunci.gerbang === false && bukaKunci.kunci === null, `akaun=${bukaKunci.akaun}`);
 
@@ -340,23 +340,23 @@ async function connect() {
     return { papar: ov ? ov.style.display : null, teks: m ? (m.innerText||'').indexOf('ID DELIMa') > -1 : false }; })()`);
   ok('L48 muat semula -> skrin daftar muncul semula (belum daftar)', rdy6 && daftar2.papar === 'flex' && daftar2.teks === true, `papar=${daftar2.papar}`);
 
-  const daftarSalah = await ev(`(function(){ document.getElementById('daftarNama').value = 'Guru Ujian';
+  const daftarSalah = await ev(`(async function(){ document.getElementById('daftarNama').value = 'Guru Ujian';
     document.getElementById('daftarEmel').value = 'guru.baru@moe-dl.edu.my';
     document.getElementById('daftarPin').value = '12';
-    submitDaftarLocal({ preventDefault: function(){} });
+    await submitDaftarLocal({ preventDefault: function(){} });
     return { daftar: localStorage.getItem('erph_daftar_selesai'), emelAuth: (authCredentials||{}).email, masihPapar: document.getElementById('appModalOverlay').style.display }; })()`);
   ok('L49 PIN terlalu pendek -> pendaftaran ditolak (tiada perubahan)', daftarSalah.daftar === null && daftarSalah.masihPapar === 'flex' && (daftarSalah.emelAuth || '') !== 'guru.baru@moe-dl.edu.my', JSON.stringify(daftarSalah));
 
-  const daftarOk = await ev(`(function(){ document.getElementById('daftarNama').value = 'Guru Baru';
+  const daftarOk = await ev(`(async function(){ document.getElementById('daftarNama').value = 'Guru Baru';
     document.getElementById('daftarEmel').value = 'guru.baru@moe-dl.edu.my';
     document.getElementById('daftarPin').value = '5678';
-    submitDaftarLocal({ preventDefault: function(){} });
+    await submitDaftarLocal({ preventDefault: function(){} });
     const s = getSession() || {};
     return { daftar: localStorage.getItem('erph_daftar_selesai'), kred: (authCredentials||{}),
              sesi: s.email, mod: s.mode, nama: teacherProfile.name,
              papar: document.getElementById('appModalOverlay').style.display }; })()`);
   ok('L50 daftar mod setempat -> emel+PIN guru sendiri, sesi & nama dikemas kini',
-     daftarOk.daftar === '1' && daftarOk.kred.email === 'guru.baru@moe-dl.edu.my' && daftarOk.kred.password === '5678' &&
+     daftarOk.daftar === '1' && daftarOk.kred.email === 'guru.baru@moe-dl.edu.my' && !!daftarOk.kred.pinHash && !daftarOk.kred.password &&
      daftarOk.sesi === 'guru.baru@moe-dl.edu.my' && daftarOk.nama === 'Guru Baru', JSON.stringify({k: daftarOk.kred, s: daftarOk.sesi}));
 
   const daftarLepas = await ev(`(function(){ finishLogin({ email:'guru.baru@moe-dl.edu.my', name:'Guru Baru', mode:'setempat' });
@@ -372,17 +372,17 @@ async function connect() {
     finishLogin({ email: DEFAULT_AUTH.email, name: DEFAULT_TEACHER.name, mode:'setempat' });
     return 'ok'; })()`);
   await new Promise(r => setTimeout(r, 1200));
-  const tolakLalai = await ev(`(function(){ document.getElementById('daftarNama').value = 'Cikgu Cubaan';
+  const tolakLalai = await ev(`(async function(){ document.getElementById('daftarNama').value = 'Cikgu Cubaan';
     document.getElementById('daftarEmel').value = DEFAULT_AUTH.email;
     document.getElementById('daftarPin').value = '9999';
-    submitDaftarLocal({ preventDefault: function(){} });
+    await submitDaftarLocal({ preventDefault: function(){} });
     return { daftar: localStorage.getItem('erph_daftar_selesai'), emel: (authCredentials||{}).email, papar: document.getElementById('appModalOverlay').style.display }; })()`);
   ok('L58 emel lalai app ditolak semasa daftar (akaun tak bertukar)', tolakLalai.daftar === null && tolakLalai.emel !== EMAIL_LALAI && tolakLalai.papar === 'flex', JSON.stringify(tolakLalai));
 
-  const idGuru = await ev(`(function(){ document.getElementById('daftarNama').value = 'Cikgu Siti';
+  const idGuru = await ev(`(async function(){ document.getElementById('daftarNama').value = 'Cikgu Siti';
     document.getElementById('daftarEmel').value = 'g-57258425';          // ID DELIMa tanpa domain
     document.getElementById('daftarPin').value = '2468';
-    submitDaftarLocal({ preventDefault: function(){} });
+    await submitDaftarLocal({ preventDefault: function(){} });
     const s = getSession() || {};
     return { daftar: localStorage.getItem('erph_daftar_selesai'), emel: s.email, idDelima: s.delimaId,
              kred: (authCredentials||{}).email, nama: teacherProfile.name, papar: document.getElementById('appModalOverlay').style.display }; })()`);
@@ -430,8 +430,67 @@ async function connect() {
   ok('L55 token tamat -> auto-sandaran perbaharui token & menyandar (tidak diam)', diag4.refresh >= 1 && diag4.patched >= 1, `refresh=${diag4.refresh} patched=${diag4.patched}`);
   ok('L56 chip Drive tidak lagi kata "sesi tamat"', !/sesi Google tamat|sesi tamat/i.test(diag4.chip), `chip="${String(diag4.chip).slice(0, 70)}"`);
 
+  /* ---------- L62-L66: audit keselamatan (W1 XSS, W2 PIN, W5 esc, W6 toast, W4/SRI) ---------- */
+  const xss = await ev(`(function(){ window.__xss = 0;
+    savedRphList.unshift({ id:424242, templateKey:'x', hari:'Isnin', masa:'x', kelas:'x', subjek:'x', minggu:'9',
+      tajuk:'XSS UJIAN', sk:'', sp:'', bukuTeks:'', pblMingguPelaksanaan:'', pblTarikhMula:'', pblTarikhHantar:'',
+      nota:'', status:'Disimpan', saved:true, auto:false, created:'', dikemas:'',
+      docHtml: '<div id="previewTajuk">RPH selamat</div><scr'+'ipt>window.__xss=1</scr'+'ipt><img src=x onerror="window.__xss=2"><a id="jahat" href="javascript:window.__xss=3">klik</a><span onclick="window.__xss=4">sentuh</span>' });
+    viewSavedRph(424242);
+    const el = document.getElementById('rphPreviewContainer');
+    const jahat = document.getElementById('jahat'); if (jahat) { try { jahat.click(); } catch (e) { } }
+    const hasil = { xss: window.__xss || 0, adaScript: el.innerHTML.toLowerCase().indexOf('<script') > -1,
+      adaOnerror: el.innerHTML.toLowerCase().indexOf('onerror') > -1, adaOnclickAttr: /\sonclick/i.test(el.innerHTML),
+      adaJavascriptHref: /javascript:/i.test(el.innerHTML), kekalTeks: el.innerText.indexOf('RPH selamat') > -1,
+      adaOnerrorPeristiwa: window.__xss === 0 };
+    savedRphList = savedRphList.filter(function(r){ return r.id !== 424242; });
+    return hasil; })()`);
+  ok('L62 XSS tersimpan (fail import/Drive) dinyahbahaya', xss.xss === 0 && xss.adaScript === false && xss.adaOnerror === false && xss.adaOnclickAttr === false && xss.adaJavascriptHref === false && xss.kekalTeks === true, JSON.stringify(xss));
+
+  const pinInfo = await ev(`(async function(){ window.__modalWajib = false; closeModalDirectly();
+    try { localStorage.removeItem('erph_daftar_selesai'); localStorage.removeItem('erph_auth_cred'); } catch (e) { }
+    finishLogin({ email: DEFAULT_AUTH.email, name: DEFAULT_TEACHER.name, mode:'setempat' });
+    openDaftarModal();
+    document.getElementById('daftarNama').value = 'Cikgu Audit';
+    document.getElementById('daftarEmel').value = 'cikgu.audit@moe-dl.edu.my';
+    document.getElementById('daftarPin').value = '4321';
+    await submitDaftarLocal({ preventDefault: function(){} });
+    const mentah = localStorage.getItem('erph_auth_cred') || '';
+    const kred = JSON.parse(mentah || '{}');
+    return { adaPinHash: !!kred.pinHash, adaGaram: !!kred.garam, adaTeksBiasa: /"password"/.test(mentah),
+             adaLemas: !!kred.pinLemas, emel: kred.email, v: kred.v }; })()`);
+  ok('L63 PIN disimpan sebagai HASH (tiada teks biasa)', pinInfo.adaPinHash === true && pinInfo.adaTeksBiasa === false && pinInfo.emel === 'cikgu.audit@moe-dl.edu.my' && pinInfo.v === 2, JSON.stringify(pinInfo));
+
+  const loginUji = await ev(`(async function(){ const g = function(){ return document.getElementById('privacyLockScreen').classList.contains('hidden'); };
+    lockAppScreen();
+    document.getElementById('loginInputEmail').value = 'cikgu.audit@moe-dl.edu.my';
+    document.getElementById('loginInputPassword').value = 'SALAH';
+    await handleLoginSubmit({ preventDefault: function(){} });
+    const selepasSalah = g();
+    document.getElementById('loginInputEmail').value = 'cikgu.audit@moe-dl.edu.my';
+    document.getElementById('loginInputPassword').value = '4321';
+    await handleLoginSubmit({ preventDefault: function(){} });
+    return { salahBuka: selepasSalah, betulBuka: g() }; })()`);
+  ok('L64 log masuk hash: PIN salah ditolak, PIN betul diterima', loginUji.salahBuka === false && loginUji.betulBuka === true, JSON.stringify(loginUji));
+
+  const escUji = await ev(`(function(){ const t = esc(String.fromCharCode(97,34,98,39,99,60,100,62,38,101));
+    return { petikan: t.indexOf('&quot;') > -1, petikanTunggal: t.indexOf('&#39;') > -1, lt: t.indexOf('&lt;') > -1, amp: t.indexOf('&amp;') > -1 }; })()`);
+  ok('L65 esc() mengescape petikan (elak suntikan atribut)', escUji.petikan === true && escUji.petikanTunggal === true && escUji.lt === true && escUji.amp === true, JSON.stringify(escUji));
+
+  const toast = await ev(`(function(){ window.__xss9 = 0; showToast('<img src=x onerror="window.__xss9=1"><b>ok</b>');
+    const t = document.getElementById('toastContainer');
+    return { xss: window.__xss9 || 0, adaOnerror: (t.innerHTML||'').toLowerCase().indexOf('onerror') > -1, adaTeks: (t.innerText||'').indexOf('ok') > -1 }; })()`);
+  ok('L66 showToast tidak boleh menyuntik skrip', toast.xss === 0 && toast.adaOnerror === false && toast.adaTeks === true, JSON.stringify(toast));
+
+  const csp = await ev(`(function(){
+    const semua = document.querySelectorAll('script[integrity], link[integrity]');
+    let sri = 0; Array.prototype.forEach.call(semua, function(n){ if ((n.getAttribute('integrity')||'').indexOf('sha384-') === 0) sri++; });
+    return { sri: sri, pelanggaranCSP: (window.__cspv || []).slice(0, 3) }; })()`);
+  ok('L67 pustaka CDN ada SRI (integriti)', csp.sri >= 5, 'sri=' + csp.sri);
+  ok('L68 tiada pelanggaran CSP sepanjang ujian', (csp.pelanggaranCSP || []).length === 0, JSON.stringify(csp.pelanggaranCSP));
+
   /* ---------- L25: ralat JS sepanjang ujian ---------- */
-  ok('L61 tiada ralat JS sepanjang ujian', errors.length === 0, errors.slice(0, 3).join(' | ') || '0 ralat');
+  ok('L69 tiada ralat JS sepanjang ujian', errors.length === 0, errors.slice(0, 3).join(' | ') || '0 ralat');
 
   console.log('\n===== UJIAN LENGKAP SEPORA RBT TOOLKIT (chromium headless + CDP) =====');
   console.log('URL: ' + TEST_URL);

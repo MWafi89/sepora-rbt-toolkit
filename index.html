@@ -11,12 +11,12 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
   
   <!-- Font Awesome 6 Icons -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha384-iw3OoTErCYJJB9mCa8LNS2hbsQ7M3C0EpIsO/H5+EGAkPGc6rk+V8i04oW/K5xq0" crossorigin="anonymous">
 
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/docx@8.5.0/build/index.umd.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js" integrity="sha384-/1qUCSGwTur9vjf/z9lmu/eCUYbpOTgSjmpbMQZ1/CtX2v/WcAIKqRv+U1DUCG6e" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js" integrity="sha384-nFoSjZIoH3CCp8W639jJyQkuPHinJ2NHe7on1xvlUA7SuGfJAfvMldrsoAVm6ECz" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js" integrity="sha384-Yv5O+t3uE3hunW8uyrbpPW3iw6/5/Y7HitWJBLgqfMoA36NogMmy+8wWZMpn3HWc" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/docx@8.5.0/build/index.umd.js" integrity="sha384-4xaIisuLEy2lo2HkB2C4rEf7v8jbTb2kuogX6TkuEt9feTWKBSFSOzsqNNbV+sKh" crossorigin="anonymous"></script>
 
   <!-- ===== PWA: boleh dipasang pada telefon & laptop (ikon + offline) ===== -->
   <link rel="manifest" href="/manifest.webmanifest">
@@ -2379,7 +2379,8 @@
       if (!container) return;
       const toast = document.createElement('div');
       toast.className = 'toast';
-      toast.innerHTML = `<i class="fa-solid fa-circle-info" style="color:var(--primary);"></i> <span>${message}</span>`;
+      const _msgSelamat = (typeof arkibSanitizeHtml === 'function') ? arkibSanitizeHtml(String(message)) : esc(String(message));
+      toast.innerHTML = `<i class="fa-solid fa-circle-info" style="color:var(--primary);"></i> <span>${_msgSelamat}</span>`;
       container.appendChild(toast);
       setTimeout(() => {
         toast.style.opacity = '0';
@@ -4713,7 +4714,11 @@ Abaikan maklumat tandatangan pentadbir, cuti umum, atau kepala surat yang tidak 
       } catch (e) { }
 
 
-    function esc(v) { return String(v).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
+    // [W5] escape & < > " ' (petikan perlu supaya suntikan atribut mustahil)
+    function esc(v) {
+      return String(v == null ? '' : v).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+    }
 
     function updateArkibBadge() {
       const badge = document.getElementById('sidebarArkibBadge');
@@ -5142,6 +5147,40 @@ function autoGenerateSmartRph() {
       d.setDate(d.getDate() + (hari || 7));
       return d.getFullYear() + '-' + ('0' + (d.getMonth() + 1)).slice(-2) + '-' + ('0' + d.getDate()).slice(-2);
     }
+    /* [W1] Nyahbahaya HTML sebelum dipaparkan (fail sandaran / Drive boleh datang dari luar). */
+    const ARKIB_TAG_BURUK = ['script', 'iframe', 'frame', 'frameset', 'object', 'embed', 'applet', 'link', 'meta', 'base', 'form', 'style', 'template', 'noscript', 'video', 'audio', 'source', 'track', 'canvas'];
+    function arkibSanitizeHtml(html) {
+      const mentah = String(html == null ? '' : html);
+      if (!mentah) return '';
+      try {
+        const doc = new DOMParser().parseFromString('<div id="arkibAkar">' + mentah + '</div>', 'text/html');
+        const akar = doc.getElementById('arkibAkar');
+        if (!akar) return '';
+        Array.prototype.slice.call(akar.querySelectorAll(ARKIB_TAG_BURUK.join(','))).forEach(function (n) { n.remove(); });
+        const semua = akar.querySelectorAll('*');
+        Array.prototype.forEach.call(semua, function (n) {
+          Array.prototype.slice.call(n.attributes).forEach(function (at) {
+            const nama = String(at.name || '').toLowerCase();
+            const nilai = String(at.value || '');
+            const buang = nama.indexOf('on') === 0 || nama === 'srcdoc' || nama === 'formaction' ||
+              ((nama === 'href' || nama === 'src' || nama === 'xlink:href' || nama === 'action') &&
+                /^\s*(javascript|vbscript|data:text\/html)/i.test(nilai));
+            if (buang) { try { n.removeAttribute(at.name); } catch (e) { } }
+          });
+          // keselamatan tambahan: <a> luar mesti selamat
+          if (n.tagName === 'A') { n.setAttribute('rel', 'noopener noreferrer'); }
+        });
+        return akar.innerHTML;
+      } catch (e) {
+        return mentah.replace(/<\s*(script|iframe|object|embed|link|meta|base|form|style)[^>]*>[\s\S]*?<\s*\/\s*\1\s*>/gi, '')
+          .replace(/\son\w+\s*=\s*("[^"]*"|'[^']*'|[^\s>]+)/gi, '')
+          .replace(/<\s*(script|iframe|object|embed|link|meta|base|form|style)[^>]*>/gi, '');
+      }
+    }
+    function arkibSanitizeList(list) {
+      (list || []).forEach(function (r) { if (r && r.docHtml) r.docHtml = arkibSanitizeHtml(r.docHtml); });
+      return list;
+    }
     function arkibNormalize(list) {
       if (!Array.isArray(list)) return [];
       return list.map(function (r) {
@@ -5404,6 +5443,7 @@ function autoGenerateSmartRph() {
       switchTab('bina-rph');
       const el = document.getElementById('rphPreviewContainer');
       if (el && r.docHtml) {
+        r.docHtml = arkibSanitizeHtml(r.docHtml);   // [W1] nyahbahaya sebelum papar
         el.innerHTML = r.docHtml;
         updateSidebarJanaan();
         showToast('Dokumen RPH "' + r.tajuk + '" dibuka dari salinan arkib. Sunting terus, kemudian tekan "Kemas Kini Rekod Terpilih".');
@@ -5658,7 +5698,7 @@ function autoGenerateSmartRph() {
         try {
           const data = JSON.parse(rd.result);
           const rows = Array.isArray(data) ? data : (data.rekod || data.records || []);
-          const norm = arkibNormalize(rows);
+          const norm = arkibSanitizeList(arkibNormalize(rows));   // [W1] fail import tidak dipercayai
           let added = 0;
           norm.forEach(function (n) {
             const dup = savedRphList.some(function (x) {
@@ -6380,7 +6420,7 @@ function autoGenerateSmartRph() {
       openModal(html);
     }
 
-    function submitTeacherProfile(e) {
+    async function submitTeacherProfile(e) {
       e.preventDefault();
       teacherProfile.name = document.getElementById('modalTeacherName').value.trim();
       teacherProfile.school = document.getElementById('modalTeacherSchool').value.trim();
@@ -6391,11 +6431,7 @@ function autoGenerateSmartRph() {
       const newPassword = document.getElementById('modalAuthPassword').value.trim();
 
       if (newEmail && newPassword) {
-        authCredentials = {
-          email: newEmail,
-          password: newPassword
-        };
-        localStorage.setItem('erph_auth_cred', JSON.stringify(authCredentials));
+        await simpanKredensial(newEmail, newPassword);   // [W2] simpan hash, bukan teks biasa
       }
 
       localStorage.setItem('erph_teacher', JSON.stringify(teacherProfile));
@@ -6438,16 +6474,18 @@ function autoGenerateSmartRph() {
       refreshDriveChip();
     }
 
-    function handleLoginSubmit(event) {
+    async function handleLoginSubmit(event) {
       event.preventDefault();
       const inputEmail = document.getElementById('loginInputEmail').value.trim().toLowerCase();
       const inputPw = document.getElementById('loginInputPassword').value.trim();
       const remember = document.getElementById('rememberSessionCheck')?.checked;
 
       const validEmail = (authCredentials.email || DEFAULT_AUTH.email).toLowerCase();
-      const validPw = authCredentials.password || DEFAULT_AUTH.password;
+      const sah = inputEmail === validEmail && (await sahPin(inputPw));   // [W2] bandingkan hash
 
-      if (inputEmail === validEmail && inputPw === validPw) {
+      if (sah) {
+        // [W2] migrasi kredensial lama (teks biasa) -> hash
+        if (!authCredentials.pinHash && !authCredentials.pinLemas) { try { await simpanKredensial(validEmail, inputPw); } catch (e) { } }
         if (remember) {
           localStorage.setItem('erph_remember_login', 'true');
         } else {
@@ -6494,9 +6532,9 @@ function autoGenerateSmartRph() {
 
     function showDefaultLoginHelp(event) {
       if (event) event.preventDefault();
+      // [W2] JANGAN paparkan PIN. Hanya tunjuk emel berdaftar.
       const currentEmail = authCredentials.email || DEFAULT_AUTH.email;
-      const currentPw = authCredentials.password || DEFAULT_AUTH.password;
-      showToast(`Emel Berdaftar: ${currentEmail} | PIN: ${currentPw}`);
+      showToast('Emel berdaftar: ' + currentEmail + ' - lupa PIN? Tetapkan PIN baharu melalui menu Profil (nama guru di atas) atau guna butang ID DELIMa.');
     }
 
     /* [F11] Kunci skrin sebenar: bendera 'erph_locked' mesti dibuka dengan emel+PIN.
@@ -6595,6 +6633,39 @@ function autoGenerateSmartRph() {
 
     function gdriveClientId() { try { return (localStorage.getItem('erph_gdrive_clientid') || SEPORA_GDRIVE.clientId || '').trim(); } catch (e) { return SEPORA_GDRIVE.clientId || ''; } }
     function gdriveConfigured() { return /\.apps\.googleusercontent\.com$/i.test(gdriveClientId()); }
+    /* [W2] PIN disimpan sebagai hash PBKDF2-SHA256 + garam (bukan teks biasa). */
+    function pinRandB64(n) {
+      const a = new Uint8Array(n || 16);
+      if (self.crypto && self.crypto.getRandomValues) self.crypto.getRandomValues(a); else for (let i = 0; i < a.length; i++) a[i] = Math.floor(Math.random() * 256);
+      let s = ''; a.forEach(function (b) { s += String.fromCharCode(b); });
+      return btoa(s);
+    }
+    async function pinHash(pin, garamB64) {
+      const enc = new TextEncoder();
+      if (!(self.crypto && self.crypto.subtle && self.crypto.subtle.importKey)) return '';   // konteks tak selamat
+      const kunci = await self.crypto.subtle.importKey('raw', enc.encode(String(pin)), 'PBKDF2', false, ['deriveBits']);
+      const bit = await self.crypto.subtle.deriveBits({ name: 'PBKDF2', salt: enc.encode(String(garamB64 || '')), iterations: 60000, hash: 'SHA-256' }, kunci, 256);
+      const arr = Array.from(new Uint8Array(bit));
+      let s = ''; arr.forEach(function (b) { s += String.fromCharCode(b); });
+      return btoa(s);
+    }
+    async function simpanKredensial(email, pin) {
+      const garam = pinRandB64(16);
+      const h = await pinHash(pin, garam);
+      if (!h) {   // pelayar lama tanpa SubtleCrypto: simpan hash ringkas (lebih baik drpd teks biasa)
+        authCredentials = { email: email, pinLemas: btoa(unescape(encodeURIComponent('sepora|' + garam + '|' + pin))), garam: garam, v: 2 };
+      } else {
+        authCredentials = { email: email, pinHash: h, garam: garam, v: 2 };
+      }
+      try { localStorage.setItem('erph_auth_cred', JSON.stringify(authCredentials)); } catch (e) { }
+      return authCredentials;
+    }
+    async function sahPin(pin) {
+      const k = authCredentials || DEFAULT_AUTH;
+      if (k.pinHash) return (await pinHash(pin, k.garam)) === k.pinHash;
+      if (k.pinLemas) return btoa(unescape(encodeURIComponent('sepora|' + k.garam + '|' + pin))) === k.pinLemas;
+      return String(pin) === String(k.password || DEFAULT_AUTH.password);   // lalai / belum migrasi
+    }
     function getSession() { try { return JSON.parse(localStorage.getItem('erph_session') || 'null'); } catch (e) { return null; } }
     function setSession(v) { try { if (v) localStorage.setItem('erph_session', JSON.stringify(v)); else localStorage.removeItem('erph_session'); } catch (e) { } }
     function isDelimEmail(e) {
@@ -6883,7 +6954,7 @@ function autoGenerateSmartRph() {
       closeModalDirectly();
       delimaLoginWithGoogle();
     }
-    function submitDaftarLocal(ev) {
+    async function submitDaftarLocal(ev) {   // [W2] perlu async utk hashing PIN
       if (ev && ev.preventDefault) ev.preventDefault();
       const nama = String((document.getElementById('daftarNama') || {}).value || '').trim();
       let emel = String((document.getElementById('daftarEmel') || {}).value || '').trim().toLowerCase();
@@ -6895,8 +6966,9 @@ function autoGenerateSmartRph() {
       if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(emel)) { showToast('Emel tidak sah. Contoh: nama@moe-dl.edu.my'); return; }
       if (pin.length < 4) { showToast('PIN terlalu pendek - minimum 4 aksara.'); return; }
       if (emel === String(DEFAULT_AUTH.email || '').toLowerCase()) { showToast('Sila guna emel anda sendiri, bukan emel lalai app.'); return; }
-      authCredentials = { email: emel, password: pin };
-      try { localStorage.setItem('erph_auth_cred', JSON.stringify(authCredentials)); } catch (e) { }
+      authCredentials = { email: emel, password: pin };   // sementara (pengesahan dlm sesi ini)
+      await simpanKredensial(emel, pin);                   // [W2] yang disimpan ialah hash sahaja
+      delete authCredentials.password;
       teacherProfile.name = nama;
       try { localStorage.setItem('erph_teacher', JSON.stringify(teacherProfile)); } catch (e) { }
       try { localStorage.setItem('erph_daftar_selesai', '1'); } catch (e) { }
@@ -7017,7 +7089,7 @@ function autoGenerateSmartRph() {
         try { localStorage.setItem('erph_drive_fileid', gFileId); } catch (e) { }
         const raw = await driveApi('/drive/v3/files/' + f.id + '?alt=media', {}, tok);
         const data = typeof raw === 'string' ? JSON.parse(raw) : raw;
-        const rows = arkibNormalize(Array.isArray(data) ? data : (data.rekod || []));
+        const rows = arkibSanitizeList(arkibNormalize(Array.isArray(data) ? data : (data.rekod || [])));   // [W1] fail Drive tidak dipercayai
         let added = 0, updated = 0;
         rows.forEach(function (n) {
           const ex = savedRphList.find(function (x) { return x.id === n.id; });
