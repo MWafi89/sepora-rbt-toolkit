@@ -561,8 +561,32 @@ async function connect() {
     return { bil: c.children.length }; })()`);
   ok('L78 toser terhad kepada 3 (mesej penting tidak tertimbun)', toser.bil <= 3, 'bil=' + toser.bil);
 
+  /* ---------- L80-L82: ciri AI tidak aktif mesti jujur (F20) ---------- */
+  const notaAi = await ev(`(function(){ switchTab('jadual'); renderAiStatusNota();
+    const n = document.getElementById('notaAiStatus');
+    return { tersedia: aiTersedia(), papar: n ? n.style.display : 'tiada elemen',
+             teks: n ? (n.innerText || '').slice(0, 80) : '' }; })()`);
+  ok('L80 nota "AI belum aktif" dipaparkan pada tab Jadual',
+     notaAi.tersedia === false && notaAi.papar !== 'none' && notaAi.teks.indexOf('belum diaktifkan') > -1, JSON.stringify(notaAi));
+
+  const aiJadual = await ev(`(async function(){ const asal = window.fetch; let n = 0;
+    window.fetch = function(){ n++; return asal.apply(this, arguments); };
+    try { await analyzeTimetableImageWithAI('AAAA', 'image/jpeg'); } catch (e) { }
+    window.fetch = asal;
+    return { panggilanRangkaian: n, toser: (document.getElementById('toastContainer')||{innerText:''}).innerText.replace(/\s+/g,' ').slice(0, 200) }; })()`);
+  ok('L81 imbas gambar tanpa kunci AI: TIADA panggilan rangkaian + mesej jujur (cadang CSV/manual)',
+     aiJadual.panggilanRangkaian === 0 && aiJadual.toser.indexOf('belum diaktifkan') > -1 && aiJadual.toser.indexOf('CSV') > -1, JSON.stringify(aiJadual));
+
+  const aiRpt = await ev(`(async function(){ const asal = window.fetch; let n = 0;
+    window.fetch = function(){ n++; return asal.apply(this, arguments); };
+    try { await analyzeRptTextWithAI('teks rpt ujian '.repeat(20)); } catch (e) { }
+    window.fetch = asal;
+    return { panggilanRangkaian: n, toser: (document.getElementById('toastContainer')||{innerText:''}).innerText.replace(/\s+/g,' ').slice(0, 200) }; })()`);
+  ok('L82 baca RPT tanpa kunci AI: TIADA panggilan rangkaian + mesej jujur (cadang .txt/manual)',
+     aiRpt.panggilanRangkaian === 0 && aiRpt.toser.indexOf('belum diaktifkan') > -1 && aiRpt.toser.indexOf('manual') > -1, JSON.stringify(aiRpt));
+
   /* ---------- L25: ralat JS sepanjang ujian ---------- */
-  ok('L79 tiada ralat JS sepanjang ujian', errors.length === 0, errors.slice(0, 3).join(' | ') || '0 ralat');
+  ok('L83 tiada ralat JS sepanjang ujian', errors.length === 0, errors.slice(0, 3).join(' | ') || '0 ralat');
 
   console.log('\n===== UJIAN LENGKAP SEPORA RBT TOOLKIT (chromium headless + CDP) =====');
   console.log('URL: ' + TEST_URL);

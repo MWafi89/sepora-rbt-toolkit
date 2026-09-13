@@ -1088,7 +1088,10 @@
           <div class="page-header">
             <div>
               <h1 class="page-title">Jadual Waktu Mengajar</h1>
-              <p class="page-desc">Muat naik gambar jadual waktu sebenar anda atau klik mana-mana slot kelas untuk menjana RPH segera.</p>
+              <p class="page-desc">Muat naik jadual anda (CSV) atau klik mana-mana slot kelas untuk menjana RPH segera.</p>
+              <p id="notaAiStatus" style="display:none; font-size:0.76rem; color:#b45309; background:rgba(245,158,11,0.10); border:1px solid rgba(245,158,11,0.35); border-radius:8px; padding:6px 10px; margin-top:6px;">
+                <i class="fa-solid fa-circle-info"></i> Imbas gambar jadual (AI) belum diaktifkan - guna fail CSV atau isi slot secara manual.
+              </p>
             </div>
             <div style="display:flex; gap:0.5rem; flex-wrap:wrap;">
               <button class="btn btn-outline" style="border-color:#10b981; color:#059669;" onclick="document.getElementById('timetableFileInput').click()">
@@ -2502,7 +2505,15 @@
       });
     }
 
+    function renderAiStatusNota() {
+      try {
+        const n = document.getElementById('notaAiStatus');
+        if (n) n.style.display = aiTersedia() ? 'none' : 'block';
+      } catch (e) { }
+    }
+
     function renderTimetable() {
+      renderAiStatusNota();
       const container = document.getElementById('timetableContainer');
       if (!container) return;
 
@@ -2630,8 +2641,17 @@
       }
     }
 
+    const SEPORA_AI_KEY = "";   // [F20] isi di sini (atau biar kosong) untuk hidupkan ciri AI
+    function aiTersedia() { return !!String(SEPORA_AI_KEY || '').trim(); }
+    function aiTidakAktifMesej(ciri) {
+      const alt = ciri === 'rpt'
+        ? 'Muat naik fail teks (.txt) atau isi RPT secara manual (butang Tambah RPT).'
+        : 'Isi slot secara manual (Tambah Slot) atau muat naik fail CSV jadual.';
+      showToast('Ciri AI (' + (ciri === 'rpt' ? 'baca dokumen RPT' : 'imbas gambar jadual') + ') belum diaktifkan dalam app ini. ' + alt);
+    }
     async function analyzeTimetableImageWithAI(base64ImageData, mimeType) {
-      const apiKey = "";
+      if (!aiTersedia()) { aiTidakAktifMesej('jadual'); return; }
+      const apiKey = SEPORA_AI_KEY;
       const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key=${apiKey}`;
 
       const prompt = `Anda adalah pakar pembaca jadual waktu guru sekolah di Malaysia.
@@ -2997,7 +3017,8 @@ Pastikan abaikan waktu rehat (REHAT), perhimpunan, atau slot kosong tanpa pengaj
     }
 
     async function analyzeRptTextWithAI(rawText) {
-      const apiKey = "";
+      if (!aiTersedia()) { aiTidakAktifMesej('rpt'); return; }
+      const apiKey = SEPORA_AI_KEY;
       const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key=${apiKey}`;
 
       // Hadkan panjang teks jika terlalu panjang bagi mengelakkan had token pelayar
