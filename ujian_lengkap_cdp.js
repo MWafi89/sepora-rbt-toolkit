@@ -271,13 +271,17 @@ async function connect() {
   ok('L35 emel + PIN membuka kunci', bukaKunci.gerbang === false && bukaKunci.kunci === null, `akaun=${bukaKunci.akaun}`);
 
   const sesiKeluar = await ev(`(function(){ finishLogin(${JSON.stringify(AKAUN_UJIAN)});
+    loadSlotToRph('Selasa','11:00 - 12:00','2 Cekal','RBT Tahun 5'); autoGenerateSmartRph();
+    const tajuk = (document.getElementById('previewTajuk')||{textContent:''}).textContent.trim();
     const sebelum = savedRphList.length; logoutSession();
-    return { sebelum: sebelum, sesi: getSession(), kunci: localStorage.getItem('erph_locked'), arkib: savedRphList.length,
-             preview: (document.getElementById('rphPreviewContainer').innerText||'').trim().length,
+    const pv = document.getElementById('rphPreviewContainer');
+    const teks = pv ? (pv.textContent || '') : '';
+    return { sebelum: sebelum, tajuk: tajuk, sesi: getSession(), kunci: localStorage.getItem('erph_locked'), arkib: savedRphList.length,
+             struktur: !!document.getElementById('previewTajuk'), dataTinggal: tajuk ? (teks.indexOf(tajuk) > -1) : false,
              gerbang: !document.getElementById('privacyLockScreen').classList.contains('hidden') }; })()`);
-  ok('L36 Log Keluar: sesi + arkib memori + dokumen dibersihkan, gerbang dipapar',
-     sesiKeluar.sesi === null && sesiKeluar.arkib === 0 && sesiKeluar.preview === 0 && sesiKeluar.gerbang === true && sesiKeluar.sebelum > 0,
-     `rekod sebelum=${sesiKeluar.sebelum} sesi=${sesiKeluar.sesi} arkib=${sesiKeluar.arkib} preview=${sesiKeluar.preview}`);
+  ok('L36 Log Keluar: sesi + arkib memori dibersihkan, dokumen guru sebelumnya TIDAK kelihatan, struktur pratonton kekal, gerbang dipapar',
+     sesiKeluar.sesi === null && sesiKeluar.arkib === 0 && sesiKeluar.struktur === true && sesiKeluar.dataTinggal === false && sesiKeluar.gerbang === true && sesiKeluar.sebelum > 0,
+     `rekod=${sesiKeluar.sebelum} struktur=${sesiKeluar.struktur} dataTinggal=${sesiKeluar.dataTinggal}`);
 
   await send('Page.reload'); const rdy5 = await waitReady(); await stub();
   const lepasKeluar = await ev(`(function(){ return { gerbang: !document.getElementById('privacyLockScreen').classList.contains('hidden'), arkib: savedRphList.length }; })()`);
@@ -585,8 +589,19 @@ async function connect() {
   ok('L82 baca RPT tanpa kunci AI: TIADA panggilan rangkaian + mesej jujur (cadang .txt/manual)',
      aiRpt.panggilanRangkaian === 0 && aiRpt.toser.indexOf('belum diaktifkan') > -1 && aiRpt.toser.indexOf('manual') > -1, JSON.stringify(aiRpt));
 
+  /* ---------- L84: selepas log masuk semula, "Jana RPH" mesti hidup lagi (F21) ---------- */
+  const pvMasuk = await ev(`(async function(){ document.getElementById('loginInputEmail').value = 'g-12345678';
+    document.getElementById('loginInputPassword').value = '4455';
+    await handleLoginSubmit({ preventDefault: function(){} });
+    loadSlotToRph('Selasa','11:00 - 12:00','2 Cekal','RBT Tahun 5'); autoGenerateSmartRph();
+    const pv = document.getElementById('rphPreviewContainer');
+    return { gerbangTutup: document.getElementById('privacyLockScreen').classList.contains('hidden'),
+             panjang: pv ? (pv.textContent || '').length : 0 }; })()`);
+  ok('L84 selepas log masuk semula: "Jana RPH" berfungsi lagi (pratonton terisi)',
+     pvMasuk.gerbangTutup === true && pvMasuk.panjang > 500, `panjang=${pvMasuk.panjang}`);
+
   /* ---------- L25: ralat JS sepanjang ujian ---------- */
-  ok('L83 tiada ralat JS sepanjang ujian', errors.length === 0, errors.slice(0, 3).join(' | ') || '0 ralat');
+  ok('L85 tiada ralat JS sepanjang ujian', errors.length === 0, errors.slice(0, 3).join(' | ') || '0 ralat');
 
   console.log('\n===== UJIAN LENGKAP SEPORA RBT TOOLKIT (chromium headless + CDP) =====');
   console.log('URL: ' + TEST_URL);

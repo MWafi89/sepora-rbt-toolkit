@@ -1914,6 +1914,9 @@
   <div id="toastContainer" class="toast-container"></div>
 
   <script>
+    // [F21] simpan struktur pratonton ASAL (pristine, sebelum apa-apa penjanaan) supaya boleh
+    // dipulihkan selepas log keluar - struktur hidup, kandungan guru sebelumnya hilang.
+    try { const _pv0 = document.getElementById('rphPreviewContainer'); if (_pv0) window.__rphPvTpl = _pv0.innerHTML; } catch (e) { }
     const SEPORA_LINKTREE_URL = "https://linktr.ee/RBTSEPORA?utm_source=linktree_profile_share&ltsid=80099ec5-2cc3-4e39-bedf-01918b0c2435";
     const DAYS = ["Isnin", "Selasa", "Rabu", "Khamis", "Jumaat"];
     let TIME_SLOTS = [
@@ -6479,6 +6482,16 @@ function autoGenerateSmartRph() {
     }
 
     /* PENGURUSAN LOG MASUK MENGGUNAKAN EMEL */
+    /* [F21] pastikan struktur pratonton RPH wujud (kalau pernah dipadam, pulihkan templat) */
+    function pastikanPratonton() {
+      try {
+        const pv = document.getElementById('rphPreviewContainer');
+        if (!pv) return false;
+        if (!pv.querySelector('[id^="preview"]') && window.__rphPvTpl) { pv.innerHTML = window.__rphPvTpl; return true; }
+        return true;
+      } catch (e) { return false; }
+    }
+
     function checkAuthStatus() {
       const lockScreen = document.getElementById('privacyLockScreen');
       const sess = getSession();
@@ -6924,6 +6937,7 @@ function autoGenerateSmartRph() {
       const lock = document.getElementById('privacyLockScreen');
       if (lock) lock.classList.add('hidden');
       if (typeof syncTeacherUI === 'function') syncTeacherUI();
+      pastikanPratonton();   // [F21] pratonton pulih selepas log masuk
       refreshDriveChip();
       const au = document.getElementById('driveAutoSync');
       if (au) au.checked = localStorage.getItem(SEPORA_GDRIVE.autoKey) === '1';
@@ -7250,8 +7264,14 @@ function autoGenerateSmartRph() {
         savedRphList = []; currentArkibId = null;
         renderSavedRphTable(); updateArkibBadge(); updateArkibSelectedInfo(); updateDashboardMetrics();
       } catch (e) { }
-      const pv = document.getElementById('rphPreviewContainer');
-      if (pv) pv.innerHTML = '';
+      // [F21] JANGAN musnahkan struktur pratonton (kalau tidak "Jana RPH" mati selepas log masuk
+      // semula): pulihkan templat, kemudian kosongkan teks/nilai supaya dokumen guru sebelumnya
+      // tidak kelihatan (keperluan F11 kekal).
+      try {
+        pastikanPratonton();
+        const pv = document.getElementById('rphPreviewContainer');
+        if (pv && window.__rphPvTpl) pv.innerHTML = window.__rphPvTpl;   // [F21] templat BERSIH: struktur hidup, kandungan guru lepas hilang
+      } catch (e) { }
       try { syncRphMirror(); } catch (e) { }
       closeModalDirectly();
       try { switchTab('dashboard'); } catch (e) { }

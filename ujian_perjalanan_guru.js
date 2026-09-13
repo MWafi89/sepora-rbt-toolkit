@@ -155,7 +155,81 @@ async function connect() {
   ok('P12 keluar bersihkan arkib dalam memori, masuk semula (ID sahaja) pulihkan arkib',
     keluar.gerbang === true && keluar.dalam === 0 && masuk.gerbangTutup === true && masuk.arkib >= 1, `pulih=${masuk.arkib}`);
 
-  ok('P13 tiada ralat JS sepanjang perjalanan', errors.length === 0, errors.slice(0, 2).join(' | '));
+  /* ---------- P14: EDIT RPH yang sudah disimpan (kitaran penuh simpan->edit->simpan) ---------- */
+  const edit = await ev(`(function(){ const r = (savedRphList || [])[0] || {};
+    openArkibEditModal(r.id);
+    document.getElementById('arkibEditTajuk').value = 'RPH DIEDIT OLEH GURU';
+    document.getElementById('arkibEditNota').value = 'nota ujian edit';
+    document.getElementById('arkibEditKelas').value = '3 Bestari';
+    submitArkibEdit({ preventDefault: function(){} }, r.id);
+    const selepas = savedRphList.find(function (x) { return x.id === r.id; }) || {};
+    const emel = ((getSession() || {}).email) || '';
+    const kunci = (typeof arkibKeyFor === 'function') ? arkibKeyFor(emel) : ('erph_saved::' + emel);
+    const storan = localStorage.getItem(kunci) || '';
+    return { tajuk: selepas.tajuk, kelas: selepas.kelas, nota: selepas.nota, dalamStoran: storan.indexOf('RPH DIEDIT OLEH GURU') > -1 }; })()`);
+  ok('P14 edit RPH tersimpan: tajuk/kelas/nota dikemas kini + kekal dalam storan',
+    edit.tajuk === 'RPH DIEDIT OLEH GURU' && edit.kelas === '3 Bestari' && edit.nota === 'nota ujian edit' && edit.dalamStoran === true,
+    `tajuk=${String(edit.tajuk).slice(0, 24)}`);
+
+  /* ---------- P15: JANA WORD (.docx) - struktur fail sebenar (bukan sekadar tiada ralat) ---------- */
+  await ev(`loadSlotToRph('Selasa','11:00 - 12:00','2 Cekal','RBT Tahun 5'); autoGenerateSmartRph(); 'ok'`);
+  const word = await ev(`(async function(){ const asalUrl = URL.createObjectURL, asalKlik = HTMLAnchorElement.prototype.click;
+    let blob = null, nama = '', ralat = '';
+    URL.createObjectURL = function (b) { blob = b; return asalUrl.call(URL, b); };
+    HTMLAnchorElement.prototype.click = function () { nama = this.download || nama; };
+    try { exportRphDocx(); } catch (e) { ralat = String(e.message); }
+    for (let i = 0; i < 20 && !blob; i++) await new Promise(r => setTimeout(r, 300));
+    URL.createObjectURL = asalUrl; HTMLAnchorElement.prototype.click = asalKlik;
+    if (!blob) return { adaBlob: false, nama: nama, ralat: ralat };
+    const buf = new Uint8Array(await blob.arrayBuffer());
+    const teks = new TextDecoder('latin1').decode(buf.slice(0, Math.min(buf.length, 300000)));
+    return { adaBlob: true, saiz: buf.length, zip: buf[0] === 0x50 && buf[1] === 0x4B, dokumen: teks.indexOf('word/document.xml') > -1, nama: nama, ralat: ralat }; })()`);
+  ok('P15 jana Word: fail .docx sah (zip + word/document.xml)',
+    word.adaBlob === true && word.zip === true && word.dokumen === true && word.saiz > 3000 && String(word.nama).indexOf('.docx') > -1,
+    `saiz=${word.saiz} zip=${word.zip} dokumen=${word.dokumen} nama=${word.nama}`);
+
+  /* ---------- P16: JANA PDF - tanda tangan fail %PDF ---------- */
+  const pdf = await ev(`(async function(){ const asalUrl = URL.createObjectURL, asalKlik = HTMLAnchorElement.prototype.click;
+    let blob = null, nama = '', ralat = '';
+    URL.createObjectURL = function (b) { blob = b; return asalUrl.call(URL, b); };
+    HTMLAnchorElement.prototype.click = function () { nama = this.download || nama; };
+    try { exportRphPdf(); } catch (e) { ralat = String(e.message); }
+    for (let i = 0; i < 60 && !blob; i++) await new Promise(r => setTimeout(r, 500));
+    URL.createObjectURL = asalUrl; HTMLAnchorElement.prototype.click = asalKlik;
+    if (!blob) return { adaBlob: false, nama: nama, ralat: ralat };
+    const buf = new Uint8Array(await blob.arrayBuffer());
+    const kepala = String.fromCharCode(buf[0], buf[1], buf[2], buf[3], buf[4]);
+    const pratontonSelepas = ((document.getElementById('rphPreviewContainer') || { innerText: '' }).innerText || '').length;
+    return { adaBlob: true, saiz: buf.length, pdf: kepala.indexOf('%PDF-') === 0, kepala: kepala, pratontonSelepas: pratontonSelepas, nama: nama, ralat: ralat }; })()`);
+  ok('P16 jana PDF: fail bermula dengan %PDF (dokumen PDF sebenar)',
+    pdf.adaBlob === true && pdf.pdf === true && pdf.saiz > 3000,
+    `saiz=${pdf.saiz} kepala=${JSON.stringify(pdf.kepala)} nama=${pdf.nama || '(tiada)'}`);
+
+  /* ---------- P17: CETAK - dokumen dicetak mengandungi kandungan RPH ---------- */
+  // Nota: html2pdf memindahkan #rphPreviewContainer ke kontena tersembunyi SEMASA render dan
+  // memulangkannya selepas selesai - jadi guna textContent (bukan innerText) + tunggu sehingga pulih.
+  const cetak = await ev(`(async function(){ const pv = function(){ const e = document.getElementById('rphPreviewContainer'); return e ? (e.textContent || '').length : -1; };
+    let pra = pv();
+    loadSlotToRph('Selasa','11:00 - 12:00','2 Cekal','RBT Tahun 5'); autoGenerateSmartRph();
+    for (let i = 0; i < 20 && pv() < 500; i++) await new Promise(r => setTimeout(r, 500));
+    let dipanggil = 0; const asal = window.print;
+    window.print = function () { dipanggil++; };
+    printRphDocument();
+    window.print = asal;
+    const teks = (document.getElementById('rphPreviewContainer') || { textContent: '' }).textContent || '';
+    return { pratontonSebelumJana: pra, dipanggil: dipanggil, panjang: teks.length, adaTajuk: teks.indexOf('PBL') > -1 || teks.indexOf('Artikel') > -1 }; })()`);
+  ok('P17 cetak: dialog cetak dipanggil + dokumen RPH ada kandungan',
+    cetak.dipanggil === 1 && cetak.panjang > 500 && cetak.adaTajuk === true, `panjang=${cetak.panjang} pra=${cetak.pratontonSebelumJana}`);
+
+  /* ---------- P18: IMPORT JADUAL CSV (jalan alternatif bila AI belum aktif) ---------- */
+  const csv = await ev(`(function(){ const sebelum = (jadualList || []).length;
+    parseTimetableText('Hari,Masa,Kelas,Subjek\\nRabu,08:00 - 09:30,3 Bestari,RBT Tahun 6\\nKhamis,09:30 - 10:30,3 Bestari,RBT Tahun 6');
+    const l = jadualList || [];
+    return { sebelum: sebelum, selepas: l.length, adaRabu: l.some(function (s) { return s.hari === 'Rabu' && s.kelas === '3 Bestari'; }) }; })()`);
+  ok('P18 import jadual CSV berfungsi (2 slot dibaca & diterapkan)',
+    csv.selepas === 2 && csv.adaRabu === true, `slot=${csv.selepas}`);
+
+  ok('P19 tiada ralat JS sepanjang perjalanan', errors.length === 0, errors.slice(0, 2).join(' | '));
   console.log(`\nRingkasan perjalanan guru baharu: ${out.length - fail}/${out.length} PASS  (URL: ${TEST_URL})`);
   process.exit(fail ? 1 : 0);
 })().catch(e => { console.error('UJIAN GAGAL DIJALANKAN: ' + e.message); process.exit(2); });
