@@ -1887,10 +1887,13 @@
         </label>
         <button type="submit" class="btn btn-primary" style="width:100%;"><i class="fa-solid fa-right-to-bracket"></i> Masuk (setempat)</button>
         <p style="font-size:0.72rem; color:var(--text-muted); margin-top:0.5rem; text-align:center;">
-          <span onclick="showDefaultLoginHelp(event)" style="cursor:pointer; text-decoration:underline;">Lupa PIN? Tunjuk log masuk asal</span>
+          <span onclick="showDefaultLoginHelp(event)" style="cursor:pointer; text-decoration:underline;">Lupa PIN?</span> &bull; Guru baharu: tekan butang <strong>Guru baharu?</strong> di bawah.
         </p>
       </form>
 
+      <button class="delima-toggle" style="margin-top:0.45rem; border-color:rgba(26,115,232,0.45); color:var(--primary);" onclick="openDaftarModal(true, true)">
+        <i class="fa-solid fa-user-plus"></i> Guru baharu? Daftar guna ID DELIMa anda sendiri
+      </button>
       <div class="delima-foot">
         <span onclick="openGdriveSetupModal()">Setelan sandaran Google Drive (Client ID)</span>
         &nbsp;•&nbsp;
@@ -6452,6 +6455,11 @@ function autoGenerateSmartRph() {
         isLoggedIn = !isLocked() && (sesiTab || ingat);
       } catch (e) { }
       if (sess && sess.email && !isLocked()) isLoggedIn = true;   // [F11] kunci skrin dihormati
+      // [F18] gerbang memaparkan emel akaun tersimpan (guru sendiri, bukan pemilik app)
+      try {
+        const _f = document.getElementById('loginInputEmail');
+        if (_f && !_f.value) _f.value = (authCredentials && authCredentials.email) || DEFAULT_AUTH.email;
+      } catch (e) { }
       try { semakDaftar(); } catch (e) { }   // [F15] skrin daftar wajib jika masih akaun lalai
 
       if (lockScreen) {
@@ -6906,8 +6914,9 @@ function autoGenerateSmartRph() {
       if (!s || !s.email) return true;                                 // belum log masuk
       return String(s.email).toLowerCase() === String(DEFAULT_AUTH.email || '').toLowerCase();
     }
-    function openDaftarModal() {
-      if (sudahDaftar()) return;
+    function tutupDaftarDariGerbang() { window.__modalWajib = false; closeModalDirectly(); }
+    function openDaftarModal(paksa, dariGerbang) {
+      if (!paksa && sudahDaftar()) return;
       window.__modalWajib = true;
       const html = `
         <div class="card-header">
@@ -6946,7 +6955,8 @@ function autoGenerateSmartRph() {
           <p style="font-size:0.72rem; color:var(--text-muted); margin-top:0.6rem;">
             Mod ini tidak menyandar ke Drive. Anda boleh daftar guna ID DELIMa bila-bila masa melalui menu Drive.
           </p>
-        </div>`;
+        </div>
+        ${dariGerbang ? '<p style="font-size:0.75rem; text-align:center; margin-top:0.6rem;"><span onclick="tutupDaftarDariGerbang()" style="cursor:pointer; text-decoration:underline; color:var(--text-muted);">Kembali ke log masuk</span></p>' : ''}`;
       openModal(html);
     }
     function daftarGoogle() {

@@ -489,8 +489,41 @@ async function connect() {
   ok('L67 pustaka CDN ada SRI (integriti)', csp.sri >= 5, 'sri=' + csp.sri);
   ok('L68 tiada pelanggaran CSP sepanjang ujian', (csp.pelanggaranCSP || []).length === 0, JSON.stringify(csp.pelanggaranCSP));
 
+  /* ---------- L70-L71: jalan masuk pengguna BAHARU (F18) ---------- */
+  const gerbang = await ev(`(function(){ window.__modalWajib = false; closeModalDirectly();
+    const btns = Array.prototype.slice.call(document.querySelectorAll('#privacyLockScreen button'));
+    const btnBaharu = btns.filter(function(b){ return (b.innerText || '').indexOf('Guru baharu') > -1; });
+    if (btnBaharu.length) btnBaharu[0].click();
+    const t = (document.getElementById('modalBoxContent') || { innerText: '' }).innerText || '';
+    return { adaButang: btnBaharu.length > 0, papar: document.getElementById('appModalOverlay').style.display,
+             adaA: t.indexOf('ID DELIMa') > -1 && t.indexOf('Pilihan A') > -1, adaB: t.indexOf('Guna tanpa Google') > -1 || t.indexOf('Pilihan B') > -1,
+             adaKembali: t.indexOf('Kembali ke log masuk') > -1 }; })()`);
+  ok('L70 gerbang: butang "Guru baharu" membuka skrin daftar (2 pilihan)',
+     gerbang.adaButang === true && gerbang.papar === 'flex' && gerbang.adaA === true && gerbang.adaB === true && gerbang.adaKembali === true, JSON.stringify(gerbang));
+
+  const kembali = await ev(`(function(){ const el = Array.prototype.slice.call(document.querySelectorAll('#modalBoxContent span')).filter(function(s){ return (s.innerText||'').indexOf('Kembali ke log masuk') > -1; });
+    if (el.length) el[0].click();
+    return { papar: document.getElementById('appModalOverlay').style.display, daftar: localStorage.getItem('erph_daftar_selesai') }; })()`);
+  ok('L71 "Kembali ke log masuk" menutup skrin daftar (tidak terperangkap)', kembali.papar === 'none', JSON.stringify(kembali));
+
+  const daftarBaharu = await ev(`(async function(){ openDaftarModal(true, true);
+    document.getElementById('daftarNama').value = 'Cikgu Masuk';
+    document.getElementById('daftarEmel').value = 'cikgu.masuk@moe-dl.edu.my';
+    document.getElementById('daftarPin').value = '1122';
+    await submitDaftarLocal({ preventDefault: function(){} });
+    const s = getSession() || {};
+    try { localStorage.removeItem('erph_session'); localStorage.setItem('erph_locked', '1'); } catch (e) { }
+    return { emel: s.email, nama: teacherProfile.name, daftar: localStorage.getItem('erph_daftar_selesai') }; })()`);
+  await send('Page.navigate', { url: TEST_URL });
+  const rdy70 = await waitReady('L72 muat semula gerbang guru baharu');
+  const prefill = await ev(`(function(){ return { emelGerbang: document.getElementById('loginInputEmail').value,
+    gerbang: !document.getElementById('privacyLockScreen').classList.contains('hidden') }; })()`);
+  ok('L72 guru baharu daftar -> gerbang memapar EMEL GURU (bukan emel pemilik) selepas muat semula',
+     rdy70 && daftarBaharu.emel === 'cikgu.masuk@moe-dl.edu.my' && daftarBaharu.daftar === '1' && prefill.emelGerbang === 'cikgu.masuk@moe-dl.edu.my' && prefill.gerbang === true,
+     `emel=${prefill.emelGerbang} daftar=${daftarBaharu.daftar}`);
+
   /* ---------- L25: ralat JS sepanjang ujian ---------- */
-  ok('L69 tiada ralat JS sepanjang ujian', errors.length === 0, errors.slice(0, 3).join(' | ') || '0 ralat');
+  ok('L73 tiada ralat JS sepanjang ujian', errors.length === 0, errors.slice(0, 3).join(' | ') || '0 ralat');
 
   console.log('\n===== UJIAN LENGKAP SEPORA RBT TOOLKIT (chromium headless + CDP) =====');
   console.log('URL: ' + TEST_URL);
