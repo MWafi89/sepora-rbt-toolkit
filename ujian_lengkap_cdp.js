@@ -522,8 +522,47 @@ async function connect() {
      rdy70 && daftarBaharu.emel === 'cikgu.masuk@moe-dl.edu.my' && daftarBaharu.daftar === '1' && prefill.emelGerbang === 'cikgu.masuk@moe-dl.edu.my' && prefill.gerbang === true,
      `emel=${prefill.emelGerbang} daftar=${daftarBaharu.daftar}`);
 
+  /* ---------- L74-L78: perjalanan guru baharu - normalisasi ID DELIMa (F19) ---------- */
+  const profId = await ev(`(async function(){ openProfileModal();
+    document.getElementById('modalAuthEmail').value = 'g-12345678';        // ID DELIMa tanpa domain
+    document.getElementById('modalAuthPassword').value = '4455';
+    await submitTeacherProfile({ preventDefault: function(){} });
+    const k = JSON.parse(localStorage.getItem('erph_auth_cred') || '{}');
+    return { emel: k.email, adaHash: !!k.pinHash, gerbang: document.getElementById('loginInputEmail').value,
+             modal: document.getElementById('appModalOverlay').style.display }; })()`);
+  ok('L74 Profil: ID DELIMa tanpa domain dinormalkan (g-12345678@moe-dl.edu.my) + PIN hash',
+     profId.emel === 'g-12345678@moe-dl.edu.my' && profId.adaHash === true && profId.gerbang === 'g-12345678@moe-dl.edu.my', JSON.stringify(profId));
+
+  const loginId = await ev(`(async function(){ lockAppScreen();
+    document.getElementById('loginInputEmail').value = 'g-12345678';       // taip ID sahaja
+    document.getElementById('loginInputPassword').value = '4455';
+    await handleLoginSubmit({ preventDefault: function(){} });
+    return { gerbangTutup: document.getElementById('privacyLockScreen').classList.contains('hidden') }; })()`);
+  ok('L75 log masuk terima ID DELIMa tanpa domain (guru tidak terkunci)', loginId.gerbangTutup === true, JSON.stringify(loginId));
+
+  const profSalah = await ev(`(async function(){ openProfileModal();
+    document.getElementById('modalAuthEmail').value = 'abc@@x';
+    document.getElementById('modalAuthPassword').value = '4455';
+    await submitTeacherProfile({ preventDefault: function(){} });
+    const k = JSON.parse(localStorage.getItem('erph_auth_cred') || '{}');
+    return { emel: k.email, modalMasihBuka: document.getElementById('appModalOverlay').style.display }; })()`);
+  ok('L76 Profil: emel tidak sah ditolak (kredensial tak berubah)', profSalah.emel === 'g-12345678@moe-dl.edu.my' && profSalah.modalMasihBuka === 'flex', JSON.stringify(profSalah));
+
+  const profPin = await ev(`(async function(){ document.getElementById('modalAuthEmail').value = '';
+    document.getElementById('modalAuthPassword').value = '12';
+    await submitTeacherProfile({ preventDefault: function(){} });
+    const k = JSON.parse(localStorage.getItem('erph_auth_cred') || '{}');
+    closeModalDirectly();
+    return { emel: k.email }; })()`);
+  ok('L77 Profil: PIN terlalu pendek / pasangan tak lengkap ditolak', profPin.emel === 'g-12345678@moe-dl.edu.my', JSON.stringify(profPin));
+
+  const toser = await ev(`(function(){ const c = document.getElementById('toastContainer');
+    for (let i = 0; i < 5; i++) showToast('ujian toser ' + i);
+    return { bil: c.children.length }; })()`);
+  ok('L78 toser terhad kepada 3 (mesej penting tidak tertimbun)', toser.bil <= 3, 'bil=' + toser.bil);
+
   /* ---------- L25: ralat JS sepanjang ujian ---------- */
-  ok('L73 tiada ralat JS sepanjang ujian', errors.length === 0, errors.slice(0, 3).join(' | ') || '0 ralat');
+  ok('L79 tiada ralat JS sepanjang ujian', errors.length === 0, errors.slice(0, 3).join(' | ') || '0 ralat');
 
   console.log('\n===== UJIAN LENGKAP SEPORA RBT TOOLKIT (chromium headless + CDP) =====');
   console.log('URL: ' + TEST_URL);

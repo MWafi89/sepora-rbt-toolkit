@@ -2380,6 +2380,7 @@
     function showToast(message) {
       const container = document.getElementById('toastContainer');
       if (!container) return;
+      while (container.children.length >= 3) { try { container.removeChild(container.firstChild); } catch (e) { break; } }   // [F19] had 3 toser
       const toast = document.createElement('div');
       toast.className = 'toast';
       const _msgSelamat = (typeof arkibSanitizeHtml === 'function') ? arkibSanitizeHtml(String(message)) : esc(String(message));
@@ -6430,17 +6431,30 @@ function autoGenerateSmartRph() {
       teacherProfile.subject = document.getElementById('modalTeacherSubject').value.trim();
       teacherProfile.grade = document.getElementById('modalTeacherGrade').value.trim();
 
-      const newEmail = document.getElementById('modalAuthEmail').value.trim().toLowerCase();
+      const newEmail = normalizeIdDelima(document.getElementById('modalAuthEmail').value);   // [F19]
       const newPassword = document.getElementById('modalAuthPassword').value.trim();
 
+      if (newEmail && !idDelimaSah(newEmail)) {
+        showToast('Emel/ID DELIMa tidak sah. Contoh: g-12345678 atau nama@moe-dl.edu.my');
+        return;
+      }
+      if ((newEmail && !newPassword) || (!newEmail && newPassword)) {
+        showToast('Isi KEDUA-DUA emel/ID DELIMa dan PIN (atau biarkan kedua-duanya kosong).');
+        return;
+      }
+      if (newEmail && newPassword && newPassword.length < 4) {
+        showToast('PIN terlalu pendek - minimum 4 aksara.');
+        return;
+      }
       if (newEmail && newPassword) {
-        await simpanKredensial(newEmail, newPassword);   // [W2] simpan hash, bukan teks biasa
+        await simpanKredensial(newEmail, newPassword);   // [W2] hash, bukan teks biasa
+        try { const f = document.getElementById('loginInputEmail'); if (f) f.value = newEmail; } catch (e) { }
       }
 
       localStorage.setItem('erph_teacher', JSON.stringify(teacherProfile));
       syncTeacherUI();
       closeModalDirectly();
-      showToast('Profil dan Emel log masuk privasi berjaya dikemaskini!');
+      showToast(newEmail ? ('Profil dikemas kini. Log masuk anda: ' + newEmail) : 'Profil berjaya dikemaskini!');
     }
 
     /* PENGURUSAN LOG MASUK MENGGUNAKAN EMEL */
@@ -6482,9 +6496,19 @@ function autoGenerateSmartRph() {
       refreshDriveChip();
     }
 
+    /* [F19] Normalisasi ID DELIMa / emel: 'g-99001122' -> 'g-99001122@moe-dl.edu.my' */
+    function normalizeIdDelima(v) {
+      let s = String(v == null ? '' : v).trim().toLowerCase();
+      if (!s) return '';
+      s = s.replace(/^id\s*delima\s*[:\-]?\s*/i, '').trim();
+      if (s.indexOf('@') === -1) s = s + '@moe-dl.edu.my';
+      return s;
+    }
+    function idDelimaSah(emel) { return /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(String(emel || '')); }
+
     async function handleLoginSubmit(event) {
       event.preventDefault();
-      const inputEmail = document.getElementById('loginInputEmail').value.trim().toLowerCase();
+      const inputEmail = normalizeIdDelima(document.getElementById('loginInputEmail').value);   // [F19] terima ID DELIMa tanpa domain
       const inputPw = document.getElementById('loginInputPassword').value.trim();
       const remember = document.getElementById('rememberSessionCheck')?.checked;
 
@@ -6509,7 +6533,7 @@ function autoGenerateSmartRph() {
         const pw = document.getElementById('loginInputPassword');
         if (pw) pw.value = '';
       } else {
-        showToast('Emel atau Kata Laluan/PIN salah. Sila cuba lagi!');
+        showToast('Emel/ID DELIMa atau PIN salah. Cuba lagi - atau tekan "Guru baharu?" untuk daftar akaun anda sendiri.');
         const pwField = document.getElementById('loginInputPassword');
         if (pwField) {
           pwField.value = '';
