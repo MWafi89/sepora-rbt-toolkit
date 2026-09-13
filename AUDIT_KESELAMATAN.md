@@ -31,6 +31,7 @@ Keputusan: **6 kelemahan ditemui, semuanya dibetulkan** · ujian `bash ujian_len
 4. **CSP masih membenarkan `'unsafe-inline'`** kerana app satu fail dengan pengendali inline; mitigasi XSS bergantung pada sanitizer (W1), bukan ketatnya CSP.
 5. **`pdf.worker.min.js`** dimuat oleh pustaka pdf.js tanpa SRI (dalaman pustaka) — baki risiko rantaian bekalan yang kecil.
 6. Client ID OAuth Google masih perlu diset oleh pemilik app sebelum sandaran Drive boleh berjalan.
+7. **Lupa PIN (mod setempat)** — sejak W2, PIN tidak lagi boleh dilihat pada skrin. Pemulihan: guru log masuk guna **ID DELIMa** (jika ada Google), atau padam data laman lalu **import semula fail JSON sandaran** (arkib dalam peranti akan hilang, sebab itu Eksport Arkib perlu dibuat berkala — sudah diterangkan dalam PANDUAN_GDRIVE.md).
 
 ## Kelayakan ujian
 
