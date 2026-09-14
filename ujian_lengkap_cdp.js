@@ -600,6 +600,36 @@ async function connect() {
   ok('L84 selepas log masuk semula: "Jana RPH" berfungsi lagi (pratonton terisi)',
      pvMasuk.gerbangTutup === true && pvMasuk.panjang > 500, `panjang=${pvMasuk.panjang}`);
 
+  /* ---------- L86: gerbang boleh dicapai pada SKRIN RENDAH (F22) ----------
+     Bug asal: butang "Guru baharu?" berada di y=399 pada viewport 344px (dlmPandangan=false)
+     kerana kad gerbang tinggi 480px + align-items:center memotong hujung.
+     Guru tekan tempat butang -> tiada apa berlaku (nampak macam telefon/app rosak). */
+  const BTN_DAFTAR = "(document.getElementById('btnDaftarGuruBaharu')||[].slice.call(document.querySelectorAll('button')).filter(function(x){return /Guru baharu/.test(x.textContent)})[0])";
+  const GEO_DAFTAR = `(function(){var b=${BTN_DAFTAR};if(!b)return JSON.stringify({ada:false});
+    var r=b.getBoundingClientRect();
+    var el=document.elementFromPoint(Math.round(r.x+r.width/2),Math.round(r.y+r.height/2));
+    return JSON.stringify({ ada:true, y:Math.round(r.y), bottom:Math.round(r.bottom), vh:window.innerHeight,
+      dlmPandangan:(r.top>=0&&r.bottom<=window.innerHeight),
+      bolehTekan:!!(el&&(el===b||b.contains(el))),
+      penghalang: el?(el===b||b.contains(el)?null:el.tagName):'TIADA' }); })()`;
+
+  for (const hSkrin of [344, 480, 800]) {
+    await send('Emulation.setDeviceMetricsOverride', { width: 980, height: hSkrin, deviceScaleFactor: 2.625, mobile: true });
+    await send('Page.navigate', { url: TEST_URL });
+    await new Promise(r => setTimeout(r, 2200));
+    await ev("try{localStorage.clear();sessionStorage.clear()}catch(e){}; 'ok'");
+    await send('Page.navigate', { url: TEST_URL });
+    await new Promise(r => setTimeout(r, 2600));
+    const gd = JSON.parse(await ev(GEO_DAFTAR));
+    ok(`L86 gerbang ${hSkrin}px: butang "Guru baharu?" kelihatan TANPA skrol`,
+       gd.ada === true && gd.dlmPandangan === true, `y=${gd.y} bottom=${gd.bottom} vh=${gd.vh}`);
+    ok(`L86 gerbang ${hSkrin}px: butang boleh DITEKAN (tiada elemen menutup)`,
+       gd.bolehTekan === true, gd.penghalang ? 'penghalang=' + gd.penghalang : 'tiada penghalang');
+  }
+  await send('Emulation.clearDeviceMetricsOverride');
+  await send('Page.navigate', { url: TEST_URL });
+  await new Promise(r => setTimeout(r, 2600));
+
   /* ---------- L25: ralat JS sepanjang ujian ---------- */
   ok('L85 tiada ralat JS sepanjang ujian', errors.length === 0, errors.slice(0, 3).join(' | ') || '0 ralat');
 

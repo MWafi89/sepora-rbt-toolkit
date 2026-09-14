@@ -830,8 +830,12 @@
     #installAppBtn { display: none; }
     .delima-gate {
       position: fixed; top: 0; left: 0; right: 0; bottom: 0; z-index: 5000;
-      display: flex; align-items: center; justify-content: center;
-      padding: 1rem; box-sizing: border-box; overflow-y: auto; overflow-x: hidden;
+      /* [F22-GERBANG-SKRIN-RENDAH] align-items:center MEMOTONG hujung kad pada skrin rendah.
+         Guna flex-start + overflow-y:auto supaya kandungan tinggi boleh diskrol. */
+      display: flex; align-items: flex-start; justify-content: center;
+      padding: max(0.7rem, env(safe-area-inset-top)) 1rem max(1.2rem, env(safe-area-inset-bottom));
+      box-sizing: border-box; overflow-y: auto; overflow-x: hidden;
+      -webkit-overflow-scrolling: touch; overscroll-behavior: contain;
       background: linear-gradient(135deg, #0b57d0 0%, #1a73e8 45%, #34a853 100%);
     }
     .delima-card {
@@ -840,6 +844,36 @@
       box-shadow: 0 24px 60px rgba(0,0,0,0.35); text-align: center; margin: auto;
     }
     @media (max-width: 480px) { .delima-card { width: 100%; } }
+    /* [F22-GERBANG-SKRIN-RENDAH] Kad gerbang MESTI muat dalam skrin rendah.
+       Diukur: tinggi kad 480px pada viewport 344px -> butang daftar di hujung kad
+       jatuh 55px di bawah lipatan, jadi guru "tekan x dapat". Padatkan supaya
+       butang daftar kelihatan tanpa skrol. */
+    @media (max-height: 600px) {
+      .delima-gate { padding: 0.5rem 0.7rem 0.9rem; }
+      .delima-card { padding: 0.7rem 0.85rem 1rem; margin: 0 auto 0.6rem; border-radius: 14px; }
+      .delima-card img { width: 40px !important; height: 40px !important; border-radius: 10px !important; }
+      .delima-card h1 { font-size: 1rem; margin: 0.25rem 0 0.05rem; }
+      .delima-card .delima-sub { font-size: 0.7rem; margin-bottom: 0.5rem; }
+      .delima-note { font-size: 0.68rem; line-height: 1.35; margin-bottom: 0.45rem; }
+      .delima-status { font-size: 0.68rem; padding: 0.4rem 0.5rem; margin-bottom: 0.45rem; }
+      .delima-google { padding: 0.55rem 0.7rem; font-size: 0.82rem; }
+      .delima-toggle { font-size: 0.72rem; padding: 3px; }
+      .daftar-cta { padding: 0.55rem 0.7rem; font-size: 0.78rem; margin-top: 0.5rem; }
+      .delima-foot { margin-top: 0.45rem; font-size: 0.66rem; }
+      .delima-local { margin-top: 0.5rem; padding-top: 0.5rem; }
+    }
+    /* [F22-GERBANG-SKRIN-RENDAH] CTA daftar - butang sebenar yang menonjol, bukan pautan halus.
+       Jarak bawah diberi supaya footer (.delima-foot) TIDAK bertindih dengan butang
+       pada skrin rendah - titik tengah butang mesti bebas untuk boleh ditekan. */
+    .daftar-cta {
+      display: block; width: 100%; margin-top: 0.7rem; margin-bottom: 0.35rem;
+      padding: 0.7rem 0.8rem; box-sizing: border-box; position: relative; z-index: 1;
+      background: rgba(26,115,232,0.10); border: 1.5px solid rgba(26,115,232,0.55);
+      color: var(--primary); font-weight: 700; font-size: 0.83rem; border-radius: 10px;
+      cursor: pointer; line-height: 1.35; text-align: center;
+    }
+    .daftar-cta:hover, .daftar-cta:active { background: rgba(26,115,232,0.18); }
+    .daftar-cta i { margin-right: 5px; }
     .delima-card h1 { font-size: 1.25rem; font-weight: 800; margin: 0.75rem 0 0.15rem; letter-spacing: 0.4px; }
     .delima-card .delima-sub { font-size: 0.8rem; color: var(--text-muted); margin-bottom: 1.1rem; }
     .delima-google {
@@ -1894,7 +1928,7 @@
         </p>
       </form>
 
-      <button class="delima-toggle" style="margin-top:0.45rem; border-color:rgba(26,115,232,0.45); color:var(--primary);" onclick="openDaftarModal(true, true)">
+      <button type="button" id="btnDaftarGuruBaharu" class="delima-toggle daftar-cta" onclick="openDaftarModal(true, true)">
         <i class="fa-solid fa-user-plus"></i> Guru baharu? Daftar guna ID DELIMa anda sendiri
       </button>
       <div class="delima-foot">
@@ -6974,6 +7008,20 @@ function autoGenerateSmartRph() {
       return String(s.email).toLowerCase() === String(DEFAULT_AUTH.email || '').toLowerCase();
     }
     function tutupDaftarDariGerbang() { window.__modalWajib = false; closeModalDirectly(); }
+    // [F22-GERBANG-SKRIN-RENDAH] Jaring keselamatan: pada skrin rendah butang daftar boleh jatuh di bawah
+    // lipatan. Skrol gerbang supaya ia kelihatan (dipanggil selepas modal ditutup & pada boot).
+    function pastikanButangDaftarKelihatan() {
+      try {
+        var g = document.getElementById('privacyLockScreen');
+        var b = document.getElementById('btnDaftarGuruBaharu');
+        if (!g || !b) return;
+        if (getComputedStyle(g).display === 'none') return;
+        var r = b.getBoundingClientRect();
+        if (r.bottom > window.innerHeight - 8 || r.top < 0) {
+          g.scrollTop = g.scrollHeight;
+        }
+      } catch (e) { }
+    }
     function openDaftarModal(paksa, dariGerbang) {
       if (!paksa && sudahDaftar()) return;
       window.__modalWajib = true;
@@ -7333,6 +7381,8 @@ function autoGenerateSmartRph() {
     window.addEventListener('offline', function () { setDriveChip('<i class="fa-solid fa-wifi"></i> Luar talian - data kekal dalam peranti', '#b45309'); });
 
     window.addEventListener('DOMContentLoaded', () => {
+      // [F22-GERBANG-SKRIN-RENDAH] skrin rendah: pastikan butang daftar kelihatan bila gerbang dipaparkan
+      setTimeout(function () { try { pastikanButangDaftarKelihatan(); } catch (e) { } }, 400);
       const savedTheme = localStorage.getItem('erph_theme');
       if (savedTheme === 'dark') {
         document.body.setAttribute('data-theme', 'dark');
