@@ -583,6 +583,12 @@
       flex-direction: column;
       gap: 8px;
     }
+    /* [F25] TOAST pernah menjadi penjenayah sebenar butang "Guru baharu?" yang tak boleh ditekan:
+       toast muncul bottom-right dan pada telefon ia bertindih dengan butang daftar di gerbang,
+       jadi jari guru mendarat pada toast, bukan butang. Pada skrin gerbang (belum log masuk),
+       toast dipindah ke ATAS supaya ia tidak pernah menutup gerbang. */
+    body.belum-masuk .toast-container { bottom: auto; top: 12px; right: 12px; }
+    body.belum-masuk .toast { font-size: 0.8rem; padding: 0.6rem 0.9rem; }
 
     .toast {
       background: var(--surface);
@@ -841,13 +847,46 @@
     .delima-card {
       width: auto; box-sizing: border-box; flex: 0 0 auto;
       min-width: 0; max-width: 430px; background: var(--surface); border-radius: 18px; padding: 1.6rem 1.4rem;
-      box-shadow: 0 24px 60px rgba(0,0,0,0.35); text-align: center; margin: auto;
+      box-shadow: 0 24px 60px rgba(0,0,0,0.35); text-align: center;
+      /* [F26] margin:auto menengahkan kad secara MENEGAK dan melimpah ke atas bila kad lebih
+         tinggi daripada skrin -> butang Google hilang di luar skrin (y=-60 pada 360x780).
+         Guna auto hanya pada paksi MELINTANG; pakai jarak atas tetap supaya kad mula dari atas. */
+      margin: 0.9rem auto 1.2rem;
     }
+    @media (max-height: 820px) { .delima-card { margin: 0.4rem auto 0.8rem; } }
     @media (max-width: 480px) { .delima-card { width: 100%; } }
     /* [F22-GERBANG-SKRIN-RENDAH] Kad gerbang MESTI muat dalam skrin rendah.
        Diukur: tinggi kad 480px pada viewport 344px -> butang daftar di hujung kad
        jatuh 55px di bawah lipatan, jadi guru "tekan x dapat". Padatkan supaya
        butang daftar kelihatan tanpa skrol. */
+    /* [F26] Skrin pendek (cth 360x640 / 412x640): kad gerbang lebih tinggi daripada skrin dan
+       butang Google jatuh di ATAS kawasan kelihatan (diukur y=-177 pada 360x640) = guru tidak
+       nampak butang langsung. Padatkan lagi + jangan guna 'align-items:center' yang memotong atas. */
+    /* [F26] GERBANG SENTIASA MULA DARI ATAS. Sebelum ini 'align-items:center' menyebabkan
+       kad yang lebih tinggi daripada skrin terpotong DI ATAS - butang pertama (Google)
+       hilang di luar skrin (diukur y=-60 pada 360x780). Ini punca guru kata
+       "butang Log Masuk ID DELIMa tekan2 tak boleh". */
+    .delima-gate { align-items: flex-start; justify-content: flex-start; }
+    @media (max-height: 820px) {
+      .delima-gate { align-items: flex-start; padding: 0.35rem 0.6rem 0.8rem; }
+      .delima-card { margin: 0 auto; padding: 0.6rem 0.75rem 0.85rem; }
+      .delima-card img { width: 34px !important; height: 34px !important; }
+      .delima-card h1 { font-size: 0.95rem; margin: 0.2rem 0 0.05rem; }
+      .delima-card .delima-sub { font-size: 0.66rem; margin-bottom: 0.35rem; }
+      .delima-note { display: none; }               /* nota panjang - buang pada skrin pendek */
+      .delima-status { font-size: 0.66rem; padding: 0.35rem 0.45rem; margin-bottom: 0.35rem;
+        max-height: 74px; overflow-y: auto; }
+      .delima-google { padding: 0.5rem 0.6rem; font-size: 0.78rem; }
+      .delima-toggle { font-size: 0.68rem; padding: 2px; }
+      .masuk-cta { padding: 0.5rem 0.6rem; font-size: 0.76rem; margin-top: 0.5rem; }
+      .daftar-cta { padding: 0.5rem 0.6rem; font-size: 0.74rem; margin-top: 0.45rem; margin-bottom: 0.5rem; }
+      .delima-foot { margin-top: 0.35rem; font-size: 0.62rem; }
+      /* [F26] nota penjelasan halaman - jangan makan ruang butang pada skrin pendek */
+      body.belum-masuk .delima-card > p[style*="kunci akaun"] { display: none; }
+      .delima-local { margin-top: 0.4rem; padding-top: 0.4rem; }
+      .delima-local .form-group { margin-bottom: 0.4rem; }
+      .delima-local .form-control { padding: 0.4rem 0.55rem; font-size: 0.8rem; }
+    }
     @media (max-height: 600px) {
       .delima-gate { padding: 0.5rem 0.7rem 0.9rem; }
       .delima-card { padding: 0.7rem 0.85rem 1rem; margin: 0 auto 0.6rem; border-radius: 14px; }
@@ -866,12 +905,17 @@
        Jarak bawah diberi supaya footer (.delima-foot) TIDAK bertindih dengan butang
        pada skrin rendah - titik tengah butang mesti bebas untuk boleh ditekan. */
     .daftar-cta {
-      display: block; width: 100%; margin-top: 0.7rem; margin-bottom: 0.35rem;
-      padding: 0.7rem 0.8rem; box-sizing: border-box; position: relative; z-index: 1;
+      display: block; width: 100%; margin-top: 0.7rem; margin-bottom: 0.9rem;
+      padding: 0.7rem 0.8rem; box-sizing: border-box; position: relative; z-index: 3;
       background: rgba(26,115,232,0.10); border: 1.5px solid rgba(26,115,232,0.55);
       color: var(--primary); font-weight: 700; font-size: 0.83rem; border-radius: 10px;
       cursor: pointer; line-height: 1.35; text-align: center;
     }
+    /* [F25] PAUTAN kaki gerbang (.delima-foot) pernah BERTINDIH dengan butang "Guru baharu?"
+       pada telefon biasa (390x844): tekan tengah butang mendarat pada <span>, jadi butang
+       "nampak tapi tak jalan". Kaki gerbang kini sentiasa DI BAWAH butang + boleh diklik. */
+    .delima-foot { position: relative; z-index: 2; line-height: 1.7; }
+    .delima-foot span { display: inline-block; padding: 3px 2px; cursor: pointer; }
     .daftar-cta:hover, .daftar-cta:active { background: rgba(26,115,232,0.18); }
     .daftar-cta i { margin-right: 5px; }
     .delima-card h1 { font-size: 1.25rem; font-weight: 800; margin: 0.75rem 0 0.15rem; letter-spacing: 0.4px; }
@@ -6592,12 +6636,14 @@ function autoGenerateSmartRph() {
         if (isLoggedIn) {
           // [F24] // jangan tinggalkan modal di atas gerbang - ia menutup butang masuk
           try { closeModalDirectly(); window.__modalWajib = false; } catch (e) { }
+          try { document.body.classList.remove('belum-masuk'); } catch (e) { }
           lockScreen.classList.add('hidden');
           if (!sess) setSession({ email: (authCredentials.email || DEFAULT_AUTH.email), name: teacherProfile.name, mode: 'setempat', loginAt: new Date().toISOString() });
         // [F6] muatkan arkib milik akaun yang sedang log masuk
         try { arkibLoadForSession(); renderSavedRphTable(); updateArkibBadge(); } catch (e) { }
         } else {
           lockScreen.classList.remove('hidden');
+          try { document.body.classList.add('belum-masuk'); } catch (e) { }
           // [F24] // butang masuk cepat + bentuk log masuk TERBUKA (satu tekaan kurang tiap kali)
           try {
             closeModalDirectly(); window.__modalWajib = false;
@@ -6728,6 +6774,7 @@ function autoGenerateSmartRph() {
       const lockScreen = document.getElementById('privacyLockScreen');
       if (lockScreen) {
         lockScreen.classList.remove('hidden');
+        try { document.body.classList.add('belum-masuk'); } catch (e) { }
         const emField = document.getElementById('loginInputEmail');
         if (emField && !emField.value) emField.value = authCredentials.email || DEFAULT_AUTH.email;
         const pwField = document.getElementById('loginInputPassword');
@@ -7000,7 +7047,20 @@ function autoGenerateSmartRph() {
     /* ---------------- Log masuk DELIMa ---------------- */
     async function delimaLoginWithGoogle() {
       const btn = document.getElementById('delimaGoogleBtn');
-      if (!gdriveConfigured()) { openGdriveSetupModal(); return; }
+      if (!gdriveConfigured()) {
+        // [F26] Client ID OAuth belum dipasang oleh pemilik app. Dulu fungsi ini membuka modal
+        // SETELAN - guru sangka butang "tak jadi apa-apa"/rosak. Sekarang: mesej jelas + arah
+        // ke jalan yang benar-benar berfungsi (Guru baharu -> Pilihan B).
+        setGateStatus('<span style="color:#b45309;">Log masuk Google belum diaktifkan untuk sekolah ini. ' +
+          'Guna <strong>ID DELIMa anda sendiri</strong>: tekan <strong>Guru baharu?</strong> di bawah, ' +
+          'pilih <strong>Pilihan B - Guna tanpa Google</strong>, dan taip nama + ID DELIMa + PIN anda.</span>');
+        showToast('Log masuk Google belum diaktifkan. Tekan "Guru baharu?" -> Pilihan B (guna tanpa Google).');
+        try {
+          const b = document.getElementById('btnDaftarGuruBaharu');
+          if (b) { b.style.animation = 'none'; b.style.boxShadow = '0 0 0 3px rgba(26,115,232,0.35)'; setTimeout(function () { b.style.boxShadow = ''; }, 1600); b.scrollIntoView({ block: 'center' }); }
+        } catch (e) { }
+        return;
+      }
       if (btn) { btn.disabled = true; btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Membuka pengesahan Google...'; }
       setGateStatus('Membuka tetingkap pengesahan Google (pilih akaun DELIMa anda)...');
       try {
@@ -7086,6 +7146,7 @@ function autoGenerateSmartRph() {
        butang masuk. Bila gerbang berubah keadaan, semua modal ditutup. */
     function showGate() {
       closeModalDirectly();
+      try { document.body.classList.add('belum-masuk'); } catch (e) { }
       try { window.__modalWajib = false; } catch (e) { }
       const lock = document.getElementById('privacyLockScreen');
       if (lock) lock.classList.remove('hidden');
@@ -7479,6 +7540,7 @@ function autoGenerateSmartRph() {
       try { switchTab('dashboard'); } catch (e) { }
       const lock = document.getElementById('privacyLockScreen');
       if (lock) lock.classList.remove('hidden');
+      try { document.body.classList.add('belum-masuk'); } catch (e) { }
       const emField = document.getElementById('loginInputEmail');
       if (emField) emField.value = authCredentials.email || DEFAULT_AUTH.email;
       const pwField = document.getElementById('loginInputPassword');
