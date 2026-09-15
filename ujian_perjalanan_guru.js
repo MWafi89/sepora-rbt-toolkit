@@ -39,7 +39,7 @@ async function connect() {
   const waitReady = async () => {
     for (let i = 0; i < 45; i++) {
       await new Promise(r => setTimeout(r, 1000));
-      try { if (await ev(`typeof openDaftarModal === 'function' && !!window.switchTab`)) return true; } catch (e) { }
+      try { if (await ev(`typeof openDaftarModal === 'function' && !!window.switchTab && !!document.getElementById('btnDaftarUtama')`)) return true; } catch (e) { }
     }
     return false;
   };
@@ -54,13 +54,17 @@ async function connect() {
   await ev(`window.confirm = function(){ return true; }; window.print = function(){ window.__printed = (window.__printed||0)+1; }; window.alert = function(){}; 'ok'`);
 
   /* ---------- P1: gerbang -> daftar guru baharu (ID DELIMa sendiri) ---------- */
-  const gerbang = await ev(`(function(){ const b = Array.prototype.slice.call(document.querySelectorAll('#privacyLockScreen button'))
-      .filter(x => (x.innerText || '').indexOf('Guru baharu') > -1);
-    if (b.length) b[0].click();
+  // [F28] Gerbang baharu: butang daftar = #btnDaftarUtama ("Saya guru BAHARU - Daftar").
+  // Pilihan A (Google) sengaja tersembunyi bila Client ID kosong -> yang diuji: Pilihan B + jalan kembali.
+  await new Promise(r => setTimeout(r, 700));
+  const gerbang = await ev(`(function(){ const b = document.getElementById('btnDaftarUtama');
+    if (b) b.click();
     const t = (document.getElementById('modalBoxContent') || { innerText: '' }).innerText || '';
-    return { butang: b.length > 0, papar: document.getElementById('appModalOverlay').style.display,
-             pilihan: t.indexOf('Pilihan A') > -1 && t.indexOf('Pilihan B') > -1, kembali: t.indexOf('Kembali ke log masuk') > -1 }; })()`);
-  ok('P01 gerbang: butang "Guru baharu" -> skrin daftar 2 pilihan (+ jalan kembali)', gerbang.butang && gerbang.papar === 'flex' && gerbang.pilihan && gerbang.kembali);
+    return { butang: !!b, papar: document.getElementById('appModalOverlay').style.display,
+             pilihanB: t.indexOf('Pilihan B') > -1 || t.indexOf('Guna tanpa Google') > -1,
+             kembali: t.indexOf('Kembali ke log masuk') > -1 }; })()`);
+  ok('P01 gerbang: butang "Saya guru BAHARU" -> skrin daftar (Pilihan B + jalan kembali)', gerbang.butang && gerbang.papar === 'flex' && gerbang.pilihanB && gerbang.kembali, JSON.stringify(gerbang));
+  await ev("closeModalDirectly(); window.__modalWajib = false; 'ok'");   // bersihkan sebelum P02
 
   const daftar = await ev(`(async function(){ openDaftarModal(true, true);
     document.getElementById('daftarNama').value = 'Cikgu Aisyah';

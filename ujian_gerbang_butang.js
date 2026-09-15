@@ -38,10 +38,12 @@ const tidur = ms => new Promise(r => setTimeout(r, ms));
       bolehTekan: !!(t&&(t===b||b.contains(t))) }; })()`;
 
   // nama butang yang guru betul-betul perlu
+  // [F28] Gerbang baharu: butang Google tersembunyi bila Client ID kosong (jadi ia TIDAK diuji
+  // sebagai butang mesti-kelihatan). Dua butang utama guru + butang Masuk setempat.
   const BUTANG = [
-    ['delimaGoogleBtn', 'Log Masuk dengan ID DELIMa (Google)'],
+    ['btnDaftarUtama', 'Saya guru BAHARU - Daftar'],
+    ['btnSudahAdaAkaun', 'Saya sudah ada akaun - Masuk'],
     ['btnMasukSetempat', 'Masuk (setempat)'],
-    ['btnDaftarGuruBaharu', 'Guru baharu? Daftar'],
   ];
 
   for (const [w, h, nama] of [[360, 640, 'telefon kecil 360x640'], [390, 844, 'telefon biasa 390x844'], [412, 915, 'telefon besar 412x915'], [360, 780, 'telefon pendek 360x780']]) {
@@ -58,7 +60,7 @@ const tidur = ms => new Promise(r => setTimeout(r, ms));
     }
     // tombak: klik SEBENAR pada "Guru baharu?" mesti buka skrin daftar
     await tidur(600);                                  // beri gerbang masa stabil
-    const g2 = await ev(GEO('btnDaftarGuruBaharu'));
+    const g2 = await ev(GEO('btnDaftarUtama'));
     if (g2.ada && g2.bolehTekan) {
       await send('Input.dispatchMouseEvent', { type: 'mouseMoved', x: g2.x, y: g2.y });   // seperti jari mendarat
       await tidur(150);
@@ -67,7 +69,7 @@ const tidur = ms => new Promise(r => setTimeout(r, ms));
       await send('Input.dispatchMouseEvent', { type: 'mouseReleased', x: g2.x, y: g2.y, button: 'left', clickCount: 1, buttons: 0 });
       await tidur(900);
       const d = await ev("(function(){var o=document.getElementById('appModalOverlay');return {papar:o?o.style.display:'(tiada)', medan:!!document.getElementById('daftarEmel')};})()");
-      ok(`${nama}: KLIK "Guru baharu?" -> skrin daftar terbuka`, d.papar === 'flex' && d.medan === true, `papar=${d.papar}`);
+      ok(`${nama}: KLIK butang daftar -> skrin daftar terbuka`, d.papar === 'flex' && d.medan === true, `papar=${d.papar}`);
     }
   }
   await send('Emulation.clearDeviceMetricsOverride');
