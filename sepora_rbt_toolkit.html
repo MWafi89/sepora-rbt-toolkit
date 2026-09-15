@@ -881,6 +881,8 @@
       .masuk-cta { padding: 0.5rem 0.6rem; font-size: 0.76rem; margin-top: 0.5rem; }
       .daftar-cta { padding: 0.5rem 0.6rem; font-size: 0.74rem; margin-top: 0.45rem; margin-bottom: 0.5rem; }
       .delima-foot { margin-top: 0.35rem; font-size: 0.62rem; }
+      #delimaGoogleNota { font-size: 0.66rem; line-height: 1.4; padding: 0.4rem 0.5rem; margin: 0.4rem 0 0.5rem;
+        max-height: 78px; overflow-y: auto; }
       /* [F26] nota penjelasan halaman - jangan makan ruang butang pada skrin pendek */
       body.belum-masuk .delima-card > p[style*="kunci akaun"] { display: none; }
       .delima-local { margin-top: 0.4rem; padding-top: 0.4rem; }
@@ -1952,14 +1954,22 @@
       <h1>SEPORA RBT TOOLKIT</h1>
       <p class="delima-sub">Sistem Pembina RPH &amp; Inovasi PBL &bull; e-RPH RBT</p>
 
-      <button class="delima-google" id="delimaGoogleBtn" onclick="delimaLoginWithGoogle()">
+      <button class="delima-google hidden" id="delimaGoogleBtn" onclick="delimaLoginWithGoogle()">
         <i class="fa-brands fa-google"></i> Log Masuk dengan ID DELIMa
       </button>
 
-      <p class="delima-note">
-        Gunakan akaun <strong>@moe-dl.edu.my</strong> (DELIMa). Arkib RPH anda akan disandarkan ke
-        <strong>Google Drive akaun DELIMa anda sendiri</strong> supaya rekod kekal walaupun tukar telefon atau laptop.
-        Data juga disimpan dalam peranti ini untuk kegunaan offline.
+      <!-- [F28] GERBANG BARU: guru baharu mesti faham apa nak tekan dalam 2 saat.
+           Butang DAFTAR jadi laluan UTAMA di atas; "sudah ada akaun" di bawahnya. -->
+      <button type="button" id="btnDaftarUtama" class="masuk-cta" style="background:var(--secondary); border-color:var(--secondary);" onclick="openDaftarModal(true, true)">
+        <i class="fa-solid fa-user-plus"></i> Saya guru BAHARU - Daftar sekarang
+      </button>
+      <button type="button" id="btnSudahAdaAkaun" class="masuk-cta" style="background:var(--surface); color:var(--primary); border-color:var(--primary); margin-top:0.45rem;" onclick="toggleLocalLogin()">
+        <i class="fa-solid fa-right-to-bracket"></i> Saya sudah ada akaun - Masuk
+      </button>
+
+      <p class="delima-note" style="margin:0.6rem 0 0.2rem; font-size:0.72rem;">
+        Guna <strong>ID DELIMa anda sendiri</strong> (cth <strong>g-57258425</strong>). Arkib RPH disimpan
+        bawah akaun anda dalam peranti ini.
       </p>
 
       <button type="button" id="btnMasukPantas" class="masuk-cta pantasan hidden" onclick="masukPantas()">
@@ -1967,8 +1977,6 @@
       </button>
 
       <div id="delimaStatus" class="delima-status">Belum log masuk. Sila log masuk untuk mula menyimpan RPH anda.</div>
-
-      <button class="delima-toggle" id="btnToggleLocal" onclick="toggleLocalLogin()"><i class="fa-solid fa-chevron-down"></i> Mod setempat (tanpa Drive)</button>
 
       <form id="delimaLocalForm" class="delima-local hidden" onsubmit="handleLoginSubmit(event)">
         <div class="form-group">
@@ -1991,9 +1999,9 @@
         </p>
       </form>
 
-      <button type="button" id="btnDaftarGuruBaharu" class="delima-toggle daftar-cta" onclick="openDaftarModal(true, true)">
-        <i class="fa-solid fa-user-plus"></i> Guru baharu? Daftar guna ID DELIMa anda sendiri
-      </button>
+      <!-- [F28] butang "Guru baharu?" dipindah ke ATAS sebagai butang utama (btnDaftarUtama).
+           Kekalkan rujukan supaya ujian/pautan lama tidak pecah. -->
+      <button type="button" id="btnDaftarGuruBaharu" class="hidden" onclick="openDaftarModal(true, true)"></button>
       <p style="font-size:0.72rem; color:var(--text-muted); margin-top:0.55rem; text-align:center; line-height:1.5;">
         Halaman ini ialah <strong>kunci akaun anda</strong> - RPH disimpan pada halaman dalam app ini
         (dipisahkan ikut emel). <span onclick="logoutSession()" style="cursor:pointer; text-decoration:underline;">Tukar akaun / Log keluar</span>
@@ -6910,6 +6918,13 @@ function autoGenerateSmartRph() {
     function toggleLocalLogin() {
       const f = document.getElementById('delimaLocalForm');
       if (f) f.classList.toggle('hidden');
+      // [F28] bila borang dibuka, terus fokus medan PIN (guru sudah nampak emelnya)
+      try {
+        if (f && !f.classList.contains('hidden')) {
+          const pw = document.getElementById('loginInputPassword');
+          if (pw && !pw.value) setTimeout(function () { try { pw.focus(); } catch (e) { } }, 120);
+        }
+      } catch (e) { }
     }
     function setGateStatus(html) { const el = document.getElementById('delimaStatus'); if (el) el.innerHTML = html; }
 
@@ -7170,6 +7185,20 @@ function autoGenerateSmartRph() {
       } catch (e) { }
       return null;
     }
+    /* [F27] Butang Google & Pilihan A DIPAPARKAN hanya bila Client ID OAuth sudah dipasang.
+       Sebelum ini ia sentiasa kelihatan tetapi tidak boleh berfungsi -> guru tertanya-tanya
+       "kenapa saya tekan log masuk DELIMa tapi tak boleh daftar". */
+    function kemasKiniButangGoogle() {
+      try {
+        const ada = (typeof gdriveConfigured === 'function') ? gdriveConfigured() : false;
+        const b = document.getElementById('delimaGoogleBtn');
+        const n = document.getElementById('delimaGoogleNota');
+        if (b) b.classList.toggle('hidden', !ada);
+        if (n) n.style.display = ada ? 'none' : 'block';
+        const pa = document.getElementById('daftarPilihanA');
+        if (pa) pa.style.display = ada ? 'block' : 'none';
+      } catch (e) { }
+    }
     function masukKredensialMasihSah() {
       let ok = false;
       try {
@@ -7180,6 +7209,16 @@ function autoGenerateSmartRph() {
       } catch (e) { ok = false; }
       const btn = document.getElementById('btnMasukPantas');
       if (btn) btn.classList.toggle('hidden', !ok);
+      // [F28] bila ada akaun tersimpan, guru lama nampak "Masuk pantas" (1 tekanan);
+      //       guru baharu sentiasa nampak butang DAFTAR hijau di atas.
+      try {
+        const bd = document.getElementById('btnDaftarUtama');
+        const bs = document.getElementById('btnSudahAdaAkaun');
+        const blama = document.getElementById('btnDaftarGuruBaharu');
+        if (blama) blama.classList.add('hidden');            // butang lama: sorok selama-lamanya
+        if (bd) bd.classList.remove('hidden');
+        if (bs) bs.classList.toggle('hidden', ok === true);  // sudah ada akaun -> tidak perlu butang ini
+      } catch (e) { }
       return ok;
     }
     // [F24] butang BESAR "Masuk": dua rujukan (gerbang & skrin kunci) kongsi satu laluan
@@ -7234,6 +7273,7 @@ function autoGenerateSmartRph() {
     function openDaftarModal(paksa, dariGerbang) {
       if (!paksa && sudahDaftar()) return;
       window.__modalWajib = true;
+      requestAnimationFrame(function () { try { kemasKiniButangGoogle(); } catch (e) { } });   // [F27]
       const html = `
         <div class="card-header">
           <h3><i class="fa-solid fa-user-plus" style="color:var(--primary); margin-right:6px;"></i> Daftar / Log Masuk SEPORA RBT</h3>
@@ -7242,7 +7282,7 @@ function autoGenerateSmartRph() {
           Pilih identiti anda dahulu supaya arkib RPH anda tersimpan bawah akaun anda sendiri
           (bukan berkongsi akaun lalai app).
         </p>
-        <div style="background:linear-gradient(135deg, rgba(26,115,232,0.08), rgba(5,150,105,0.06)); border:1px solid var(--surface-border); border-radius:10px; padding:0.9rem; margin-bottom:0.9rem;">
+        <div id="daftarPilihanA" style="background:linear-gradient(135deg, rgba(26,115,232,0.08), rgba(5,150,105,0.06)); border:1px solid var(--surface-border); border-radius:10px; padding:0.9rem; margin-bottom:0.9rem;">
           <div style="font-weight:700; font-size:0.9rem; margin-bottom:0.35rem;"><i class="fa-brands fa-google" style="color:#4285f4;"></i> Pilihan A - Daftar dengan ID DELIMa (disyorkan)</div>
           <div style="font-size:0.78rem; color:var(--text-muted); margin-bottom:0.6rem;">
             Guna akaun Google sekolah anda (@moe-dl.edu.my). Google MOE yang sahkan identiti anda -
@@ -7587,6 +7627,7 @@ function autoGenerateSmartRph() {
       try { v ? localStorage.setItem('erph_gdrive_clientid', v) : localStorage.removeItem('erph_gdrive_clientid'); } catch (e) { }
       closeModalDirectly();
       showToast(v ? 'Client ID disimpan. Tekan "Log Masuk dengan ID DELIMa".' : 'Client ID dikosongkan.');
+      try { kemasKiniButangGoogle(); } catch (e) { }   // [F27]
       const btn = document.getElementById('delimaGoogleBtn');
       if (btn && v) btn.click();
     }
@@ -7676,6 +7717,7 @@ function autoGenerateSmartRph() {
       applyDeepLinkTab();
       gFileId = localStorage.getItem('erph_drive_fileid') || '';
       checkAuthStatus();
+      try { kemasKiniButangGoogle(); } catch (e) { }   // [F27] sembunyikan butang Google mati
       // [F24] sahkan butang "Masuk" besar berfungsi (jangan gantung guru pada butang mati)
       try {
         const _bm = document.getElementById('loginBtnMasuk');
