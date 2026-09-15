@@ -343,8 +343,8 @@ async function connect() {
   // [F24] daftar TIDAK lagi dipaksa (itulah punca "makin susah mau masuk"). Bukti baharu:
   // (a) guru baharu sampai ke skrin daftar melalui butang jelas di gerbang (satu tekanan),
   // (b) laluan setempat dibuka + butang "Masuk" besar sedia ada.
-  const daftarBtnAda = await ev(`(function(){ var b = document.getElementById('btnDaftarGuruBaharu');
-    return { ada: !!b, teks: b ? (b.innerText||'').trim() : '' }; })()`);
+  const daftarBtnAda = await ev(`(function(){ var b = document.getElementById('btnDaftarUtama');
+    return { ada: !!b, teks: b ? (b.innerText||'').trim() : '', nampak: b ? !b.classList.contains('hidden') : false }; })()`);
   await ev("openDaftarModal(true, true); 'ok'");
   await new Promise(r => setTimeout(r, 400));
   const daftarPapar = await ev(`(function(){ const m = document.getElementById('modalBoxContent'), ov = document.getElementById('appModalOverlay');
@@ -352,10 +352,10 @@ async function connect() {
     const ada = function(k){ return t.indexOf(k) > -1; };
     return { papar: ov ? ov.style.display : null, tajuk: ada('Daftar / Log Masuk'), delima: ada('ID DELIMa'),
              tanpaGoogle: ada('Guna tanpa Google'), adaForm: !!document.getElementById('daftarEmel') }; })()`);
-  ok('[F24] guru baharu: butang jelas di gerbang + skrin daftar 2 pilihan boleh dibuka',
-     daftarBtnAda.ada === true && /Guru baharu/.test(daftarBtnAda.teks) && daftarPapar.papar === 'flex'
-     && daftarPapar.tajuk === true && daftarPapar.delima === true && daftarPapar.tanpaGoogle === true && daftarPapar.adaForm === true,
-     `teks="${daftarBtnAda.teks}" papar=${daftarPapar.papar}`);
+  ok('[F28] guru baharu: butang jelas di gerbang + skrin daftar boleh dibuka',
+     daftarBtnAda.ada === true && daftarBtnAda.nampak === true && /BAHARU/.test(daftarBtnAda.teks)
+     && daftarPapar.papar === 'flex' && daftarPapar.tajuk === true && daftarPapar.tanpaGoogle === true && daftarPapar.adaForm === true,
+     `teks="${daftarBtnAda.teks}" nampak=${daftarBtnAda.nampak} papar=${daftarPapar.papar}`);
   ok('[F24] daftar TIDAK dipaksa automatik (gerbang kekal mudah: butang Masuk besar ada)',
      daftar1.papar !== 'flex' && daftar1.wajib === false, `papar=${daftar1.papar} wajib=${daftar1.wajib}`);
   await ev("closeModalDirectly(); window.__modalWajib = false; 'ok'");
@@ -365,7 +365,7 @@ async function connect() {
   const daftar2 = await ev(`(function(){ const ov = document.getElementById('appModalOverlay'), m = document.getElementById('modalBoxContent');
     return { papar: ov ? ov.style.display : null, teks: m ? (m.innerText||'').indexOf('ID DELIMa') > -1 : false }; })()`);
   // [F24] muat semula: gerbang terus boleh guna (borang log masuk terbuka + butang daftar ada)
-  const bolehMasuk = await ev(`(function(){ const b = document.getElementById('btnMasukSetempat'), d = document.getElementById('btnDaftarGuruBaharu');
+  const bolehMasuk = await ev(`(function(){ const b = document.getElementById('btnMasukSetempat'), d = document.getElementById('btnDaftarUtama');
     return { masuk: !!b, daftar: !!d }; })()`);
   ok('[F24] muat semula: gerbang sedia guna (butang Masuk + butang Guru baharu ada, tiada daftar paksa)',
      rdy6 && bolehMasuk.masuk === true && bolehMasuk.daftar === true && daftar2.papar !== 'flex',
@@ -525,16 +525,19 @@ async function connect() {
   ok('L68 tiada pelanggaran CSP sepanjang ujian', (csp.pelanggaranCSP || []).length === 0, JSON.stringify(csp.pelanggaranCSP));
 
   /* ---------- L70-L71: jalan masuk pengguna BAHARU (F18) ---------- */
+  // [F28] Gerbang baharu: butang daftar = #btnDaftarUtama ("Saya guru BAHARU").
+  // Pilihan A (Google) sengaja tersembunyi bila Client ID belum dipasang -> jalannya Pilihan B.
   const gerbang = await ev(`(function(){ window.__modalWajib = false; closeModalDirectly();
-    const btns = Array.prototype.slice.call(document.querySelectorAll('#privacyLockScreen button'));
-    const btnBaharu = btns.filter(function(b){ return (b.innerText || '').indexOf('Guru baharu') > -1; });
-    if (btnBaharu.length) btnBaharu[0].click();
+    const b = document.getElementById('btnDaftarUtama');
+    if (b) b.click();
     const t = (document.getElementById('modalBoxContent') || { innerText: '' }).innerText || '';
-    return { adaButang: btnBaharu.length > 0, papar: document.getElementById('appModalOverlay').style.display,
-             adaA: t.indexOf('ID DELIMa') > -1 && t.indexOf('Pilihan A') > -1, adaB: t.indexOf('Guna tanpa Google') > -1 || t.indexOf('Pilihan B') > -1,
+    const pa = document.getElementById('daftarPilihanA');
+    return { adaButang: !!b, papar: document.getElementById('appModalOverlay').style.display,
+             adaA: pa ? pa.style.display !== 'none' : false,
+             adaB: t.indexOf('Guna tanpa Google') > -1 || t.indexOf('Pilihan B') > -1,
              adaKembali: t.indexOf('Kembali ke log masuk') > -1 }; })()`);
-  ok('L70 gerbang: butang "Guru baharu" membuka skrin daftar (2 pilihan)',
-     gerbang.adaButang === true && gerbang.papar === 'flex' && gerbang.adaA === true && gerbang.adaB === true && gerbang.adaKembali === true, JSON.stringify(gerbang));
+  ok('L70 gerbang: butang "Saya guru BAHARU" membuka skrin daftar (laluan Pilihan B)',
+     gerbang.adaButang === true && gerbang.papar === 'flex' && gerbang.adaB === true && gerbang.adaKembali === true, JSON.stringify(gerbang));
 
   const kembali = await ev(`(function(){ const el = Array.prototype.slice.call(document.querySelectorAll('#modalBoxContent span')).filter(function(s){ return (s.innerText||'').indexOf('Kembali ke log masuk') > -1; });
     if (el.length) el[0].click();
@@ -669,7 +672,9 @@ async function connect() {
      Bug asal: butang "Guru baharu?" berada di y=399 pada viewport 344px (dlmPandangan=false)
      kerana kad gerbang tinggi 480px + align-items:center memotong hujung.
      Guru tekan tempat butang -> tiada apa berlaku (nampak macam telefon/app rosak). */
-  const BTN_DAFTAR = "(document.getElementById('btnDaftarGuruBaharu')||[].slice.call(document.querySelectorAll('button')).filter(function(x){return /Guru baharu/.test(x.textContent)})[0])";
+  // [F28] butang daftar guru baharu kini #btnDaftarUtama ("Saya guru BAHARU - Daftar").
+  // Butang lama #btnDaftarGuruBaharu dikekalkan tersembunyi untuk pautan lama.
+  const BTN_DAFTAR = "(document.getElementById('btnDaftarUtama')||[].slice.call(document.querySelectorAll('button')).filter(function(x){return /BAHARU|Guru baharu/.test(x.textContent)})[0])";
   const GEO_DAFTAR = `(function(){var b=${BTN_DAFTAR};if(!b)return JSON.stringify({ada:false});
     var r=b.getBoundingClientRect();
     var el=document.elementFromPoint(Math.round(r.x+r.width/2),Math.round(r.y+r.height/2));

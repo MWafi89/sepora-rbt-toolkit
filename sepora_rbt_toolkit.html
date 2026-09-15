@@ -889,6 +889,49 @@
       .delima-local .form-group { margin-bottom: 0.4rem; }
       .delima-local .form-control { padding: 0.4rem 0.55rem; font-size: 0.8rem; }
     }
+    /* [F28] Baris dua butang utama (table-cell, BUKAN flex - flex membalut & naikkan kad).
+       Dipakai pada semua skrin pendek supaya jimat ~40px tinggi menegak. */
+    @media (max-height: 820px) {
+      #btnDaftarUtama, #btnSudahAdaAkaun { display: table-cell; width: 50%; white-space: nowrap; }
+      #btnDaftarUtama { border-radius: 9px 0 0 9px; margin-top: 0.45rem; }
+      #btnSudahAdaAkaun { border-radius: 0 9px 9px 0; border-left: none; margin-top: 0.45rem; }
+      .butang-baris { display: table; width: 100%; table-layout: fixed; }
+      .butang-baris .masuk-cta { margin: 0.45rem 0 0; }
+    }
+    /* [F28] SKRIN SANGAT RENDAH (<=430px, cth 980x344 landskap / telefon lama).
+       Diukur: kad gerbang 811px dgn butang DAFTAR di y=-118 -> guru tak nampak butang langsung.
+       Padatkan sehingga butang utama masuk skrin tanpa skrol. */
+    @media (max-height: 430px) {
+      /* Susun dua butang utama sebelah-menyebelah dengan table-cell (bukan flex -
+         flex menyebabkan butang membalut & kad lebih tinggi). */
+      .delima-gate { align-items: flex-start; padding: 0.25rem 0.5rem 0.4rem; }
+      .delima-card { padding: 0.4rem 0.55rem 0.5rem; }
+      .delima-card h1 { font-size: 0.82rem; margin: 0 0 0.05rem; }
+      .delima-card .delima-sub { display: none; }
+      #btnDaftarUtama, #btnSudahAdaAkaun { padding: 0.4rem 0.5rem; font-size: 0.7rem; }
+      .butang-baris { margin-top: 0.3rem; }
+      .delima-status { font-size: 0.58rem; padding: 0.25rem 0.35rem; margin-bottom: 0.25rem; max-height: 40px; overflow-y: auto; }
+      .delima-local { margin-top: 0.3rem; padding-top: 0.3rem; }
+      .delima-local .form-group { margin-bottom: 0.25rem; }
+      .delima-local .form-control { padding: 0.3rem 0.4rem; font-size: 0.74rem; }
+      .delima-local label { font-size: 0.68rem; }
+      .delima-toggle { font-size: 0.6rem; padding: 1px; }
+      .delima-foot { display: none; }
+      .delima-card { margin: 0 auto; padding: 0.5rem 0.6rem 0.6rem; border-radius: 12px; }
+      .delima-card img { display: none; }
+      .delima-card h1 { font-size: 0.88rem; margin: 0 0 0.1rem; }
+      .delima-card .delima-sub { font-size: 0.6rem; margin-bottom: 0.3rem; }
+      .delima-note { display: none; }
+      #delimaGoogleNota { display: none !important; }
+      .delima-status { font-size: 0.6rem; padding: 0.28rem 0.4rem; margin-bottom: 0.3rem; max-height: 46px; overflow-y: auto; }
+      .masuk-cta { padding: 0.42rem 0.5rem; font-size: 0.72rem; margin-top: 0.35rem; margin-bottom: 0.2rem; }
+      .daftar-cta { padding: 0.4rem 0.5rem; font-size: 0.7rem; margin-top: 0.3rem; margin-bottom: 0.3rem; }
+      .delima-local { margin-top: 0.35rem; padding-top: 0.35rem; }
+      .delima-local .form-group { margin-bottom: 0.3rem; }
+      .delima-local .form-control { padding: 0.32rem 0.45rem; font-size: 0.76rem; }
+      .delima-toggle { font-size: 0.62rem; padding: 1px; }
+      .delima-foot { display: none; }
+    }
     @media (max-height: 600px) {
       .delima-gate { padding: 0.5rem 0.7rem 0.9rem; }
       .delima-card { padding: 0.7rem 0.85rem 1rem; margin: 0 auto 0.6rem; border-radius: 14px; }
@@ -1960,12 +2003,14 @@
 
       <!-- [F28] GERBANG BARU: guru baharu mesti faham apa nak tekan dalam 2 saat.
            Butang DAFTAR jadi laluan UTAMA di atas; "sudah ada akaun" di bawahnya. -->
-      <button type="button" id="btnDaftarUtama" class="masuk-cta" style="background:var(--secondary); border-color:var(--secondary);" onclick="openDaftarModal(true, true)">
-        <i class="fa-solid fa-user-plus"></i> Saya guru BAHARU - Daftar sekarang
-      </button>
-      <button type="button" id="btnSudahAdaAkaun" class="masuk-cta" style="background:var(--surface); color:var(--primary); border-color:var(--primary); margin-top:0.45rem;" onclick="toggleLocalLogin()">
-        <i class="fa-solid fa-right-to-bracket"></i> Saya sudah ada akaun - Masuk
-      </button>
+      <div class="butang-baris">
+        <button type="button" id="btnDaftarUtama" class="masuk-cta" style="background:var(--secondary); border-color:var(--secondary);" onclick="openDaftarModal(true, true)">
+          <i class="fa-solid fa-user-plus"></i> Saya guru BAHARU - Daftar
+        </button>
+        <button type="button" id="btnSudahAdaAkaun" class="masuk-cta" style="background:var(--surface); color:var(--primary); border-color:var(--primary); margin-top:0.45rem;" onclick="toggleLocalLogin()">
+          <i class="fa-solid fa-right-to-bracket"></i> Sudah ada akaun - Masuk
+        </button>
+      </div>
 
       <p class="delima-note" style="margin:0.6rem 0 0.2rem; font-size:0.72rem;">
         Guna <strong>ID DELIMa anda sendiri</strong> (cth <strong>g-57258425</strong>). Arkib RPH disimpan
@@ -5996,6 +6041,19 @@ function autoGenerateSmartRph() {
       if (modalBox && overlay) {
         modalBox.innerHTML = contentHtml;
         overlay.style.display = 'flex';
+        // [F29] PEPIJAT BESAR: gerbang log masuk (privacyLockScreen) berada DI ATAS modal dan
+        // menangkap ketikan - guru taip ke dalam medan daftar tetapi taipan masuk ke medan
+        // LOG MASUK di belakang, jadi borang daftar kekal kosong dan "Daftar" gagal senyap.
+        // Diukur: titik tengah #daftarEmel = INPUT#loginInputEmail.
+        // Pembetulan: modal mesti di ATAS gerbang dan gerbang tidak lagi menerima sentuhan.
+        try {
+          overlay.style.zIndex = '99999';
+          const gate = document.getElementById('privacyLockScreen');
+          if (gate && !gate.classList.contains('hidden')) {
+            gate.style.pointerEvents = 'none';
+            window.__gateKenaTutup = true;
+          }
+        } catch (e) { }
       }
     }
 
@@ -6009,6 +6067,14 @@ function autoGenerateSmartRph() {
     function closeModalDirectly() {
       const overlay = document.getElementById('appModalOverlay');
       if (overlay) overlay.style.display = 'none';
+      // [F29] pulihkan gerbang supaya butang Masuk/Daftar boleh ditekan semula
+      try {
+        if (window.__gateKenaTutup) {
+          const gate = document.getElementById('privacyLockScreen');
+          if (gate) gate.style.pointerEvents = '';
+          window.__gateKenaTutup = false;
+        }
+      } catch (e) { }
     }
 
     function openAddSlotModal() {
