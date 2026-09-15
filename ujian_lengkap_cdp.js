@@ -334,16 +334,39 @@ async function connect() {
     return { papar: ov ? ov.style.display : null, wajib: window.__modalWajib === true,
              tajuk: ada('Daftar / Log Masuk'), delima: ada('ID DELIMa'), tanpaGoogle: ada('Guna tanpa Google'),
              adaForm: !!document.getElementById('daftarEmel'), belumDaftar: !localStorage.getItem('erph_daftar_selesai') }; })()`);
-  ok('L47 akaun lalai -> skrin DAFTAR wajib dipaparkan (2 pilihan identiti)',
-     daftar1.papar === 'flex' && daftar1.wajib === true && daftar1.tajuk === true && daftar1.delima === true && daftar1.tanpaGoogle === true && daftar1.adaForm === true,
-     `papar=${daftar1.papar} wajib=${daftar1.wajib} delima=${daftar1.delima}`);
+  // [F24] daftar TIDAK lagi dipaksa (itulah punca "makin susah mau masuk"). Bukti baharu:
+  // (a) guru baharu sampai ke skrin daftar melalui butang jelas di gerbang (satu tekanan),
+  // (b) laluan setempat dibuka + butang "Masuk" besar sedia ada.
+  const daftarBtnAda = await ev(`(function(){ var b = document.getElementById('btnDaftarGuruBaharu');
+    return { ada: !!b, teks: b ? (b.innerText||'').trim() : '' }; })()`);
+  await ev("openDaftarModal(true, true); 'ok'");
+  await new Promise(r => setTimeout(r, 400));
+  const daftarPapar = await ev(`(function(){ const m = document.getElementById('modalBoxContent'), ov = document.getElementById('appModalOverlay');
+    const t = m ? (m.innerText||'') : '';
+    const ada = function(k){ return t.indexOf(k) > -1; };
+    return { papar: ov ? ov.style.display : null, tajuk: ada('Daftar / Log Masuk'), delima: ada('ID DELIMa'),
+             tanpaGoogle: ada('Guna tanpa Google'), adaForm: !!document.getElementById('daftarEmel') }; })()`);
+  ok('[F24] guru baharu: butang jelas di gerbang + skrin daftar 2 pilihan boleh dibuka',
+     daftarBtnAda.ada === true && /Guru baharu/.test(daftarBtnAda.teks) && daftarPapar.papar === 'flex'
+     && daftarPapar.tajuk === true && daftarPapar.delima === true && daftarPapar.tanpaGoogle === true && daftarPapar.adaForm === true,
+     `teks="${daftarBtnAda.teks}" papar=${daftarPapar.papar}`);
+  ok('[F24] daftar TIDAK dipaksa automatik (gerbang kekal mudah: butang Masuk besar ada)',
+     daftar1.papar !== 'flex' && daftar1.wajib === false, `papar=${daftar1.papar} wajib=${daftar1.wajib}`);
+  await ev("closeModalDirectly(); window.__modalWajib = false; 'ok'");
 
   await send('Page.reload'); const rdy6 = await waitReady(); await stub();
   await new Promise(r => setTimeout(r, 1400));
   const daftar2 = await ev(`(function(){ const ov = document.getElementById('appModalOverlay'), m = document.getElementById('modalBoxContent');
     return { papar: ov ? ov.style.display : null, teks: m ? (m.innerText||'').indexOf('ID DELIMa') > -1 : false }; })()`);
-  ok('L48 muat semula -> skrin daftar muncul semula (belum daftar)', rdy6 && daftar2.papar === 'flex' && daftar2.teks === true, `papar=${daftar2.papar}`);
+  // [F24] muat semula: gerbang terus boleh guna (borang log masuk terbuka + butang daftar ada)
+  const bolehMasuk = await ev(`(function(){ const b = document.getElementById('btnMasukSetempat'), d = document.getElementById('btnDaftarGuruBaharu');
+    return { masuk: !!b, daftar: !!d }; })()`);
+  ok('[F24] muat semula: gerbang sedia guna (butang Masuk + butang Guru baharu ada, tiada daftar paksa)',
+     rdy6 && bolehMasuk.masuk === true && bolehMasuk.daftar === true && daftar2.papar !== 'flex',
+     `masuk=${bolehMasuk.masuk} daftar=${bolehMasuk.daftar} papar=${daftar2.papar}`);
 
+  await ev("openDaftarModal(true, true); 'ok'");   // [F24] skrin daftar dibuka secara sedar untuk ujian ini
+  await new Promise(r => setTimeout(r, 300));
   const daftarSalah = await ev(`(async function(){ document.getElementById('daftarNama').value = 'Guru Ujian';
     document.getElementById('daftarEmel').value = 'guru.baru@moe-dl.edu.my';
     document.getElementById('daftarPin').value = '12';
@@ -376,6 +399,8 @@ async function connect() {
     finishLogin({ email: DEFAULT_AUTH.email, name: DEFAULT_TEACHER.name, mode:'setempat' });
     return 'ok'; })()`);
   await new Promise(r => setTimeout(r, 1200));
+  await ev("openDaftarModal(true, true); 'ok'");   // [F24] buka skrin daftar (tidak lagi dipaksa)
+  await new Promise(r => setTimeout(r, 300));
   const tolakLalai = await ev(`(async function(){ document.getElementById('daftarNama').value = 'Cikgu Cubaan';
     document.getElementById('daftarEmel').value = DEFAULT_AUTH.email;
     document.getElementById('daftarPin').value = '9999';

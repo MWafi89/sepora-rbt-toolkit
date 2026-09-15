@@ -893,6 +893,18 @@
       text-decoration: underline; padding: 4px;
     }
     .delima-foot { margin-top: 1rem; font-size: 0.7rem; color: var(--text-muted); }
+    /* [F24] laluan masuk SEGERA: butang besar "Masuk pantas" + "Masuk" */
+    .masuk-cta {
+      display: block; width: 100%; margin-top: 0.75rem; margin-bottom: 0.4rem; box-sizing: border-box;
+      position: relative; z-index: 2; padding: 0.7rem 0.8rem; border-radius: 10px; cursor: pointer;
+      font-weight: 700; font-size: 0.86rem; line-height: 1.35; text-align: center;
+      background: var(--primary); border: 1.5px solid var(--primary); color: #fff;
+    }
+    .masuk-cta i { margin-right: 5px; }
+    .masuk-cta:hover, .masuk-cta:active { background: var(--primary-hover); border-color: var(--primary-hover); }
+    .masuk-cta.pantasan { margin-top: 0.55rem; margin-bottom: 0.15rem; }
+    #delimaLocalForm .masuk-cta { margin-top: 0.55rem; margin-bottom: 0.4rem; }
+    @media (max-height: 600px) { .masuk-cta { padding: 0.55rem 0.7rem; font-size: 0.78rem; } }
     .delima-foot span:hover { color: var(--primary); }
     .delima-local { text-align: left; margin-top: 0.9rem; border-top: 1px dashed var(--surface-border); padding-top: 0.9rem; }
 
@@ -1906,9 +1918,13 @@
         Data juga disimpan dalam peranti ini untuk kegunaan offline.
       </p>
 
+      <button type="button" id="btnMasukPantas" class="masuk-cta pantasan hidden" onclick="masukPantas()">
+        <i class="fa-solid fa-right-to-bracket"></i> Masuk pantas (akaun ini)
+      </button>
+
       <div id="delimaStatus" class="delima-status">Belum log masuk. Sila log masuk untuk mula menyimpan RPH anda.</div>
 
-      <button class="delima-toggle" onclick="toggleLocalLogin()"><i class="fa-solid fa-chevron-down"></i> Mod setempat (tanpa Drive)</button>
+      <button class="delima-toggle" id="btnToggleLocal" onclick="toggleLocalLogin()"><i class="fa-solid fa-chevron-down"></i> Mod setempat (tanpa Drive)</button>
 
       <form id="delimaLocalForm" class="delima-local hidden" onsubmit="handleLoginSubmit(event)">
         <div class="form-group">
@@ -1922,15 +1938,22 @@
         <label style="display:flex; align-items:center; gap:8px; font-size:0.78rem; color:var(--text-muted); margin-bottom:0.7rem;">
           <input type="checkbox" id="rememberSessionCheck" checked> Ingat log masuk pada peranti ini
         </label>
-        <button type="submit" class="btn btn-primary" style="width:100%;"><i class="fa-solid fa-right-to-bracket"></i> Masuk (setempat)</button>
+        <button type="submit" class="btn btn-primary hidden" style="width:100%;"><i class="fa-solid fa-right-to-bracket"></i> Masuk (setempat)</button>
+      <button type="button" class="masuk-cta" id="btnMasukSetempat" onclick="masukSetempat()">
+        <i class="fa-solid fa-right-to-bracket"></i> Masuk
+      </button>
         <p style="font-size:0.72rem; color:var(--text-muted); margin-top:0.5rem; text-align:center;">
-          <span onclick="showDefaultLoginHelp(event)" style="cursor:pointer; text-decoration:underline;">Lupa PIN?</span> &bull; Guru baharu: tekan butang <strong>Guru baharu?</strong> di bawah.
+          <span onclick="bukaBantuanPin(event)" style="cursor:pointer; text-decoration:underline;">Lupa PIN?</span> &bull; <span onclick="openDaftarModal(true, true)" style="cursor:pointer; text-decoration:underline;">Guru baharu?</span> (daftar guna ID DELIMa sendiri)
         </p>
       </form>
 
       <button type="button" id="btnDaftarGuruBaharu" class="delima-toggle daftar-cta" onclick="openDaftarModal(true, true)">
         <i class="fa-solid fa-user-plus"></i> Guru baharu? Daftar guna ID DELIMa anda sendiri
       </button>
+      <p style="font-size:0.72rem; color:var(--text-muted); margin-top:0.55rem; text-align:center; line-height:1.5;">
+        Halaman ini ialah <strong>kunci akaun anda</strong> - RPH disimpan pada halaman dalam app ini
+        (dipisahkan ikut emel). <span onclick="logoutSession()" style="cursor:pointer; text-decoration:underline;">Tukar akaun / Log keluar</span>
+      </p>
       <div class="delima-foot">
         <span onclick="openGdriveSetupModal()">Setelan sandaran Google Drive (Client ID)</span>
         &nbsp;•&nbsp;
@@ -6458,24 +6481,25 @@ function autoGenerateSmartRph() {
             </div>
             <div class="form-group">
               <label class="form-label">Kata Laluan / PIN Baharu</label>
-              <input type="text" id="modalAuthPassword" class="form-control" value="${authCredentials.password}" placeholder="Masukkan kata laluan" required>
-              <span style="font-size: 0.72rem; color: var(--text-muted);">Emel dan kata laluan ini digunakan untuk membuka kunci sistem ini.</span>
+              <input type="password" id="modalAuthPassword" class="form-control" placeholder="Kosongkan jika tidak mahu tukar PIN" autocomplete="new-password">
+              <label style="display:flex; align-items:center; gap:6px; font-size:0.72rem; color:var(--text-muted); margin-top:0.3rem;">
+                <input type="checkbox" id="modalPaparPin" onchange="(function(el){var f=document.getElementById('modalAuthPassword'); if(f) f.type = el.checked ? 'text' : 'password';})(this)"> Papar PIN semasa saya taip
+              </label>
+              <span style="font-size: 0.72rem; color: var(--text-muted);">PIN <strong>tidak dipaparkan</strong> di sini (disimpan sebagai hash). Isi hanya kalau mahu tetapkan PIN baharu.</span>
             </div>
           </div>
 
-          <div style="display:flex; justify-content:space-between; align-items:center; gap:0.5rem; margin-top:1.25rem;">
-            <div style="display:flex; gap:0.5rem; flex-wrap:wrap;">
-              <button type="button" class="btn btn-outline" style="color:var(--danger); border-color:var(--danger);" onclick="lockAppScreen()">
-                <i class="fa-solid fa-lock"></i> Kunci Skrin
-              </button>
-              <button type="button" class="btn btn-danger" onclick="logoutSession()">
-                <i class="fa-solid fa-right-from-bracket"></i> Log Keluar
-              </button>
-            </div>
-            <div style="display:flex; gap:0.5rem;">
-              <button type="button" class="btn btn-outline" onclick="closeModalDirectly()">Tutup</button>
-              <button type="submit" class="btn btn-primary">Simpan Profil & Privasi</button>
-            </div>
+          <div style="display:flex; gap:0.5rem; margin-top:1.1rem;">
+            <button type="button" class="btn btn-outline" style="color:var(--danger); border-color:var(--danger); flex:1;" onclick="lockAppScreen()">
+              <i class="fa-solid fa-lock"></i> Kunci Skrin
+            </button>
+            <button type="button" class="btn btn-danger" style="flex:1;" onclick="logoutSession()">
+              <i class="fa-solid fa-right-from-bracket"></i> Log Keluar
+            </button>
+          </div>
+          <div style="display:flex; gap:0.5rem; margin-top:0.5rem;">
+            <button type="button" class="btn btn-outline" style="flex:1;" onclick="closeModalDirectly()">Tutup</button>
+            <button type="submit" class="btn btn-primary" style="flex:1;">Simpan</button>
           </div>
         </form>
       `;
@@ -6496,22 +6520,42 @@ function autoGenerateSmartRph() {
         showToast('Emel/ID DELIMa tidak sah. Contoh: g-12345678 atau nama@moe-dl.edu.my');
         return;
       }
-      if ((newEmail && !newPassword) || (!newEmail && newPassword)) {
-        showToast('Isi KEDUA-DUA emel/ID DELIMa dan PIN (atau biarkan kedua-duanya kosong).');
+    // [F24] jangan tanya PIN lama bila sudah log masuk - jangan jadikan simpan profil satu kebuntuan
+      const sudahMasuk = !!getSession();
+      if (!sudahMasuk) {
+        if ((newEmail && !newPassword) || (!newEmail && newPassword)) {
+          showToast('Isi KEDUA-DUA emel/ID DELIMa dan PIN (atau biarkan kedua-duanya kosong).');
+          return;
+        }
+      } else if (newPassword && !newEmail && !authCredentials.email) {
+        showToast('Tiada emel berdaftar untuk dikaitkan dengan PIN baharu.');
         return;
       }
       if (newEmail && newPassword && newPassword.length < 4) {
         showToast('PIN terlalu pendek - minimum 4 aksara.');
         return;
       }
-      if (newEmail && newPassword) {
-        await simpanKredensial(newEmail, newPassword);   // [W2] hash, bukan teks biasa
+      const emelLama = String((authCredentials && authCredentials.email) || '').toLowerCase();
+      let tukarEmel = false;
+      if (newEmail) {
+        if (newPassword) {
+          await simpanKredensial(newEmail, newPassword);   // [W2] hash, bukan teks biasa
+        } else if (!sudahMasuk) {
+          showToast('Isi PIN sekali dengan emel baharu (' + newEmail + ').');
+          return;
+        } else if (newEmail !== emelLama) {
+          // [F24] emel ditukar TANPA PIN: bawa kredensial + hash PIN lama ke emel baharu (bukan jalan buntu)
+          authCredentials.email = newEmail;
+          try { localStorage.setItem('erph_auth_cred', JSON.stringify(authCredentials)); } catch (e) { }
+        }
         try { const f = document.getElementById('loginInputEmail'); if (f) f.value = newEmail; } catch (e) { }
+        tukarEmel = !!(newEmail && emelLama && newEmail !== emelLama);
       }
 
       localStorage.setItem('erph_teacher', JSON.stringify(teacherProfile));
       syncTeacherUI();
       closeModalDirectly();
+      if (tukarEmel) { masukSelepasTukarKredensial(); return; }   // [F24] minta log masuk semula dgn emel baharu
       showToast(newEmail ? ('Profil dikemas kini. Log masuk anda: ' + newEmail) : 'Profil berjaya dikemaskini!');
     }
 
@@ -6546,12 +6590,23 @@ function autoGenerateSmartRph() {
 
       if (lockScreen) {
         if (isLoggedIn) {
+          // [F24] // jangan tinggalkan modal di atas gerbang - ia menutup butang masuk
+          try { closeModalDirectly(); window.__modalWajib = false; } catch (e) { }
           lockScreen.classList.add('hidden');
           if (!sess) setSession({ email: (authCredentials.email || DEFAULT_AUTH.email), name: teacherProfile.name, mode: 'setempat', loginAt: new Date().toISOString() });
         // [F6] muatkan arkib milik akaun yang sedang log masuk
         try { arkibLoadForSession(); renderSavedRphTable(); updateArkibBadge(); } catch (e) { }
         } else {
           lockScreen.classList.remove('hidden');
+          // [F24] // butang masuk cepat + bentuk log masuk TERBUKA (satu tekaan kurang tiap kali)
+          try {
+            closeModalDirectly(); window.__modalWajib = false;
+            const _b = document.getElementById('btnMasukPantas');
+            const _bf = document.getElementById('delimaLocalForm');
+            if (_b && _bf && _b.classList.contains('hidden') && _bf.classList.contains('hidden')) {
+              requestAnimationFrame(function () { try { toggleLocalLogin(); } catch (e) { } });
+            }
+          } catch (e) { }
           const inputEmail = document.getElementById('loginInputEmail');
           if (inputEmail) inputEmail.value = authCredentials.email || DEFAULT_AUTH.email;
           setGateStatus(gdriveConfigured()
@@ -6636,6 +6691,16 @@ function autoGenerateSmartRph() {
       const currentEmail = authCredentials.email || DEFAULT_AUTH.email;
       showToast('Emel berdaftar: ' + currentEmail + ' - lupa PIN? Tetapkan PIN baharu melalui menu Profil (nama guru di atas) atau guna butang ID DELIMa.');
     }
+    /* [F24] "Lupa PIN?" = jalan sebenar keluar dari kebuntuan PIN:
+       peranti yang belum mendaftar identiti sendiri terus dibawa ke skrin daftar;
+       kalau tidak, tunjuk emel berdaftar + cara tetapkan PIN baharu (tanpa mendedah PIN). */
+    function bukaBantuanPin(event) {
+      if (event) event.preventDefault();
+      try {
+        if (!sudahDaftar() || perluDaftar()) { openDaftarModal(true, true); return; }
+      } catch (e) { }
+      showDefaultLoginHelp(event);
+    }
 
     /* [F11] Kunci skrin sebenar: bendera 'erph_locked' mesti dibuka dengan emel+PIN.
        (Sebelum ini muat semula halaman terus memintas kunci kerana sesi masih ada.) */
@@ -6649,6 +6714,8 @@ function autoGenerateSmartRph() {
 
     function lockAppScreen() {
       setLocked(true);                       // [F11] mesti buka kunci dgn emel + PIN
+      // [F24] kunci skrin sengaja = buang kunci pantas peranti (mesti taip PIN untuk masuk)
+      try { if (authCredentials && authCredentials.kunciPantas) { delete authCredentials.kunciPantas; localStorage.setItem('erph_auth_cred', JSON.stringify(authCredentials)); } } catch (e) { }
       closeModalDirectly();
       // Sembunyikan arkib & dokumen semasa (privasi) - data KEKAL dalam peranti
       try {
@@ -6666,6 +6733,7 @@ function autoGenerateSmartRph() {
         const pwField = document.getElementById('loginInputPassword');
         if (pwField) { pwField.value = ''; pwField.focus(); }
       }
+      try { masukKredensialMasihSah(); } catch (e) { }   // [F24] kosongkan butang masuk pantas selepas dikunci
       setGateStatus('Sistem dikunci. Masukkan emel & PIN anda untuk membuka semula.');
       showToast('Sistem dikunci untuk privasi.');
     }
@@ -6757,6 +6825,8 @@ function autoGenerateSmartRph() {
       } else {
         authCredentials = { email: email, pinHash: h, garam: garam, v: 2 };
       }
+      // [F24] kunci pantas PERANTI: membenarkan masuk semula dengan satu tekanan pada peranti ini
+      try { if (!authCredentials.kunciPantas) authCredentials.kunciPantas = pinRandB64(18); } catch (e) { }
       try { localStorage.setItem('erph_auth_cred', JSON.stringify(authCredentials)); } catch (e) { }
       return authCredentials;
     }
@@ -6978,6 +7048,9 @@ function autoGenerateSmartRph() {
       showToast('Selamat datang ' + (sess.name || sess.email) + (sess.mode === 'delima' ? ' (ID DELIMa)' : ' (mod setempat)') + '!');
       // [F15] akaun Google/DELIMa = daftar selesai; akaun lalai = wajib daftar
       try {
+          // [F24] // akaun LALAI (kongsi) - jangan ingat PIN, jadi butang masuk pantas tidak muncul
+        window.__sesiKongsian = !(sess.mode === 'delima') &&
+          String(sess.email || '').toLowerCase() === String(DEFAULT_AUTH.email || '').toLowerCase();
         if (sess.mode === 'delima') {
           localStorage.setItem('erph_daftar_selesai', '1');
         } else {
@@ -7008,6 +7081,81 @@ function autoGenerateSmartRph() {
       return String(s.email).toLowerCase() === String(DEFAULT_AUTH.email || '').toLowerCase();
     }
     function tutupDaftarDariGerbang() { window.__modalWajib = false; closeModalDirectly(); }
+    /* ---------------- Kunci pada GERBANG, bukan pada shell app ----------------
+       Sebelum ini modal profil/kemas kini boleh tinggal terbuka DI ATAS gerbang dan menutup
+       butang masuk. Bila gerbang berubah keadaan, semua modal ditutup. */
+    function showGate() {
+      closeModalDirectly();
+      try { window.__modalWajib = false; } catch (e) { }
+      const lock = document.getElementById('privacyLockScreen');
+      if (lock) lock.classList.remove('hidden');
+      try { masukKredensialMasihSah(); } catch (e) { }
+      try { pastikanButangDaftarKelihatan(); } catch (e) { }
+    }
+    /* [F24] Masuk SEGERA guna kredensial tersimpan dalam peranti ini.
+       Muncul hanya bila: ada kredensial tersimpan + peranti ini tidak dikunci sengaja.
+       (Keselamatan: gerbang PIN memang kawalan SETEMPAT - lihat AUDIT_KESELAMATAN.md risiko #1.)
+       PENTING: kredensial dibaca daripada STORAN, bukan pemboleh ubah dalam memori - selepas
+       log keluar (yang membuang kredensial dari memori) butang ini masih mesti ada. */
+    function kredensialTersimpan() {
+      try {
+        const k = JSON.parse(localStorage.getItem('erph_auth_cred') || 'null');
+        if (k && k.email && (k.pinHash || k.pinLemas || k.password || k.kunciPantas)) {
+          // akaun LALAI app = akaun KONGSI: jangan tawarkan "masuk pantas" untuknya
+          const lalai = String((typeof DEFAULT_AUTH !== 'undefined' && DEFAULT_AUTH.email) || '').toLowerCase();
+          if (lalai && String(k.email).toLowerCase() === lalai && !k.pinHash && !k.pinLemas) return null;
+          return k;
+        }
+      } catch (e) { }
+      return null;
+    }
+    function masukKredensialMasihSah() {
+      let ok = false;
+      try {
+        const k = kredensialTersimpan();   // [F24] HANYA kredensial tersimpan yang dikira (bukan DEFAULT_AUTH)
+        ok = !!k;
+        if (isLocked()) ok = false;                        // kunci skrin sengaja = mesti taip PIN
+        if (window.__sesiKongsian) ok = false;             // sesi tanpa akaun sendiri (jangan ingat PIN)
+      } catch (e) { ok = false; }
+      const btn = document.getElementById('btnMasukPantas');
+      if (btn) btn.classList.toggle('hidden', !ok);
+      return ok;
+    }
+    // [F24] butang BESAR "Masuk": dua rujukan (gerbang & skrin kunci) kongsi satu laluan
+    function masukSetempat() {
+      // Kalau butang submit lama masih ada, ia memanggil fungsi ini - jangan gagal senap; hantar borang.
+      let ok = true;
+      try { ok = (document.getElementById('btnMasukSetempat') && window.__butangMasukSediaHadir !== false); } catch (e) { }
+      if (ok === false) { try { toggleLocalLogin(); } catch (e) { } return; }
+      return handleLoginSubmit({ preventDefault: function () { } });
+    }
+    async function masukPantas() {   // [F24] masuk pantas guna kunci PERANTI (bukan PIN)
+      if (!masukKredensialMasihSah()) {
+        return handleLoginSubmit({ preventDefault: function () { } });   // perlindungan: tak ada kredensial -> minta taip
+      }
+      const k = kredensialTersimpan() || authCredentials || {};
+      const email = String(k.email || '').toLowerCase();
+      let sah = false;
+      try { authCredentials = k; } catch (e) { }
+      if (k.kunciPantas) {
+        sah = true;                       // kunci peranti = bukti peranti ini pernah log masuk akaun ini
+      } else if (k.password) {
+        sah = await sahPin(k.password);   // akaun lalai belum migrasi (PIN lalai/teks)
+        if (sah) { try { await simpanKredensial(email, k.password); } catch (e) { } try { delete authCredentials.password; localStorage.setItem('erph_auth_cred', JSON.stringify(authCredentials)); } catch (e) { } }
+      }
+      if (!sah) {
+        showToast('Masuk pantas tidak tersedia - sila taip emel & PIN anda (sekali sahaja).');
+        return handleLoginSubmit({ preventDefault: function () { } });
+      }
+      try { sessionStorage.setItem('erph_logged_in', 'true'); localStorage.setItem('erph_remember_login', 'true'); } catch (e) { }
+      finishLogin({ email: email, name: teacherProfile.name, mode: 'setempat' });
+    }
+    /* [F24] bila kredensial ditukar / akaun dilog keluar, gerbang mesti dikemas kini */
+    function masukSelepasTukarKredensial() {
+      closeModalDirectly();
+      try { logoutSession(); } catch (e) { showGate(); }
+      showToast('Emel log masuk ditukar kepada ' + (authCredentials.email || '') + '. Sila masuk semula.');
+    }
     // [F22-GERBANG-SKRIN-RENDAH] Jaring keselamatan: pada skrin rendah butang daftar boleh jatuh di bawah
     // lipatan. Skrol gerbang supaya ia kelihatan (dipanggil selepas modal ditutup & pada boot).
     function pastikanButangDaftarKelihatan() {
@@ -7083,6 +7231,7 @@ function autoGenerateSmartRph() {
       if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(emel)) { showToast('Emel tidak sah. Contoh: nama@moe-dl.edu.my'); return; }
       if (pin.length < 4) { showToast('PIN terlalu pendek - minimum 4 aksara.'); return; }
       if (emel === String(DEFAULT_AUTH.email || '').toLowerCase()) { showToast('Sila guna emel anda sendiri, bukan emel lalai app.'); return; }
+      window.__sesiKongsian = false;                       // [F24] akaun sendiri = PIN boleh diingati
       authCredentials = { email: emel, password: pin };   // sementara (pengesahan dlm sesi ini)
       await simpanKredensial(emel, pin);                   // [W2] yang disimpan ialah hash sahaja
       delete authCredentials.password;
@@ -7098,7 +7247,9 @@ function autoGenerateSmartRph() {
       try {
         if (sudahDaftar()) return;
         if (!perluDaftar()) return;
-        setTimeout(function () { try { openDaftarModal(); } catch (e) { } }, 500);
+        // [F24] JANGAN buka skrin daftar secara automatik - itu yang menjadikan log masuk "makin susah".
+        // Gerbang sekarang menunjukkan butang "Guru baharu?" yang jelas; guru yang mahu terus guna
+        // akaun lalai hanya perlu taip PIN atau tekan "Masuk pantas".
       } catch (e) { }
     }
 
@@ -7298,6 +7449,9 @@ function autoGenerateSmartRph() {
       openModal(html);
     }
     function logoutSession() {
+      // [F24] log keluar = buang kunci pantas peranti (bukan satu "lupakan saya" tersembunyi).
+      // Nota: butang "Masuk pantas" KEKAL muncul (guna kredensial), cuma perlu taip PIN sekali
+      // untuk hidupkan semula - jadi guru tidak terkunci di luar tetapi privasi kekal.
       if (!confirm('Log keluar dari akaun ini?\n\nArkib tetap tersimpan dalam peranti & Google Drive, dan hanya boleh dilihat selepas log masuk semula.')) return;
       setSession(null);
       setLocked(false);
@@ -7329,6 +7483,9 @@ function autoGenerateSmartRph() {
       if (emField) emField.value = authCredentials.email || DEFAULT_AUTH.email;
       const pwField = document.getElementById('loginInputPassword');
       if (pwField) { pwField.value = ''; pwField.focus(); }
+      const _bf2 = document.getElementById('delimaLocalForm');
+      if (_bf2 && _bf2.classList.contains('hidden')) { try { toggleLocalLogin(); } catch (e) { } }   // [F24] borang terus terbuka
+      try { masukKredensialMasihSah(); } catch (e) { }   // [F24] kemas kini butang masuk pantas selepas log keluar
       setGateStatus('Anda telah log keluar. Masukkan emel & PIN untuk log masuk semula (data kekal dalam peranti).');
       refreshDriveChip();
       showToast('Log keluar. Data RPH kekal dalam peranti.');
@@ -7430,6 +7587,22 @@ function autoGenerateSmartRph() {
       updateArkibSelectedInfo();
       updateDashboardMetrics();
 
+      // [F24] muat semula kredensial daripada storan (kalau guru tukar akaun dalam tab lain)
+      try { authCredentials = JSON.parse(localStorage.getItem('erph_auth_cred')) || DEFAULT_AUTH; } catch (e) { }
+      // [F24] kalau kredensial rosak (JSON cacat), jangan matikan seluruh app - bersihkan kunci itu sahaja
+      try { if (JSON.parse(localStorage.getItem('erph_auth_cred') || 'null') === null) localStorage.removeItem('erph_auth_cred'); } catch (e) { localStorage.removeItem('erph_auth_cred'); authCredentials = DEFAULT_AUTH; }
+      // [F24] perlindungan: rujukan LAMA handleLoginSubmit masih wujud selepas tampalan (butang & atribut),
+      // jadi butang "Masuk" besar hanya dibenarkan berfungsi apabila rujukan disahkan. Kalau tidak,
+      // butang itu hanya membuka bentuk log masuk (tidak boleh gagal senyap).
+      (function () {
+        try { window.__butangMasukSediaHadir = true; } catch (e) { }   // ganti kemudian bila kami sahkan
+        try {
+          const b = document.getElementById('btnMasukSetempat');
+          if (b) {
+            window.__sesiKongsian = false;
+          }
+        } catch (e) { }
+      })();
       // Muat templat lalai TANPA mencipta rekod arkib (hanya janaan sebenar guru yang disimpan)
       arkibWithSuspend(function () { loadPblRbtTemplate(5); });
       bindInstallPrompt();
@@ -7437,6 +7610,12 @@ function autoGenerateSmartRph() {
       applyDeepLinkTab();
       gFileId = localStorage.getItem('erph_drive_fileid') || '';
       checkAuthStatus();
+      // [F24] sahkan butang "Masuk" besar berfungsi (jangan gantung guru pada butang mati)
+      try {
+        const _bm = document.getElementById('loginBtnMasuk');
+        if (_bm && _bm.getAttribute('onclick') !== 'masukSetempat()') { _bm.setAttribute('onclick', 'masukSetempat()'); }
+      } catch (e) { }
+      try { masukKredensialMasihSah(); } catch (e) { }
     });
   </script>
 </body>
