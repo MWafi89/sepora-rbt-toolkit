@@ -5,6 +5,24 @@ Chrome/Edge → menu ⋮ → *Add to Home screen*).
 
 ---
 
+## LALUAN TERPANTAS (selepas kemas kini [F24]) — cuba ini dulu
+
+1. Buka **https://sepora-rbt-toolkit.vercel.app** .
+2. Skrin log masuk sekarang **sudah terbuka** dan emel anda sudah terisi — cuma taip PIN anda
+   dan tekan butang besar **Masuk**.
+3. Kalau ini peranti yang pernah anda log masuk (dan anda **tidak** menekan *Kunci Skrin*),
+   akan ada butang biru **Masuk pantas (akaun ini)** — satu tekanan, terus masuk, tiada taip apa-apa.
+4. Peranti baharu / guru baharu: tekan **Guru baharu?** (butang di bawah butang *Masuk*),
+   pilih **Pilihan B — Guna tanpa Google**, isi Nama + ID DELIMa (cth `g-57258425`) + PIN anda,
+   tekan **Daftar & Mula Guna** — anda terus masuk tanpa menunggu apa-apa lagi.
+
+> Nota: *Lupa PIN?* sekarang membuka skrin daftar (laluan pulih sebenar), bukan sekadar mesej.
+> Kalau anda tekan *Kunci Skrin* atau *Log Keluar*, butang *Masuk pantas* dimatikan —
+> itu memang disengajakan supaya telefon yang dipinjam orang lain tidak boleh masuk arkib anda.
+
+
+---
+
 ## Pilihan 1 (DISYORKAN) — guna akaun Google sekolah (ID DELIMa)
 
 1. Buka app. Skrin pertama: **SEPORA RBT TOOLKIT**.
