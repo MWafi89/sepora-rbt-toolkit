@@ -17,6 +17,13 @@ Chrome/Edge → menu ⋮ → *Add to Home screen*).
    tekan **Daftar & Mula Guna** — anda terus masuk tanpa menunggu apa-apa lagi.
 
 
+### Kalau paparan nampak pelik / butang tak boleh ditekan
+
+Kemas kini terkini sudah membetulkan tiga masalah yang membuat guru tidak boleh masuk:
+butang Google yang jatuh di luar skrin pada telefon kecil, notifikasi yang menutup butang
+"Guru baharu?", dan kad gerbang yang terlalu tinggi. Kalau telefon anda masih tunjuk
+paparan lama: **tutup app sepenuhnya, buka semula** (paparan baru akan dimuat).
+
 ### Kalau butang "Log Masuk dengan ID DELIMa" tidak membawa ke mana
 
 Butang Google itu **belum diaktifkan untuk sekolah ini** (pemilik app perlu pasang Client ID
