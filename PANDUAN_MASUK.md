@@ -1,99 +1,86 @@
-# CARA MASUK — Pengguna Baharu (Guru)
+# CARA MASUK — SEPORA RBT TOOLKIT (Untuk Guru)
 
-App: **https://sepora-rbt-toolkit.vercel.app** (boleh tambah ke skrin utama telefon:
-Chrome/Edge → menu ⋮ → *Add to Home screen*).
-
----
-
-## LALUAN TERPANTAS (selepas kemas kini [F24]) — cuba ini dulu
-
-1. Buka **https://sepora-rbt-toolkit.vercel.app** .
-2. Skrin log masuk sekarang **sudah terbuka** dan emel anda sudah terisi — cuma taip PIN anda
-   dan tekan butang besar **Masuk**.
-3. Kalau ini peranti yang pernah anda log masuk (dan anda **tidak** menekan *Kunci Skrin*),
-   akan ada butang biru **Masuk pantas (akaun ini)** — satu tekanan, terus masuk, tiada taip apa-apa.
-4. Peranti baharu / guru baharu: tekan **Guru baharu?** (butang di bawah butang *Masuk*),
-   pilih **Pilihan B — Guna tanpa Google**, isi Nama + ID DELIMa (cth `g-57258425`) + PIN anda,
-   tekan **Daftar & Mula Guna** — anda terus masuk tanpa menunggu apa-apa lagi.
-
-
-### Kalau paparan nampak pelik / butang tak boleh ditekan
-
-Kemas kini terkini sudah membetulkan tiga masalah yang membuat guru tidak boleh masuk:
-butang Google yang jatuh di luar skrin pada telefon kecil, notifikasi yang menutup butang
-"Guru baharu?", dan kad gerbang yang terlalu tinggi. Kalau telefon anda masih tunjuk
-paparan lama: **tutup app sepenuhnya, buka semula** (paparan baru akan dimuat).
-
-### Kalau butang "Log Masuk dengan ID DELIMa" tidak membawa ke mana
-
-Butang Google itu **belum diaktifkan untuk sekolah ini** (pemilik app perlu pasang Client ID
-sekali sahaja). Bila ditekan, app akan beritahu perkara itu dan menunjukkan butang yang
-**memang berfungsi**. Jangan tunggu Google — guna jalan ini:
-
-1. Tekan **Guru baharu? Daftar guna ID DELIMa anda sendiri**
-2. Pilih **Pilihan B — Guna tanpa Google (offline)**
-3. Isi Nama + ID DELIMa (cth `g-57258425`) + PIN anda → **Daftar & Mula Guna**
-
-Semua ciri RPH berfungsi penuh melalui jalan ini; hanya sandaran automatik ke Google Drive
-yang menunggu Client ID dipasang.
-
-> Nota: *Lupa PIN?* sekarang membuka skrin daftar (laluan pulih sebenar), bukan sekadar mesej.
-> Kalau anda tekan *Kunci Skrin* atau *Log Keluar*, butang *Masuk pantas* dimatikan —
-> itu memang disengajakan supaya telefon yang dipinjam orang lain tidak boleh masuk arkib anda.
-
+**Laman:** https://sepora-rbt-toolkit.vercel.app
+Boleh pasang pada telefon: Chrome → menu ⋮ → *Tambah ke skrin utama*
 
 ---
 
-## Pilihan 1 (DISYORKAN) — guna akaun Google sekolah (ID DELIMa)
+## GURU BAHARU — 3 LANGKAH SAHAJA
 
-1. Buka app. Skrin pertama: **SEPORA RBT TOOLKIT**.
-2. Tekan **Log Masuk dengan ID DELIMa**.
-3. Pilih akaun **@moe-dl.edu.my** anda (kalau belum masuk Google, taip emel + kata laluan
-   DELIMa **pada halaman Google sendiri** — app ini tidak pernah menerima kata laluan itu).
-4. Sahkan kebenaran skop *Google Drive (drive.file)*. App hanya nampak fail yang dia sendiri cipta.
-5. Siap. Pilih waktu dalam **Jadual** → tekan jana RPH → **Simpan**.
-6. Sandaran: buka chip **Drive** di bar atas → **Sandaran sekarang**. Salinan masuk ke folder
-   **SEPORATOOLKIT** dalam Drive anda (`SEPORA_RPH_ARKIB.json`). Auto-sandaran dihidupkan
-   secara automatik selepas log masuk DELIMa.
+**1.** Buka laman. Skrin **SEPORA RBT TOOLKIT** akan keluar.
 
-> Nota: pilihan ini perlu **Client ID OAuth** dipasang sekali oleh pemilik app
-> (rujuk `PANDUAN_GDRIVE.md`). Sebelum itu, guna Pilihan 2.
+**2.** Tekan butang **hijau** bertulis:
 
----
+> **"Saya guru BAHARU - Daftar sekarang"**
 
-## Pilihan 2 — guna tanpa Google (semua ada dalam telefon anda)
+**3.** Isi tiga ruang, kemudian tekan **"Daftar & Mula Guna"**:
 
-1. Buka app → pada gerbang, tekan **Guru baharu? Daftar guna ID DELIMa anda sendiri**
-   (tekan sekali lagi kalau peranti ini sudah ada akaun orang lain).
-2. Pilih **Pilihan B — Guna tanpa Google** dan isi:
-   - **Nama Guru** — nama penuh anda,
-   - **ID DELIMa atau emel anda** — boleh taip `g-57258425` (ID DELIMa) atau emel penuh; ID akan
-     dijadikan `g-57258425@moe-dl.edu.my`,
-   - **PIN sendiri** — minimum 4 aksara, **jangan guna 1234**. PIN ini disimpan dalam bentuk
-     **hash** (bukan teks biasa) dan tidak dipaparkan pada skrin.
-3. Tekan **Daftar & Mula Guna**.
-4. Siap. Arkib anda disimpan bawah akaun anda (`erph_saved::<emel-anda>`) — guru lain tidak bercampur.
-5. Lain kali buka app: gerbang sudah terisi **emel anda** → taip PIN anda → masuk.
+| Ruang | Isi apa | Contoh |
+|---|---|---|
+| Nama Guru | Nama penuh anda | Cikgu Aisyah binti Ali |
+| ID DELIMa | ID DELIMa sahaja (tanpa @moe-dl.edu.my) | `g-57258425` |
+| PIN anda | PIN sendiri, **min 4 aksara** | *jangan guna 1234* |
+
+**SIAP.** Anda terus masuk — tiada pengesahan emel, tiada kelulusan, tiada menunggu.
+Pergi ke tab **Jadual** → pilih waktu → jana RPH → **Simpan**.
 
 ---
 
-## Kalau terlupa PIN (mod setempat)
+## KALI SETERUSNYA — MASUK SEMULA
 
-- Kalau anda pernah log masuk Google: tekan **Log Masuk dengan ID DELIMa** (tidak perlu PIN).
-- Kalau tidak: padam data laman (Chrome → Tetapan laman → Padam data) lalu **import semula** fail
-  **Eksport Arkib (JSON)** anda. Sebab itu **buat Eksport Arkib berkala** — tab *Simpan/Cetak* →
-  *Eksport Arkib (JSON)* → simpan fail itu dalam Drive/WhatsApp diri sendiri.
+Buka laman. Ada dua cara:
 
-## Keselamatan (apa yang app ini buat & tidak buat)
+- **Paling cepat:** tekan butang biru **"Masuk pantas (akaun ini)"** — satu tekanan, terus masuk.
+  (Butang ini muncul jika telefon ini pernah log masuk dan anda tidak menekan *Kunci Skrin*.)
+- **Cara biasa:** tekan **"Saya sudah ada akaun - Masuk"** → emel anda sudah terisi →
+  taip PIN → tekan **Masuk**.
 
-- **Tidak** menyimpan kata laluan DELIMa. Log masuk Google disahkan oleh Google/MOE sendiri.
-- PIN setempat disimpan sebagai **PBKDF2-SHA256 + garam** (60,000 iterasi).
-- Fail sandaran yang diimport/pulih dari Drive **dinyahbahaya** dahulu (buang skrip/atribut on*)
-  sebelum dipaparkan — fail daripada orang lain tidak boleh menyuntik kod.
-- Pustaka luar (pdf.js, mammoth, html2pdf, docx, font-awesome) dikunci dengan **SRI sha384**.
-- Laman dihidangkan dengan **CSP** + header keselamatan lain (lihat `AUDIT_KESELAMATAN.md`).
+---
 
-## Untuk pemilik app (sekali sahaja)
+## PENTING: JANGAN CARI BUTANG GOOGLE
 
-1. Pasang **Client ID OAuth** (rujuk `PANDUAN_GDRIVE.md`) supaya butang ID DELIMa berfungsi untuk semua guru.
-2. Sebelum Client ID dipasang, arahkan guru guna **Pilihan 2** dahulu.
+Butang **"Log Masuk dengan ID DELIMa"** (Google) **sengaja disembunyikan** kerana ia
+belum diaktifkan untuk sekolah ini. Kalau anda mencarinya dan tidak jumpa — itu memang
+betul. Guna laluan **"Saya guru BAHARU"** atau **"Saya sudah ada akaun"** sahaja.
+Semua ciri RPH berfungsi penuh melalui laluan ini.
+
+---
+
+## KALAU ADA MASALAH
+
+**"Saya tekan butang tapi tiada apa berlaku"**
+Tutup app sepenuhnya, buka semula. Kalau masih tak jadi, tarik skrin ke bawah (refresh).
+
+**"Paparan saya tak sama — tiada butang hijau 'Saya guru BAHARU'"**
+Telefon anda masih simpan versi lama. Tutup app sepenuhnya dan buka semula, atau
+tarik-untuk-muat-semula. Lepas itu paparan baharu akan keluar.
+
+**"Saya lupa PIN"**
+Tekan **"Lupa PIN?"** → ia buka skrin daftar semula → isi nama + ID DELIMa yang **sama** +
+PIN baharu → Daftar & Mula Guna. Arkib RPH lama anda **tidak hilang**.
+
+**"Kenapa kena taip PIN tiap kali?"**
+Itu memang disengajakan. Kalau anda tekan *Kunci Skrin* atau *Log Keluar*, butang
+*Masuk pantas* dimatikan — supaya telefon yang dipinjam orang lain tidak boleh masuk
+arkib RPH anda.
+
+**"RPH saya hilang bila tukar telefon"**
+Buat sandaran: tab **Simpan/Cetak** → **Eksport Arkib (JSON)** → simpan fail itu dalam
+Google Drive atau hantar ke WhatsApp diri sendiri. Di telefon baharu, import semula fail itu.
+
+---
+
+## TIGA PERKARA PALING PENTING
+
+1. **Jangan guna PIN 1234** — PIN ini melindungi RPH dan maklumat peribadi anda.
+2. **Guna ID DELIMa yang sama setiap kali** — arkib disimpan bawah akaun; tukar ID = arkib berasingan.
+3. **Buat Eksport Arkib berkala** (tab *Simpan/Cetak*) — jaring keselamatan kalau telefon rosak.
+
+---
+
+## NOTA UNTUK PEMILIK APP
+
+Butang Google + sandaran automatik Google Drive hanya berfungsi selepas **Client ID OAuth**
+dipasang sekali (rujuk `PANDUAN_GDRIVE.md`). Bila Client ID disimpan melalui
+*Setelan sandaran Google Drive (Client ID)*, butang Google akan muncul semula secara
+automatik pada gerbang dan pada skrin daftar (Pilihan A).
