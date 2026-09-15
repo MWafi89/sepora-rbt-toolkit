@@ -51,8 +51,14 @@ async function connect() {
       if (u.indexOf('/drive/v3/files/OLD9?alt=media') >= 0) return J({ rekod: [] });
       return J({});
     }; };` });
+  // [F26] had masa pada setiap penilaian: tanpa ini, satu panggilan yang tidak pulang selepas
+  // halaman dimuat semula (cth di L86 dengan metrik peranti tiruan) menggantung SELURUH suite.
   const ev = async (expression) => {
-    const r = await send('Runtime.evaluate', { expression, returnByValue: true, awaitPromise: true });
+    const r = await Promise.race([
+      send('Runtime.evaluate', { expression, returnByValue: true, awaitPromise: true }),
+      new Promise(res => setTimeout(() => res({ __timeout: true }), 20000))
+    ]);
+    if (r.__timeout) throw new Error('ev() TIMEOUT (20s): ' + String(expression).slice(0, 90));
     if (r.result && r.result.exceptionDetails) throw new Error((r.result.exceptionDetails.exception && r.result.exceptionDetails.exception.description) || r.result.exceptionDetails.text);
     return r.result && r.result.result ? r.result.result.value : undefined;
   };
@@ -552,15 +558,49 @@ async function connect() {
      `emel=${prefill.emelGerbang} daftar=${daftarBaharu.daftar}`);
 
   /* ---------- L74-L78: perjalanan guru baharu - normalisasi ID DELIMa (F19) ---------- */
-  const profId = await ev(`(async function(){ openProfileModal();
-    document.getElementById('modalAuthEmail').value = 'g-12345678';        // ID DELIMa tanpa domain
-    document.getElementById('modalAuthPassword').value = '4455';
-    await submitTeacherProfile({ preventDefault: function(){} });
-    const k = JSON.parse(localStorage.getItem('erph_auth_cred') || '{}');
+  // [F26] pecahkan kepada langkah: chromium kadang tidak menyelesaikan janji dlm skrip
+  // Runtime.evaluate yang memanggil fungsi async app -> panggil, tunggu, kemudian BACA.
+  // [F26] Selepas 74 ujian, halaman dalam keadaan berat (modal + arkib dalam memori).
+  // Muat semula dahulu supaya keadaan bersih dan ujian ini mengukur app, bukan sisa ujian lepas.
+  await send('Page.navigate', { url: TEST_URL });
+  await waitReady('L74 keadaan bersih');
+  await ev("window.confirm=function(){return true}; window.print=function(){}; 'ok'");
+  await ev("openProfileModal(); 'ok'");
+  await ev(`(function(){ document.getElementById('modalAuthEmail').value = 'g-12345678';
+    document.getElementById('modalAuthPassword').value = '4455'; return 'ok'; })()`);
+  await ev("submitTeacherProfile({ preventDefault: function(){} }); 'dihantar'");
+  await new Promise(r => setTimeout(r, 2500));   // [F26] PBKDF2 60k iterasi + simpan storan
+  const profId = await ev(`(function(){ const k = JSON.parse(localStorage.getItem('erph_auth_cred') || '{}');
     return { emel: k.email, adaHash: !!k.pinHash, gerbang: document.getElementById('loginInputEmail').value,
              modal: document.getElementById('appModalOverlay').style.display }; })()`);
   ok('L74 Profil: ID DELIMa tanpa domain dinormalkan (g-12345678@moe-dl.edu.my) + PIN hash',
      profId.emel === 'g-12345678@moe-dl.edu.my' && profId.adaHash === true && profId.gerbang === 'g-12345678@moe-dl.edu.my', JSON.stringify(profId));
+  // [F26] REGRESI: pendaftaran guru baharu MESTI menyimpan kredensial ke storan.
+  // Sebelum ini tiada semakan ini; kredensial boleh hilang dan guru terkunci di luar.
+  await ev("closeModalDirectly(); window.__modalWajib = false; 'ok'");
+  await ev(`(function(){ try { localStorage.removeItem('erph_auth_cred'); localStorage.removeItem('erph_daftar_selesai'); } catch (e) { }
+    authCredentials = JSON.parse(localStorage.getItem('erph_auth_cred')) || { email: DEFAULT_AUTH.email, password: DEFAULT_AUTH.password };
+    return 'ok'; })()`);
+  await ev("openDaftarModal(true, true); 'ok'");
+  await ev(`(function(){ document.getElementById('daftarNama').value = 'Guru Simpan';
+    document.getElementById('daftarEmel').value = 'g-77776666';
+    document.getElementById('daftarPin').value = '334455'; return 'ok'; })()`);
+  await ev("submitDaftarLocal({ preventDefault: function(){} }); 'dihantar'");
+  await new Promise(r => setTimeout(r, 2500));                    // tunggu hashing + simpan
+  const simpanDaftar = await ev(`(function(){ const k = JSON.parse(localStorage.getItem('erph_auth_cred') || 'null');
+    return { ada: !!k, emel: k ? k.email : null, hash: k ? !!k.pinHash : false,
+             daftar: localStorage.getItem('erph_daftar_selesai'),
+             gerbangTutup: document.getElementById('privacyLockScreen').classList.contains('hidden') }; })()`);
+  ok('[F26] daftar guru baharu MESTI simpan kredensial + buka gerbang (tiada guru terkunci luar)',
+     simpanDaftar.ada === true && simpanDaftar.emel === 'g-77776666@moe-dl.edu.my' && simpanDaftar.hash === true
+     && simpanDaftar.daftar === '1' && simpanDaftar.gerbangTutup === true, JSON.stringify(simpanDaftar));
+  // [F26] PULIHKAN keadaan yang ujian-ujian selepas ini jangkakan (email g-12345678 + PIN 4455).
+  await ev("logoutSession(); 'ok'");
+  await ev(`(async function(){ await simpanKredensial('g-12345678@moe-dl.edu.my', '4455');
+    try { localStorage.setItem('erph_teacher', JSON.stringify(teacherProfile)); localStorage.setItem('erph_daftar_selesai', '1'); } catch (e) { }
+    const f = document.getElementById('loginInputEmail'); if (f) f.value = 'g-12345678@moe-dl.edu.my';
+    return 'dipulihkan'; })()`);
+  await new Promise(r => setTimeout(r, 2000));
 
   const loginId = await ev(`(async function(){ lockAppScreen();
     document.getElementById('loginInputEmail').value = 'g-12345678';       // taip ID sahaja
@@ -638,18 +678,24 @@ async function connect() {
       bolehTekan:!!(el&&(el===b||b.contains(el))),
       penghalang: el?(el===b||b.contains(el)?null:el.tagName):'TIADA' }); })()`;
 
+  // [F26] L86 dipadatkan: dulu setiap saiz skrin MUAT SEMULA halaman 2x (6 muatan penuh).
+  // Selepas 74 ujian, itu menghabiskan memori chromium dan suite tergantung.
+  // Sekarang: SATU muatan, kemudian tukar metrik peranti sahaja + ukur (lebih pantas & stabil).
+  await send('Page.navigate', { url: TEST_URL });
+  await new Promise(r => setTimeout(r, 3000));
+  await ev("try{localStorage.clear();sessionStorage.clear()}catch(e){}; 'ok'");
+  await send('Page.reload');
+  await new Promise(r => setTimeout(r, 3000));
+  await ev("window.confirm=function(){return true}; window.print=function(){}; 'ok'");
   for (const hSkrin of [344, 480, 800]) {
-    await send('Emulation.setDeviceMetricsOverride', { width: 980, height: hSkrin, deviceScaleFactor: 2.625, mobile: true });
-    await send('Page.navigate', { url: TEST_URL });
-    await new Promise(r => setTimeout(r, 2200));
-    await ev("try{localStorage.clear();sessionStorage.clear()}catch(e){}; 'ok'");
-    await send('Page.navigate', { url: TEST_URL });
-    await new Promise(r => setTimeout(r, 2600));
-    const gd = JSON.parse(await ev(GEO_DAFTAR));
+    await send('Emulation.setDeviceMetricsOverride', { width: 980, height: hSkrin, deviceScaleFactor: 2, mobile: true });
+    await new Promise(r => setTimeout(r, 700));                 // biar susun atur CSS selesai
+    let gd = { ada: false };
+    try { gd = JSON.parse(await ev(GEO_DAFTAR)); } catch (e) { gd = { ada: false, ralat: e.message }; }
     ok(`L86 gerbang ${hSkrin}px: butang "Guru baharu?" kelihatan TANPA skrol`,
-       gd.ada === true && gd.dlmPandangan === true, `y=${gd.y} bottom=${gd.bottom} vh=${gd.vh}`);
+       gd.ada === true && gd.dlmPandangan === true, gd.ralat ? gd.ralat : `y=${gd.y} bottom=${gd.bottom} vh=${gd.vh}`);
     ok(`L86 gerbang ${hSkrin}px: butang boleh DITEKAN (tiada elemen menutup)`,
-       gd.bolehTekan === true, gd.penghalang ? 'penghalang=' + gd.penghalang : 'tiada penghalang');
+       gd.bolehTekan === true, gd.penghalang ? 'penghalang=' + gd.penghalang : (gd.ralat || 'tiada penghalang'));
   }
   await send('Emulation.clearDeviceMetricsOverride');
   await send('Page.navigate', { url: TEST_URL });

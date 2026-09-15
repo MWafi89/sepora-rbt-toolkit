@@ -7649,10 +7649,14 @@ function autoGenerateSmartRph() {
       updateArkibSelectedInfo();
       updateDashboardMetrics();
 
-      // [F24] muat semula kredensial daripada storan (kalau guru tukar akaun dalam tab lain)
-      try { authCredentials = JSON.parse(localStorage.getItem('erph_auth_cred')) || DEFAULT_AUTH; } catch (e) { }
-      // [F24] kalau kredensial rosak (JSON cacat), jangan matikan seluruh app - bersihkan kunci itu sahaja
-      try { if (JSON.parse(localStorage.getItem('erph_auth_cred') || 'null') === null) localStorage.removeItem('erph_auth_cred'); } catch (e) { localStorage.removeItem('erph_auth_cred'); authCredentials = DEFAULT_AUTH; }
+      // [F26] muat semula kredensial daripada storan (kalau guru tukar akaun dalam tab lain).
+      // PENTING: jangan PERNAH padam kredensial dalam blok catch - kalau storan tidak dapat dibaca
+      // (cth kunci skrin / mod privasi pelayar), dulu kredensial guru terpadam dan guru terkunci
+      // di luar. Sekarang: kredensial yang tidak terbaca hanya tidak digunakan, TIDAK dibuang.
+      try {
+        const _kred = localStorage.getItem('erph_auth_cred');
+        if (_kred) authCredentials = JSON.parse(_kred);
+      } catch (e) { /* biar authCredentials sedia ada - JANGAN padam */ }
       // [F24] perlindungan: rujukan LAMA handleLoginSubmit masih wujud selepas tampalan (butang & atribut),
       // jadi butang "Masuk" besar hanya dibenarkan berfungsi apabila rujukan disahkan. Kalau tidak,
       // butang itu hanya membuka bentuk log masuk (tidak boleh gagal senyap).
