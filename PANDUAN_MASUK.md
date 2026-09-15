@@ -16,6 +16,20 @@ Chrome/Edge → menu ⋮ → *Add to Home screen*).
    pilih **Pilihan B — Guna tanpa Google**, isi Nama + ID DELIMa (cth `g-57258425`) + PIN anda,
    tekan **Daftar & Mula Guna** — anda terus masuk tanpa menunggu apa-apa lagi.
 
+
+### Kalau butang "Log Masuk dengan ID DELIMa" tidak membawa ke mana
+
+Butang Google itu **belum diaktifkan untuk sekolah ini** (pemilik app perlu pasang Client ID
+sekali sahaja). Bila ditekan, app akan beritahu perkara itu dan menunjukkan butang yang
+**memang berfungsi**. Jangan tunggu Google — guna jalan ini:
+
+1. Tekan **Guru baharu? Daftar guna ID DELIMa anda sendiri**
+2. Pilih **Pilihan B — Guna tanpa Google (offline)**
+3. Isi Nama + ID DELIMa (cth `g-57258425`) + PIN anda → **Daftar & Mula Guna**
+
+Semua ciri RPH berfungsi penuh melalui jalan ini; hanya sandaran automatik ke Google Drive
+yang menunggu Client ID dipasang.
+
 > Nota: *Lupa PIN?* sekarang membuka skrin daftar (laluan pulih sebenar), bukan sekadar mesej.
 > Kalau anda tekan *Kunci Skrin* atau *Log Keluar*, butang *Masuk pantas* dimatikan —
 > itu memang disengajakan supaya telefon yang dipinjam orang lain tidak boleh masuk arkib anda.

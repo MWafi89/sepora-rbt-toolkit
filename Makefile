@@ -4,9 +4,10 @@
 #   make journey  -> perjalanan pengguna BAHARU (guru) hujung-ke-hujung (13 pemeriksaan)
 #   make masuk    -> jalan masuk guru (F24): 16 pemeriksaan, termasuk masuk 1 tekanan
 #   make klik     -> klik SEBENAR butang "Guru baharu?" pada 3 saiz skrin (6 pemeriksaan)
+#   make gerbang  -> SEMUA butang gerbang pada 4 saiz telefon (17 pemeriksaan, klik sebenar)
 #   make verify   -> ujian statik + CDP ringkas (ujian_verify.sh)
 #   make serve    -> hidang setempat pada http://127.0.0.1:8899 (guna TEST_URL=... utk ujian setempat)
-.PHONY: test journey masuk klik verify serve
+.PHONY: test journey masuk klik gerbang verify serve
 
 test:
 	@TEST_URL=$(TEST_URL) bash ujian_lengkap.sh
@@ -19,6 +20,9 @@ masuk:
 
 klik:
 	@TEST_URL=$(TEST_URL) bash ujian_klik_daftar.sh
+
+gerbang:
+	@TEST_URL=$(TEST_URL) bash ujian_gerbang_butang.sh
 
 verify:
 	@bash ujian_verify.sh
