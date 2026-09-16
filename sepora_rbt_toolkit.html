@@ -1947,13 +1947,23 @@
               <button class="btn btn-outline" style="border-color:#c4b5fd; color:#6d28d9;" onclick="document.getElementById('arkibImportInput').click()"><i class="fa-solid fa-file-import"></i> Import Arkib (JSON)</button>
               <input type="file" id="arkibImportInput" accept="application/json,.json" style="display:none" onchange="importArkibJson(event)">
               <button class="btn btn-outline" style="border-color:#fca5a5; color:#b91c1c;" onclick="deleteAllDrafts()"><i class="fa-solid fa-broom"></i> Padam Semua Draf</button>
-              <span style="width:1px; height:22px; background:var(--surface-border);"></span>
-              <button class="btn btn-outline" style="border-color:#93c5fd; color:#1d4ed8;" onclick="driveSave(false)"><i class="fa-solid fa-cloud-arrow-up"></i> Sandaran ke Drive</button>
-              <button class="btn btn-outline" style="border-color:#93c5fd; color:#1d4ed8;" onclick="driveRestore(false)"><i class="fa-solid fa-cloud-arrow-down"></i> Pulih dari Drive</button>
-              <label style="display:flex; align-items:center; gap:7px; font-size:0.8rem; color:var(--text-muted); font-weight:600;">
-                <input type="checkbox" id="driveAutoSync" onchange="toggleDriveAutoSync(this.checked)">
-                Auto-sandaran Drive
-              </label>
+              <!-- [F30] Butang Drive hanya bermakna bila Client ID OAuth sudah dipasang.
+                   Sebelum ini ia sentiasa kelihatan tetapi menolak guru dgn mesej "log masuk DELIMa",
+                   sedangkan butang Google sendiri tersembunyi -> guru buntu. Kini disembunyikan
+                   sehingga Client ID wujud (kemasKiniDriveUI). -->
+              <span id="driveActionsSep" style="width:1px; height:22px; background:var(--surface-border);"></span>
+              <span id="driveActions">
+                <button class="btn btn-outline" style="border-color:#93c5fd; color:#1d4ed8;" onclick="driveSave(false)"><i class="fa-solid fa-cloud-arrow-up"></i> Sandaran ke Drive</button>
+                <button class="btn btn-outline" style="border-color:#93c5fd; color:#1d4ed8;" onclick="driveRestore(false)"><i class="fa-solid fa-cloud-arrow-down"></i> Pulih dari Drive</button>
+                <label style="display:flex; align-items:center; gap:7px; font-size:0.8rem; color:var(--text-muted); font-weight:600;">
+                  <input type="checkbox" id="driveAutoSync" onchange="toggleDriveAutoSync(this.checked)">
+                  Auto-sandaran Drive
+                </label>
+              </span>
+              <!-- [F30] alternatif SENTIASA ada: sandaran manual ke fail (guru simpan sendiri) -->
+              <span id="driveGantiNota" style="font-size:0.75rem; color:var(--text-muted); font-style:italic;">
+                Sandaran Drive belum diaktifkan - guna <strong>Eksport Arkib (JSON)</strong> untuk simpan salinan.
+              </span>
             </div>
             <div id="arkibSelectedInfo" style="margin-top:0.6rem; font-size:0.8rem; color:var(--text-muted);">Tiada rekod dipilih.</div>
           </div>
@@ -7254,6 +7264,20 @@ function autoGenerateSmartRph() {
     /* [F27] Butang Google & Pilihan A DIPAPARKAN hanya bila Client ID OAuth sudah dipasang.
        Sebelum ini ia sentiasa kelihatan tetapi tidak boleh berfungsi -> guru tertanya-tanya
        "kenapa saya tekan log masuk DELIMa tapi tak boleh daftar". */
+    /* [F30] Butang Drive/auto-sandaran hanya kelihatan bila Client ID OAuth sudah dipasang.
+       Tanpa Client ID, butang itu mati - guru tekan dan dapat mesej "log masuk DELIMa" sedangkan
+       butang Google tersembunyi. Sekarang: Drive disembunyikan, nota Eksport JSON ditunjuk. */
+    function kemasKiniDriveUI() {
+      try {
+        const ada = (typeof gdriveConfigured === 'function') ? gdriveConfigured() : false;
+        const aksi = document.getElementById('driveActions');
+        const sep = document.getElementById('driveActionsSep');
+        const nota = document.getElementById('driveGantiNota');
+        if (aksi) aksi.style.display = ada ? '' : 'none';
+        if (sep) sep.style.display = ada ? '' : 'none';
+        if (nota) nota.style.display = ada ? 'none' : '';
+      } catch (e) { }
+    }
     function kemasKiniButangGoogle() {
       try {
         const ada = (typeof gdriveConfigured === 'function') ? gdriveConfigured() : false;
@@ -7694,6 +7718,7 @@ function autoGenerateSmartRph() {
       closeModalDirectly();
       showToast(v ? 'Client ID disimpan. Tekan "Log Masuk dengan ID DELIMa".' : 'Client ID dikosongkan.');
       try { kemasKiniButangGoogle(); } catch (e) { }   // [F27]
+      try { kemasKiniDriveUI(); } catch (e) { }        // [F30]
       const btn = document.getElementById('delimaGoogleBtn');
       if (btn && v) btn.click();
     }
@@ -7784,6 +7809,7 @@ function autoGenerateSmartRph() {
       gFileId = localStorage.getItem('erph_drive_fileid') || '';
       checkAuthStatus();
       try { kemasKiniButangGoogle(); } catch (e) { }   // [F27] sembunyikan butang Google mati
+      try { kemasKiniDriveUI(); } catch (e) { }        // [F30] sembunyikan butang Drive mati
       // [F24] sahkan butang "Masuk" besar berfungsi (jangan gantung guru pada butang mati)
       try {
         const _bm = document.getElementById('loginBtnMasuk');
